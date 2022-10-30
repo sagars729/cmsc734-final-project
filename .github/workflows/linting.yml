@@ -8,8 +8,16 @@ on:
 jobs:
   python:
     runs-on: ubuntu-latest
-
     steps:
      - uses: actions/checkout@v2  
      - name: Python Linter
        uses: sunnysid3up/python-linter@master
+       
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare
+        run: npm install
+      - name: TypeScript Linter
+        uses: AntonKornus/TypeScript-Linter@1.0.0
