@@ -19,5 +19,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: Prepare
         run: npm install
-      - name: TypeScript Linter
-        uses: AntonKornus/TypeScript-Linter@1.0.0
+      - name: eslint
+        uses: icrawl/action-eslint@v1
