@@ -1,22 +1,13 @@
 import React from 'react';
-import './Card.css';
 
-function Card(  ) {
-    return (
-        <div className='Card'>
-            <div className='left_info'>
-                <div className='timestamp'>
-                    <header></header>
-                </div>
-                <div className='variable'>
-                    <p></p>
-                </div>
-            </div>
-            <div className='right_input'>
-                <input type='text'></input>
-            </div>
-        </div>
-    )
+class Card extends React.Component {
+    render () {
+        return (
+            <li>
+                {/* {this.props.key_point.time} {this.props.key_point.variable} */}
+            </li>
+        )
+    }
 }
 
-export default Card
+export default Card;
