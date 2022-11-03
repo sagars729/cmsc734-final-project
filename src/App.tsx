@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import LineChart from "./LineChart";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  changeHandler = (event: any) => {
+    // this.state.data = event.target.files[0];
+    // console.log(this.state.data);
+    this.setState({ data: event.target.files[0] });
+  };
+
+  state = {
+    data: null,
+  };
+  render() {
+    return (
+      <div className="container">
+        <input
+          type="file"
+          name="file"
+          accept=".csv"
+          onChange={this.changeHandler}
+          style={{ display: "block", margin: "10px auto" }}
+        />
+        <div className="row">
+          <div className="col-md-6 borderStyle">#left content in here</div>
+          {/* <span style={{ margin: "2px" }}></span> */}
+          <div className="col-md-6 borderStyle">
+            <LineChart data={this.state.data} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
