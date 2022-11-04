@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import UserInput from './components/UserInput/UserInput';
+import UserEditPage from './components/UserEditPage/UserEditPage';
 
 function App() {
   return (
     <div>
-      <UserInput />
+      <UserEditPage />
     </div>
   );
 }
