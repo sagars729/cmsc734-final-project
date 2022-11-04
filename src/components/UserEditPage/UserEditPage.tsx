@@ -1,5 +1,5 @@
 import React from 'react';
-import UserInput from '../UserInput/UserInput';
+import UserInput from '../KeyPointsList/KeyPointsList';
 import './UserEditPage.css';
 
 function UserEditPage() {
@@ -10,9 +10,9 @@ function UserEditPage() {
             </div>
 
             <div className="split right">
-                <div className="centered">
+                
                     <h2>Graph from Shubham</h2>
-                </div>
+               
             </div>
         </div>
     )
