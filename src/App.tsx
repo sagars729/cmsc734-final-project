@@ -5,7 +5,16 @@ import LineChart from "./LineChart";
 
 class App extends Component {
   changeHandler = (event: any) => {
-    this.setState({ data: event.target.files[0] });
+    this.setState({
+      data: {
+        csv: event.target.files[0],
+        general: {
+          title: "COVID CASES IN THE US 2020- 2021",
+          "x-axis": "Time Frame",
+          "y-axis": "Cases (in thousands)",
+        },
+      },
+    });
   };
 
   state = {

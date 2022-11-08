@@ -3,8 +3,8 @@ import * as d3 from "d3";
 import Papa from "papaparse";
 
 // Tooltip
-// X-axis
-// Hardcoded axis and title
+// X-axis - Done
+// Hardcoded axis and title - Done
 // Multi trend
 // Json for data circle and line path
 // Styling
@@ -15,8 +15,9 @@ import "./LineChart.css";
 const LineChart = (props: any) => {
   const d3Chart = useRef<SVGSVGElement | null>(null);
   useEffect(() => {
-    if (props.data) {
-      Papa.parse(props.data, {
+    // console.log(props.data);
+    if (props.data && props.data.csv) {
+      Papa.parse(props.data.csv, {
         header: true,
         skipEmptyLines: true,
         complete: function (results) {
@@ -25,37 +26,27 @@ const LineChart = (props: any) => {
             d.date = d3.timeParse("%Y-%m-%d")(d.date);
             d.circle = i % 199 ? 0 : 1;
           });
-          var data2 = JSON.parse(JSON.stringify(data));
-          data2.forEach(function (d: any, i: any) {
-            d.date = d3.timeParse("%Y-%m-%d")(d.date);
-            d.value = i % 10 ? 100 : 0;
-            d.circle = i % 199 ? 0 : 1;
-          });
-          console.log(data2);
+
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
           const padding = { t: 40, r: 10, b: 40, l: 10 };
+          // Compute chart dimensions
+          var chartWidth = width - padding.l - padding.r;
+          var chartHeight = height - padding.t - padding.b;
+
           const svg = d3
             .select(d3Chart.current)
             .attr("transform", "translate(" + [padding.l, padding.t] + ")");
 
-          // Compute chart dimensions
-          var chartWidth = width - padding.l - padding.r;
-          var chartHeight = height - padding.t - padding.b;
-          console.log(chartWidth, chartHeight);
+          //Scaling Chart
           const x = d3
-            .scaleLinear()
+            .scaleTime()
             .domain(
               d3.extent(data, function (d: any) {
                 return d.date;
               }) as [Date, Date]
             )
             .rangeRound([30, chartWidth]);
-          // console.log(
-          //   d3.extent(data, function (d: any) {
-          //     return d.Date;
-          //   }) as [Date, Date]
-          // );
           const y = d3
             .scaleLinear()
             .domain([
@@ -66,6 +57,7 @@ const LineChart = (props: any) => {
             ])
             .rangeRound([chartHeight, 0]);
 
+          //Adding Axes
           svg
             .append("g")
             .attr("class", "x axis")
@@ -78,12 +70,13 @@ const LineChart = (props: any) => {
             .attr("transform", "translate(25,0)")
             .call(d3.axisRight(y));
 
+          // Adding titles
           svg
             .append("text")
             .attr("class", "title")
             .attr("font-family", "cursive")
             .attr("transform", "translate(" + chartWidth / 4 + "," + 15 + ")")
-            .text("Title - Chart");
+            .text(props.data.general.title);
 
           svg
             .append("text")
@@ -93,7 +86,7 @@ const LineChart = (props: any) => {
               "translate(" + [chartWidth / 2, chartHeight + 35] + ")"
             )
             .attr("font-family", "serif")
-            .text("X-Axis");
+            .text(props.data.general["x-axis"]);
 
           svg
             .append("text")
@@ -103,8 +96,9 @@ const LineChart = (props: any) => {
               "translate(" + [5, chartWidth / 2] + ")  rotate(90)"
             )
             .attr("font-family", "serif")
-            .text("Y-Axis :)");
+            .text(props.data.general["y-axis"]);
 
+          // Adding Line Graph/ Path
           svg
             .append("path")
             .datum(data)
@@ -123,34 +117,20 @@ const LineChart = (props: any) => {
                 }) as any
             );
 
-          svg
-            .append("path")
-            .datum(data2)
-            .attr("fill", "none")
-            .attr("stroke", "green")
-            .attr("stroke-width", 1.5)
-            .attr(
-              "d",
-              d3
-                .line()
-                .x(function (d: any) {
-                  return x(d.date);
-                })
-                .y(function (d: any) {
-                  return y(d.value);
-                }) as any
-            );
+          // Tooltip On Hover
+          const tooltip = d3
+            .select("body")
+            .append("div")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "hidden")
+            .style("background-color", "black")
+            .style("font-size", "13px")
+            .style("color", "#fff")
+            .attr("class", "keyPointTip");
 
-          // const data2: any = data.filter((e: any) => {
-          //   return e.circle;
-          // });
-          // console.log(data2);
-          const ele = svg
-            .selectAll("g")
-            .data(data)
-            .enter()
-            .append("g")
-            .attr("cursor", "pointer");
+          // Adding data Key points circle
+          const ele = svg.selectAll("g").data(data).enter().append("g");
 
           ele
             .append("circle")
@@ -166,8 +146,23 @@ const LineChart = (props: any) => {
             })
             .attr("cy", function (d: any) {
               return y(d.value);
+            })
+            .on("mouseover", function () {
+              d3.select(this).style("fill", "lightgreen");
+              tooltip.text("This is my tooltip");
+              tooltip.style("visibility", "visible");
+            })
+            .on("mouseout", function () {
+              d3.select(this).style("fill", "red");
+              tooltip.style("visibility", "hidden");
+            })
+            .on("mousemove", function (event: any) {
+              tooltip
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px");
             });
 
+          // Adding new key point highlight
           svg
             .append("line")
             .attr("x1", x(d3.timeParse("%Y-%m-%d")("2017-12-17") as Date)) //<<== change your code here
@@ -177,24 +172,6 @@ const LineChart = (props: any) => {
             .style("stroke-width", 0.5)
             .style("stroke", "red")
             .style("fill", "none");
-
-          ele
-            .append("text")
-
-            .text(function (d: any) {
-              return d.circle ? "Tooltip" : "";
-            })
-            .attr("opacity", 0)
-            .attr("margin", "10px")
-            .attr("transform", function (d: any) {
-              return "translate(" + x(d.date) + "," + y(d.value) + ")";
-            })
-            .on("mouseover", function (d, i) {
-              d3.select(this).attr("opacity", "1");
-            })
-            .on("mouseout", function (d, i) {
-              d3.select(this).attr("opacity", "0");
-            });
         },
       });
     }

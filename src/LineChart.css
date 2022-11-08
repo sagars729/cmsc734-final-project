@@ -1,35 +1,22 @@
-.az {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
-}
-
-.az .azz {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
+/* .keyPointTip {
     position: absolute;
-    z-index: 1;
-    bottom: 150%;
-    left: 50%;
-    margin-left: -60px;
-}
+    text-align: center;
+    width: 60px;
+    height: 28px;
+    padding: 2px;
+    font: 15px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+} */
 
-.az .azz::after {
+.keyPointTip::after {
     content: "";
     position: absolute;
     top: 100%;
-    left: 50%;
+    right: 100%;
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
     border-color: black transparent transparent transparent;
-}
-
-.az:hover .azz {
-    visibility: visible;
 }
