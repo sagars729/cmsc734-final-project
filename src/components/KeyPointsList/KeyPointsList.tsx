@@ -18,13 +18,10 @@ const UserInput = (props : any) => {
         let newData = [...props.data];
 
         //temporarily adding fake dates
-        var i = moment()
-        .utcOffset('+08:30')
-        .format('MM-DD-YYYY');
         
 
         var jsonPoints = [{ "variable": attribute, "point_value": "" + counter, "analysis_yielded": "<input>"}]
-        var jsonObj = { "time": i, "points": jsonPoints};
+        var jsonObj = { "time": time, "points": jsonPoints};
 
         newData.push(jsonObj);
         // newData.sort( (a, b) => a.time.localeCompare(b.time));
@@ -103,7 +100,7 @@ const UserInput = (props : any) => {
                 <button onClick={(e) => {
                         var timeStamp = moment()
                         .utcOffset('+08:30')
-                        .format('MM-DD-YYYY');
+                        .format('YYYY-MM-DD');
 
                         var variableStr = "something";
                         addKeyPoint(timeStamp, variableStr);

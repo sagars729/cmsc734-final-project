@@ -7,8 +7,8 @@ import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
 
 const originalKeyPointsJson =  [
   {
-  time: "01-02-2020",
-  points: [
+  "time": "2020-01-22",
+  "points": [
      {
         "variable":"cases",
         "analysis_yielded":"absolute maximum"
@@ -16,19 +16,19 @@ const originalKeyPointsJson =  [
   ]
   },
   {
-  time: "04-14-2022",
-  points:[
+  "time": "2021-04-14",
+  "points":[
      {
-        "variable":"deaths",
+        "variable":"cases",
         "analysis_yielded":"absolute minimum"
      }
   ]
   },
   {
-    time: "04-16-2022",
-    points:[
+    "time": "2022-04-15",
+    "points":[
        {
-          "variable":"deaths",
+          "variable":"cases",
           "analysis_yielded":"absolute saddle point"
        }
     ]
@@ -36,7 +36,7 @@ const originalKeyPointsJson =  [
 
 const emptyData = [
   {
-    time: "1-1-11",
+    time: "1111-11-11",
     points: [
       {
         "variable": "",
