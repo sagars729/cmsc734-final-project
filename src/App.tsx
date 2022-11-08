@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import LineChart from "./LineChart";
+import LineChart from "./components/LineChart/LineChart";
 import UserEditPage from "./components/UserEditPage/UserEditPage";
 
 class App extends Component {
@@ -14,13 +14,11 @@ class App extends Component {
   state = {
     data: null,
   };
+
   render() {
     return (
       <div className="container">
-        <div>
-          <UserEditPage />
-        </div>
-        
+
         <input
           type="file"
           name="file"
@@ -29,7 +27,9 @@ class App extends Component {
           style={{ display: "block", margin: "10px auto" }}
         />
         <div className="row">
-          <div className="col-md-6 borderStyle">#left content in here</div>
+          <div className="col-md-6 borderStyle">
+            <UserEditPage />
+          </div>
           {/* <div className="m-2"></div> */}
           <div className="col-md-6 borderStyle">
             <LineChart data={this.state.data} />
