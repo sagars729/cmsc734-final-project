@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import Papa from "papaparse";
 
@@ -8,12 +8,14 @@ import Papa from "papaparse";
 // Multi trend
 // Json for data circle and line path - Done
 // Styling and resizing
-// Horizontal line for time
+// Horizontal line for time - Partial Done
 
 import "./LineChart.css";
+import { zoomTransform } from "d3";
 
 const LineChart = (props: any) => {
   const d3Chart = useRef<SVGSVGElement | null>(null);
+  const [currentZoomState, setCurrentZoomState] = useState();
   useEffect(() => {
     if (props.csv) {
       Papa.parse(props.csv, {
@@ -31,7 +33,7 @@ const LineChart = (props: any) => {
               index != -1
                 ? props.keyPoints[index].points[0]["analysis_yielded"]
                 : "";
-            d.highlight = i % 300;
+            d.highlight = i % 300 == 0;
           });
 
           const width = parseInt(d3.select("#d3ChartId").style("width"));
@@ -54,6 +56,14 @@ const LineChart = (props: any) => {
               }) as [Date, Date]
             )
             .rangeRound([30, chartWidth]);
+
+          if (currentZoomState) {
+            const newXScale = (currentZoomState as any).rescaleX(x);
+            // console.log(x.domain());
+            // console.log(newXScale.domain());
+            x.domain(newXScale.domain());
+          }
+
           const y = d3
             .scaleLinear()
             .domain([
@@ -175,25 +185,40 @@ const LineChart = (props: any) => {
                 .style("left", event.pageX + 10 + "px");
             });
 
+          const zoomBehaviour: any = d3
+            .zoom()
+            .scaleExtent([0.5, 5])
+            // .translateExtent([
+            //   [-100, 0],
+            //   [width + 100, height],
+            // ])
+            .on("zoom", () => {
+              const zoomState: any = zoomTransform(svg.node() as any);
+              setCurrentZoomState(zoomState);
+            });
+
+          // svg.call(zoomBehaviour);
+
           // Adding new key point highlight
-          //   svg
-          //     .append("line")
-          //     .data(data)
-          //     .attr("x1", function (d: any) {
-          //       return x(d.date);
-          //     }) //<<== change your code here
-          //     .attr("y1", 0)
-          //     .attr("x2", function (d: any) {
-          //       return x(d.date);
-          //     }) //<<== and here
-          //     .attr("y2", height - padding.t - padding.b)
-          //     .style("stroke-width", 1)
-          //     .style("stroke", "red")
-          //     .style("fill", "none");
+          // console.log(chartHeight, chartWidth, width, height);
+          data.forEach((d: any) => {
+            if (d.highlight) {
+              // console.log(x(d.date), x(d.value), y(d.date), y(d.value));
+              svg
+                .append("line")
+                .attr("x1", x(d.date)) //<<== change your code here
+                .attr("y1", y(d.value))
+                .attr("x2", x(d.date)) //<<== and here
+                .attr("y2", chartWidth + 10)
+                .style("stroke-width", 1)
+                .style("stroke", "red")
+                .style("fill", "none");
+            }
+          });
         },
       });
     }
-  });
+  }, [currentZoomState, props.csv]);
   return (
     <div id="d3ChartId">
       <svg
