@@ -1,47 +1,21 @@
+import { conditionalExpression } from '@babel/types';
 import moment from 'moment';
 import React, { useState} from 'react';
 import './KeyPointsList.css';
 // import key_points from "../../json_data.json";
 
-const UserInput = () => {
-    let originalData =  [
-        {
-        time: "01-02-2022",
-        points: [
-           {
-              "variable":"cases",
-              "point_value":"131",
-              "analysis_yielded":"absolute maximum"
-           },
-           {
-              "variable":"deaths",
-              "point_value":"16",
-              "analysis_yielded":"highest rise"
-           }
-        ]
-        },
-        {
-        time: "04-14-2020",
-        points:[
-           {
-              "variable":"deaths",
-              "point_value":"43",
-              "analysis_yielded":"absolute minimum"
-           }
-        ]
-    }]
-    
+const UserInput = (props : any) => {
     //place holder values. these will be taken from shubham
     let counter = 1;
-
-    const [data, setData] = useState(originalData);
 
     const printData = (data:any) => {
         console.log(data);
     }
+
+    // lol i don't know how to add another point was i doing that correctly?
     
     const addKeyPoint = (time:string, attribute:string) => {
-        let newData = [...data];
+        let newData = [...props.data];
 
         //temporarily adding fake dates
         var i = moment()
@@ -61,7 +35,7 @@ const UserInput = () => {
                 new Date(b.time).getTime()
         });
 
-        setData(newData);
+        props.setData(newData);
     }
 
     // don't think we'll need this
@@ -75,7 +49,7 @@ const UserInput = () => {
     
     const deletePoint = (time:string , index:number) => {
 
-        let newData = [...data];
+        let newData = [...props.data];
 
         newData.find(val => {return val.time === time})?.points.splice(index, 1);
         var len = newData.find(val => {return val.time === time})?.points.length;
@@ -92,42 +66,39 @@ const UserInput = () => {
             });
         }
         
-        setData(newData);        
+        props.setData(newData);        
 
     }
     
+    // the keypoints function is not adding to the overall data
     return (
         <div>
             <div className="centered">
                 <h1> Key Points </h1>
-                {data.map(item => {
-                    return (
-                        <div id={item.time} key={item.time} className="parent">
-                            <h4>{item.time}</h4>
-                            <div>
-                            {item.points.map( (point, i) => {
-                                return (
-                                    <div key={i + "_" + point.variable} className="child">
-                                        <p>value: {point.point_value}</p>
-                                        <p>Variable: {point.variable}</p>
-                                        <textarea 
-                                            defaultValue={point.analysis_yielded}
-                                            onChange={(e) => {
-                                                point.analysis_yielded = e.target.value;
-                                            }}>   
-                                        </textarea>
-                                        <div>
-                                            <button onClick={ (e) => deletePoint(item.time, i)}>
-                                                delete key_point
-                                            </button>
-                                        </div>
+                {props.data.map((item:any) => (
+
+                    <div id={item.time} key={item.time} className="parent">
+                        <h4>{item.time}</h4>
+                        <div>
+                            {item.points.map( (point:any, i:number) => (
+                                <div key={i + "_" + point.variable} className="child">
+                                    <p>Variable: {point.variable}</p>
+                                    <textarea 
+                                        defaultValue={point.analysis_yielded}
+                                        onChange={(e) => {
+                                            point.analysis_yielded = e.target.value;
+                                        }}>   
+                                    </textarea>
+                                    <div>
+                                        <button onClick={ (e) => deletePoint(item.time, i)} disabled={props.disabled}>
+                                            delete key_point
+                                        </button>
                                     </div>
-                                )
-                            })}
-                            </div>
+                                </div>
+                            ))}
                         </div>
-                    )
-                })}
+                    </div>
+                ))}
                 
                 <button onClick={(e) => {
                         var timeStamp = moment()
@@ -136,11 +107,15 @@ const UserInput = () => {
 
                         var variableStr = "something";
                         addKeyPoint(timeStamp, variableStr);
-                    } }>
+                    } }
+                    disabled={props.disabled}>
 
                     add key_point
                 </button>
-                <button onClick={(e) => printData(data)}>
+                <button onClick={(e) => {
+                    printData(props.data)
+                    }  }
+                    disabled={props.disabled}>
                     submit data!
                 </button>
                 

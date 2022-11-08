@@ -24,7 +24,7 @@ const LineChart = (props: any) => {
           const data = results.data;
           data.forEach(function (d: any, i: any) {
             d.date = d3.timeParse("%Y-%m-%d")(d.date);
-            d.circle = i % 199 ? 0 : 1;
+            d.circle = i % 199 ? 0 : 1; //
           });
 
           const width = parseInt(d3.select("#d3ChartId").style("width"));
