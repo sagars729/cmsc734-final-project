@@ -23,7 +23,7 @@ const LineChart = (props: any) => {
           const data = results.data;
           data.forEach(function (d: any, i: any) {
             d.date = d3.timeParse("%Y-%m-%d")(d.date);
-            d.circle = i % 199 ? 0 : 1;
+            d.circle = i % 199 ? 0 : 1; //
           });
           var data2 = JSON.parse(JSON.stringify(data));
           data2.forEach(function (d: any, i: any) {
