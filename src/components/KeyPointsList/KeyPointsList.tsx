@@ -6,7 +6,7 @@ import './KeyPointsList.css';
 const UserInput = () => {
     let originalData =  [
         {
-        time: "01-02-22 12:34:23",
+        time: "01-02-22",
         points: [
            {
               "variable":"cases",
@@ -21,7 +21,7 @@ const UserInput = () => {
         ]
         },
         {
-        time: "04-14-20 08:51:14",
+        time: "04-14-20",
         points:[
            {
               "variable":"deaths",
@@ -46,7 +46,7 @@ const UserInput = () => {
         //temporarily adding fake dates
         var i = moment()
         .utcOffset('+08:30')
-        .format('MM-DD-YY hh:mm:ss');
+        .format('MM-DD-YY');
         
 
         var jsonPoints = [{ "variable": attribute, "point_value": "" + counter, "analysis_yielded": "<input>"}]
