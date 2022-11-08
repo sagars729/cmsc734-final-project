@@ -5,8 +5,6 @@ import LineChart from "./LineChart";
 
 class App extends Component {
   changeHandler = (event: any) => {
-    // this.state.data = event.target.files[0];
-    // console.log(this.state.data);
     this.setState({ data: event.target.files[0] });
   };
 
