@@ -1,0 +1,10 @@
+  /* If you want the content centered horizontally and vertically */
+.centered {
+  text-align: center;
+  height: 100%;
+}
+
+.bottom {
+  position: absolute;
+  top: 90%;
+}
