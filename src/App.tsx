@@ -25,7 +25,7 @@ class App extends Component {
         />
         <div className="row">
           <div className="col-md-6 borderStyle">#left content in here</div>
-          {/* <span style={{ margin: "2px" }}></span> */}
+          {/* <div className="m-2"></div> */}
           <div className="col-md-6 borderStyle">
             <LineChart data={this.state.data} />
           </div>

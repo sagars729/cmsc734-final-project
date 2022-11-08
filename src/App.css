@@ -1,11 +1,21 @@
 .borderStyle {
   border-style: solid !important;
-  height: 95vh;
 }
 
-.container {
-  max-width: none;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  ;
+.a {
+  flex-wrap: inherit !important;
+  position: fixed;
+  bottom: 10px;
+  top: 10px;
+}
+
+.container,
+.container-fluid,
+.container-xxl,
+.container-xl,
+.container-lg,
+.container-md,
+.container-sm {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
 }

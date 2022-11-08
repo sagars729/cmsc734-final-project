@@ -2,6 +2,14 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import Papa from "papaparse";
 
+// Tooltip
+// X-axis
+// Hardcoded axis and title
+// Multi trend
+// Json for data circle and line path
+// Styling
+// Horizontal line for time
+
 import "./LineChart.css";
 
 const LineChart = (props: any) => {
@@ -13,6 +21,17 @@ const LineChart = (props: any) => {
         skipEmptyLines: true,
         complete: function (results) {
           const data = results.data;
+          data.forEach(function (d: any, i: any) {
+            d.date = d3.timeParse("%Y-%m-%d")(d.date);
+            d.circle = i % 199 ? 0 : 1;
+          });
+          var data2 = JSON.parse(JSON.stringify(data));
+          data2.forEach(function (d: any, i: any) {
+            d.date = d3.timeParse("%Y-%m-%d")(d.date);
+            d.value = i % 10 ? 100 : 0;
+            d.circle = i % 199 ? 0 : 1;
+          });
+          console.log(data2);
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
           const padding = { t: 40, r: 10, b: 40, l: 10 };
@@ -24,48 +43,57 @@ const LineChart = (props: any) => {
           var chartWidth = width - padding.l - padding.r;
           var chartHeight = height - padding.t - padding.b;
           console.log(chartWidth, chartHeight);
-          const xScale = d3
+          const x = d3
             .scaleLinear()
-            .domain([1870, 2017])
+            .domain(
+              d3.extent(data, function (d: any) {
+                return d.date;
+              }) as [Date, Date]
+            )
             .rangeRound([30, chartWidth]);
-
-          const yScale = d3
+          // console.log(
+          //   d3.extent(data, function (d: any) {
+          //     return d.Date;
+          //   }) as [Date, Date]
+          // );
+          const y = d3
             .scaleLinear()
-            .domain([0, 75])
+            .domain([
+              0,
+              d3.max(data, function (d: any) {
+                return +d.value;
+              }) as number,
+            ])
             .rangeRound([chartHeight, 0]);
 
           svg
             .append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(" + [0, chartHeight] + ")")
-            .call(
-              d3.axisBottom(xScale).tickFormat(function (d: any) {
-                return d;
-              })
-            );
+            .call(d3.axisBottom(x));
 
           svg
             .append("g")
             .attr("class", "y axis")
             .attr("transform", "translate(25,0)")
-            .call(d3.axisRight(yScale));
+            .call(d3.axisRight(y));
 
           svg
             .append("text")
             .attr("class", "title")
             .attr("font-family", "cursive")
             .attr("transform", "translate(" + chartWidth / 4 + "," + 15 + ")")
-            .text("Top 10 HR Leaders per MLB Season");
+            .text("Title - Chart");
 
           svg
             .append("text")
             .attr("class", "label")
             .attr(
               "transform",
-              "translate(" + [chartWidth / 3, chartHeight + 45] + ")"
+              "translate(" + [chartWidth / 2, chartHeight + 35] + ")"
             )
             .attr("font-family", "serif")
-            .text("MLB Season");
+            .text("X-Axis");
 
           svg
             .append("text")
@@ -75,8 +103,48 @@ const LineChart = (props: any) => {
               "translate(" + [5, chartWidth / 2] + ")  rotate(90)"
             )
             .attr("font-family", "serif")
-            .text("Home Runs (HR)");
+            .text("Y-Axis :)");
 
+          svg
+            .append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr(
+              "d",
+              d3
+                .line()
+                .x(function (d: any) {
+                  return x(d.date);
+                })
+                .y(function (d: any) {
+                  return y(d.value);
+                }) as any
+            );
+
+          svg
+            .append("path")
+            .datum(data2)
+            .attr("fill", "none")
+            .attr("stroke", "green")
+            .attr("stroke-width", 1.5)
+            .attr(
+              "d",
+              d3
+                .line()
+                .x(function (d: any) {
+                  return x(d.date);
+                })
+                .y(function (d: any) {
+                  return y(d.value);
+                }) as any
+            );
+
+          // const data2: any = data.filter((e: any) => {
+          //   return e.circle;
+          // });
+          // console.log(data2);
           const ele = svg
             .selectAll("g")
             .data(data)
@@ -86,41 +154,40 @@ const LineChart = (props: any) => {
 
           ele
             .append("circle")
-            .attr("r", "2")
-            // For Styling opacity
-            .attr("opacity", function (d: any) {
-              return d.homeruns > 50
-                ? 1
-                : d.homeruns < 50 && d.homeruns > 30
-                ? 0.6
-                : 0.4;
+            .attr("r", function (d: any) {
+              return d.circle == 1 ? "5" : "0";
             })
-            .style("fill", function (d: any) {
-              return d.rank < 4 ? "orange" : "#42b9df";
-            })
-            .style("stroke", function (d: any) {
-              return d.rank < 4 ? "black" : "none";
-            })
-            .style("stroke-width", function (d: any) {
-              return d.rank < 4 ? "0.2" : "none";
-            })
+            .attr("opacity", 1)
+            .style("fill", "red")
+            .style("stroke", "black")
+            .style("stroke-width", "0.2")
             .attr("cx", function (d: any) {
-              return xScale(d.year);
+              return x(d.date);
             })
             .attr("cy", function (d: any) {
-              return yScale(d.homeruns);
+              return y(d.value);
             });
+
+          svg
+            .append("line")
+            .attr("x1", x(d3.timeParse("%Y-%m-%d")("2017-12-17") as Date)) //<<== change your code here
+            .attr("y1", 0)
+            .attr("x2", x(d3.timeParse("%Y-%m-%d")("2017-12-17") as Date)) //<<== and here
+            .attr("y2", height - padding.t - padding.b)
+            .style("stroke-width", 0.5)
+            .style("stroke", "red")
+            .style("fill", "none");
 
           ele
             .append("text")
+
             .text(function (d: any) {
-              return d.name;
+              return d.circle ? "Tooltip" : "";
             })
             .attr("opacity", 0)
+            .attr("margin", "10px")
             .attr("transform", function (d: any) {
-              return (
-                "translate(" + xScale(d.year) + "," + yScale(d.homeruns) + ")"
-              );
+              return "translate(" + x(d.date) + "," + y(d.value) + ")";
             })
             .on("mouseover", function (d, i) {
               d3.select(this).attr("opacity", "1");
@@ -137,7 +204,7 @@ const LineChart = (props: any) => {
       <svg
         style={{
           width: "100%",
-          height: "90vh",
+          height: "620px",
         }}
         ref={d3Chart}
       ></svg>
