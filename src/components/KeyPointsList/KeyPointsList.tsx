@@ -6,7 +6,7 @@ import './KeyPointsList.css';
 const UserInput = () => {
     let originalData =  [
         {
-        time: "01-02-22",
+        time: "01-02-2022",
         points: [
            {
               "variable":"cases",
@@ -21,7 +21,7 @@ const UserInput = () => {
         ]
         },
         {
-        time: "04-14-20",
+        time: "04-14-2020",
         points:[
            {
               "variable":"deaths",
@@ -46,15 +46,22 @@ const UserInput = () => {
         //temporarily adding fake dates
         var i = moment()
         .utcOffset('+08:30')
-        .format('MM-DD-YY');
+        .format('MM-DD-YYYY');
         
 
         var jsonPoints = [{ "variable": attribute, "point_value": "" + counter, "analysis_yielded": "<input>"}]
         var jsonObj = { "time": i, "points": jsonPoints};
 
         newData.push(jsonObj);
-        newData.sort( (a, b) => a.time.localeCompare(b.time));
-        setData(newData);        
+        // newData.sort( (a, b) => a.time.localeCompare(b.time));
+                
+
+        newData.sort((a,b) => {
+            return new Date(a.time).getTime() - 
+                new Date(b.time).getTime()
+        });
+
+        setData(newData);
     }
 
     // don't think we'll need this
@@ -78,7 +85,11 @@ const UserInput = () => {
             newData.splice(toRemove, 1);
             // console.log(data);
 
-            newData.sort( (a, b) => a.time.localeCompare(b.time));
+            // newData.sort( (a, b) => a.time.localeCompare(b.time));
+            newData.sort((a,b) => {
+                return new Date(a.time).getTime() - 
+                    new Date(b.time).getTime()
+            });
         }
         
         setData(newData);        
@@ -96,7 +107,7 @@ const UserInput = () => {
                             <div>
                             {item.points.map( (point, i) => {
                                 return (
-                                    <div key={i} className="child">
+                                    <div key={i + "_" + point.variable} className="child">
                                         <p>value: {point.point_value}</p>
                                         <p>Variable: {point.variable}</p>
                                         <textarea 
@@ -121,7 +132,7 @@ const UserInput = () => {
                 <button onClick={(e) => {
                         var timeStamp = moment()
                         .utcOffset('+08:30')
-                        .format('MM-DD-YYYY hh:mm:ss');
+                        .format('MM-DD-YYYY');
 
                         var variableStr = "something";
                         addKeyPoint(timeStamp, variableStr);
