@@ -3,6 +3,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
 import UserEditPage from "./components/UserEditPage/UserEditPage";
+import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
 
 class App extends Component {
   changeHandler = (event: any) => {
@@ -28,7 +29,7 @@ class App extends Component {
         />
         <div className="row">
           <div className="col-md-6 borderStyle">
-            <UserEditPage />
+            <KeyPointsList />
           </div>
           {/* <div className="m-2"></div> */}
           <div className="col-md-6 borderStyle">
