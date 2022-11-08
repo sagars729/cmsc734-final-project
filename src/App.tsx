@@ -7,7 +7,7 @@ import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
 
 const originalKeyPointsJson = [
   {
-    time: "01-02-2020",
+    time: "2014-08-20",
     points: [
       {
         variable: "cases",
@@ -16,7 +16,7 @@ const originalKeyPointsJson = [
     ],
   },
   {
-    time: "04-14-2022",
+    time: "2016-12-21",
     points: [
       {
         variable: "deaths",
@@ -25,7 +25,7 @@ const originalKeyPointsJson = [
     ],
   },
   {
-    time: "04-16-2022",
+    time: "2018-03-20",
     points: [
       {
         variable: "deaths",
@@ -37,7 +37,7 @@ const originalKeyPointsJson = [
 
 const emptyData = [
   {
-    time: "1-1-11",
+    time: "11-1-1",
     points: [
       {
         variable: "",
@@ -51,6 +51,12 @@ const App = () => {
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
+  const [generalChartInfo, setChartInfo] = useState({
+    title: "COVID CASES IN THE US 2020- 2021",
+    "x-axis": "Time Frame",
+    "y-axis": "Cases (in thousands)",
+    date_format: "%Y-%m-%d",
+  });
 
   const changeHandler = (event: any) => {
     // this.state.data = event.target.files[0];
@@ -80,8 +86,9 @@ const App = () => {
         {/* <div className="m-2"></div> */}
         <div className="col-md-6 borderStyle">
           <LineChart
-            data={dataCSV}
+            csv={dataCSV}
             keyPoints={keyPointsData}
+            general={generalChartInfo}
             setData={setKeyPointsData}
           />
         </div>

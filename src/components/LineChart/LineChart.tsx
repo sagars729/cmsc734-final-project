@@ -2,12 +2,12 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import Papa from "papaparse";
 
-// Tooltip
+// Tooltip - Done
 // X-axis - Done
 // Hardcoded axis and title - Done
 // Multi trend
-// Json for data circle and line path
-// Styling
+// Json for data circle and line path - Done
+// Styling and resizing
 // Horizontal line for time
 
 import "./LineChart.css";
@@ -15,16 +15,23 @@ import "./LineChart.css";
 const LineChart = (props: any) => {
   const d3Chart = useRef<SVGSVGElement | null>(null);
   useEffect(() => {
-    // console.log(props.data);
-    if (props.data && props.data.csv) {
-      Papa.parse(props.data.csv, {
+    if (props.csv) {
+      Papa.parse(props.csv, {
         header: true,
         skipEmptyLines: true,
         complete: function (results) {
           const data = results.data;
           data.forEach(function (d: any, i: any) {
-            d.date = d3.timeParse("%Y-%m-%d")(d.date);
-            d.circle = i % 199 ? 0 : 1; //
+            const index = props.keyPoints.findIndex(
+              (x: any) => x.time === d.date
+            );
+            d.circle = index != -1 ? 1 : 0;
+            d.date = d3.timeParse(props.general.date_format)(d.date);
+            d.tooltip =
+              index != -1
+                ? props.keyPoints[index].points[0]["analysis_yielded"]
+                : "";
+            d.highlight = i % 300;
           });
 
           const width = parseInt(d3.select("#d3ChartId").style("width"));
@@ -76,7 +83,7 @@ const LineChart = (props: any) => {
             .attr("class", "title")
             .attr("font-family", "cursive")
             .attr("transform", "translate(" + chartWidth / 4 + "," + 15 + ")")
-            .text(props.data.general.title);
+            .text(props.general.title);
 
           svg
             .append("text")
@@ -86,17 +93,17 @@ const LineChart = (props: any) => {
               "translate(" + [chartWidth / 2, chartHeight + 35] + ")"
             )
             .attr("font-family", "serif")
-            .text(props.data.general["x-axis"]);
+            .text(props.general["x-axis"]);
 
           svg
             .append("text")
             .attr("class", "label")
             .attr(
               "transform",
-              "translate(" + [5, chartWidth / 2] + ")  rotate(90)"
+              "translate(" + [5, chartWidth / 3] + ")  rotate(90)"
             )
             .attr("font-family", "serif")
-            .text(props.data.general["y-axis"]);
+            .text(props.general["y-axis"]);
 
           // Adding Line Graph/ Path
           svg
@@ -149,11 +156,17 @@ const LineChart = (props: any) => {
             })
             .on("mouseover", function () {
               d3.select(this).style("fill", "lightgreen");
-              tooltip.text("This is my tooltip");
+              tooltip.text(
+                (d3.select(this) as any)._groups[0][0]["__data__"][
+                  "tooltip"
+                ] as string
+              );
+              tooltip.transition().duration(200);
               tooltip.style("visibility", "visible");
             })
             .on("mouseout", function () {
               d3.select(this).style("fill", "red");
+              tooltip.transition().duration(500);
               tooltip.style("visibility", "hidden");
             })
             .on("mousemove", function (event: any) {
@@ -163,15 +176,20 @@ const LineChart = (props: any) => {
             });
 
           // Adding new key point highlight
-          svg
-            .append("line")
-            .attr("x1", x(d3.timeParse("%Y-%m-%d")("2017-12-17") as Date)) //<<== change your code here
-            .attr("y1", 0)
-            .attr("x2", x(d3.timeParse("%Y-%m-%d")("2017-12-17") as Date)) //<<== and here
-            .attr("y2", height - padding.t - padding.b)
-            .style("stroke-width", 0.5)
-            .style("stroke", "red")
-            .style("fill", "none");
+          //   svg
+          //     .append("line")
+          //     .data(data)
+          //     .attr("x1", function (d: any) {
+          //       return x(d.date);
+          //     }) //<<== change your code here
+          //     .attr("y1", 0)
+          //     .attr("x2", function (d: any) {
+          //       return x(d.date);
+          //     }) //<<== and here
+          //     .attr("y2", height - padding.t - padding.b)
+          //     .style("stroke-width", 1)
+          //     .style("stroke", "red")
+          //     .style("fill", "none");
         },
       });
     }
