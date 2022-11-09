@@ -16,7 +16,7 @@ interface Timestamp {
 export function data_processing(
     input_data: any
 ): any {
-    readCSV(input_data)
+    return readCSV(input_data)
         .then((df) => {
             // assume date column is first
             df.drop({ columns: [''], inplace: true });
@@ -30,7 +30,6 @@ export function data_processing(
 
             // find simple key points using df functions
             var final_json = JSON.stringify(key_points)
-            console.log(final_json)
             return final_json
 
         }).catch(err => {
@@ -54,13 +53,12 @@ export function absolute_max_min(
         analysis_yielded: "absolute maximum",
     };
 
-    let max_points: Timestamp = {
+    let max_point: Timestamp = {
         time: max_timestamps[0],
         points: [absolute_max]
     }
 
-    console.log(max_points)
-    return max_points
+    return max_point
     // let col1_min = df[col1].min({ axis: 0 })
     // let min_timestamps = df.loc({ rows: df[col1].eq(col1_min) })[date_col].values
 
