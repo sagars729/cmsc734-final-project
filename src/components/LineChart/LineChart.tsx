@@ -8,7 +8,8 @@ import Papa from "papaparse";
 // Multi trend
 // Json for data circle and line path - Done
 // Styling and resizing
-// Horizontal line for time - Partial Done
+// Zoom
+// Horizontal line for time - Done
 
 import "./LineChart.css";
 import { zoomTransform } from "d3";
