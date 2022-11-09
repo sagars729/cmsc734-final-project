@@ -54,7 +54,15 @@ const App = () => {
     setDataCSV( event.target.files[0] );
     setKeyPointsData(originalKeyPointsJson);
     setUploadedCsvBool(false);
-    data_processing(event.target.files[0]);
+
+    const getData = async () => {
+      const a = await data_processing(event.target.files[0]);
+      console.log(a);
+    };
+    getData();
+
+    // var json_data = await data_processing(event.target.files[0])
+    // console.log(json_data)
   };
 
     return (
