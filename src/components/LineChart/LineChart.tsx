@@ -152,10 +152,12 @@ const LineChart = (props: any) => {
           ele
             .append("circle")
             .attr("r", function (d: any) {
-              return d.circle == 1 ? "5" : "0";
+              return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
             })
             .attr("opacity", 1)
-            .style("fill", "red")
+            .style("fill", function (d: any) {
+              return d.circle == 1 ? "red" : d.highlight ? "pink" : "";
+            })
             .style("stroke", "black")
             .style("stroke-width", "0.2")
             .attr("cx", function (d: any) {
@@ -175,7 +177,13 @@ const LineChart = (props: any) => {
               tooltip.style("visibility", "visible");
             })
             .on("mouseout", function () {
-              d3.select(this).style("fill", "red");
+              d3.select(this).style(
+                "fill",
+                (d3.select(this) as any)._groups[0][0]["__data__"]["circle"] ==
+                  1
+                  ? "red"
+                  : "pink"
+              );
               tooltip.transition().duration(500);
               tooltip.style("visibility", "hidden");
             })
@@ -211,7 +219,7 @@ const LineChart = (props: any) => {
                 .attr("x2", x(d.date)) //<<== and here
                 .attr("y2", chartWidth + 10)
                 .style("stroke-width", 1)
-                .style("stroke", "red")
+                .style("stroke", "pink")
                 .style("fill", "none");
             }
           });
