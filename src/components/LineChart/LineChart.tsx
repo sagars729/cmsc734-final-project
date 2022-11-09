@@ -31,7 +31,9 @@ const LineChart = (props: any) => {
             d.value = i % 10 ? 100 : 0;
             d.circle = i % 199 ? 0 : 1;
           });
+
           console.log(data2);
+
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
           const padding = { t: 40, r: 10, b: 40, l: 10 };
@@ -42,7 +44,9 @@ const LineChart = (props: any) => {
           // Compute chart dimensions
           var chartWidth = width - padding.l - padding.r;
           var chartHeight = height - padding.t - padding.b;
+
           console.log(chartWidth, chartHeight);
+          
           const x = d3
             .scaleLinear()
             .domain(
