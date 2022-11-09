@@ -19,7 +19,7 @@ export function data_processing(
     return readCSV(input_data)
         .then((df) => {
             // assume date column is first
-            df.drop({ columns: [''], inplace: true });
+            // df.drop({ columns: [''], inplace: true });
             var columns = df.columns.slice(1,)
             var key_points = []
 
