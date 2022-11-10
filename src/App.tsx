@@ -63,6 +63,7 @@ const App = () => {
 
   const changeHandler = (event: any) => {
     process_data(event.target.files[0]).then(function (result) {
+      console.log(result);
       setDataCSV(event.target.files[0]);
       setKeyPointsData(result);
       setUploadedCsvBool(false);

@@ -35,14 +35,16 @@ const LineChart = (props: any) => {
               index != -1
                 ? props.keyPoints[index].points[0]["analysis_yielded"]
                 : "";
-            d.highlight = i % 300 == 0;
+            d.highlight =
+              index != -1 &&
+              props.keyPoints[index].points[0]["analysis_yielded"] === "";
           });
 
           console.log(data);
 
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
-          const padding = { t: 40, r: 10, b: 40, l: 10 };
+          const padding = { t: 10, r: 10, b: 30, l: 10 };
           // Compute chart dimensions
           var chartWidth = width - padding.l - padding.r;
           var chartHeight = height - padding.t - padding.b;
