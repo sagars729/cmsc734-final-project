@@ -29,7 +29,7 @@ export function data_processing(
             }
 
             // find simple key points using df functions
-            var final_json = JSON.stringify(key_points)
+            var final_json = JSON.parse(JSON.stringify(key_points))
             return final_json
 
         }).catch(err => {
@@ -37,7 +37,7 @@ export function data_processing(
         })
 };
 
-export function absolute_max_min(
+function absolute_max_min(
     df: any,
     col: string
 ): any {

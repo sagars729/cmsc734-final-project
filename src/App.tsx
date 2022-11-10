@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./App.css";
-import { data_processing } from './data'
+import LineChart from "./components/LineChart/LineChart";
+import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
+import { data_processing } from './data';
 
-const originalKeyPointsJson =  [
+let originalKeyPointsJson =  [
   {
   "time": "2020-01-22",
   "points": [
@@ -43,6 +45,10 @@ const emptyData = [
   }
 ]
 
+const process_data = async (file:any) => {
+  return await data_processing(file);
+};
+
 const App = () => {
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
   const [keyPointsData, setKeyPointsData] = useState( emptyData );
@@ -51,18 +57,14 @@ const App = () => {
   const changeHandler = (event: any) => {
     // this.state.data = event.target.files[0];
     // console.log(this.state.data);
-    setDataCSV( event.target.files[0] );
-    setKeyPointsData(originalKeyPointsJson);
-    setUploadedCsvBool(false);
 
-    const getData = async () => {
-      const a = await data_processing(event.target.files[0]);
-      console.log(a);
-    };
-    getData();
+    process_data(event.target.files[0]).then( function(result) {
+      setDataCSV( event.target.files[0] );
+      setKeyPointsData(result);
+      setUploadedCsvBool(false);
+      
+    } );
 
-    // var json_data = await data_processing(event.target.files[0])
-    // console.log(json_data)
   };
 
     return (
@@ -74,6 +76,15 @@ const App = () => {
           onChange={changeHandler}
           style={{ display: "block", margin: "10px auto" }}
         />
+        <div className="row">
+          <div className="col-md-6 borderStyle">
+            <KeyPointsList data={keyPointsData} setData={setKeyPointsData} disabled={uploadedCsvBool}/>
+          </div>
+          {/* <div className="m-2"></div> */}
+          <div className="col-md-6 borderStyle">
+            <LineChart data={dataCSV} keyPoints={keyPointsData} setData={setKeyPointsData} />
+          </div>
+        </div>
       </div>
     );
   }
