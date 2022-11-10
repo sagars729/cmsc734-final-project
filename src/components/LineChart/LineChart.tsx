@@ -19,6 +19,7 @@ const LineChart = (props: any) => {
   const [currentZoomState, setCurrentZoomState] = useState();
   useEffect(() => {
     if (props.csv) {
+      console.log(props);
       Papa.parse(props.csv, {
         header: true,
         skipEmptyLines: true,
@@ -26,16 +27,18 @@ const LineChart = (props: any) => {
           const data = results.data;
           data.forEach(function (d: any, i: any) {
             const index = props.keyPoints.findIndex(
-              (x: any) => x.time === d.date
+              (x: any) => x.time === d.Date
             );
             d.circle = index != -1 ? 1 : 0;
-            d.date = d3.timeParse(props.general.date_format)(d.date);
+            d.Date = d3.timeParse("%Y-%m-%d")(d.Date);
             d.tooltip =
               index != -1
                 ? props.keyPoints[index].points[0]["analysis_yielded"]
                 : "";
             d.highlight = i % 300 == 0;
           });
+
+          console.log(data);
 
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
@@ -53,7 +56,7 @@ const LineChart = (props: any) => {
             .scaleTime()
             .domain(
               d3.extent(data, function (d: any) {
-                return d.date;
+                return d.Date;
               }) as [Date, Date]
             )
             .rangeRound([30, chartWidth]);
@@ -70,7 +73,7 @@ const LineChart = (props: any) => {
             .domain([
               0,
               d3.max(data, function (d: any) {
-                return +d.value;
+                return +d.Cases;
               }) as number,
             ])
             .rangeRound([chartHeight, 0]);
@@ -128,10 +131,10 @@ const LineChart = (props: any) => {
               d3
                 .line()
                 .x(function (d: any) {
-                  return x(d.date);
+                  return x(d.Date);
                 })
                 .y(function (d: any) {
-                  return y(d.value);
+                  return y(d.Cases);
                 }) as any
             );
 
@@ -162,10 +165,10 @@ const LineChart = (props: any) => {
             .style("stroke", "black")
             .style("stroke-width", "0.2")
             .attr("cx", function (d: any) {
-              return x(d.date);
+              return x(d.Date);
             })
             .attr("cy", function (d: any) {
-              return y(d.value);
+              return y(d.Cases);
             })
             .on("mouseover", function () {
               d3.select(this).style("fill", "lightgreen");
@@ -212,12 +215,12 @@ const LineChart = (props: any) => {
           // console.log(chartHeight, chartWidth, width, height);
           data.forEach((d: any) => {
             if (d.highlight) {
-              // console.log(x(d.date), x(d.value), y(d.date), y(d.value));
+              // console.log(x(d.Date), x(d.Cases), y(d.Date), y(d.Cases));
               svg
                 .append("line")
-                .attr("x1", x(d.date)) //<<== change your code here
-                .attr("y1", y(d.value))
-                .attr("x2", x(d.date)) //<<== and here
+                .attr("x1", x(d.Date)) //<<== change your code here
+                .attr("y1", y(d.Cases))
+                .attr("x2", x(d.Date)) //<<== and here
                 .attr("y2", chartWidth + 10)
                 .style("stroke-width", 1)
                 .style("stroke", "pink")
