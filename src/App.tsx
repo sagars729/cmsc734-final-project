@@ -2,37 +2,36 @@ import React, { useState } from "react";
 import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
-import { data_processing } from "./data";
+import { data_processing } from './data';
 
-let originalKeyPointsJson = [
+let originalKeyPointsJson =  [
   {
-    time: "2020-01-22",
-    points: [
-      {
-        variable: "cases",
-        analysis_yielded: "absolute maximum",
-      },
-    ],
+  "time": "2020-01-22",
+  "points": [
+     {
+        "variable":"cases",
+        "analysis_yielded":"absolute maximum"
+     }
+  ]
   },
   {
-    time: "2021-04-14",
-    points: [
-      {
-        variable: "cases",
-        analysis_yielded: "absolute minimum",
-      },
-    ],
+  "time": "2021-04-14",
+  "points":[
+     {
+        "variable":"cases",
+        "analysis_yielded":"absolute minimum"
+     }
+  ]
   },
   {
-    time: "2022-04-15",
-    points: [
-      {
-        variable: "cases",
-        analysis_yielded: "absolute saddle point",
-      },
-    ],
-  },
-];
+    "time": "2022-04-15",
+    "points":[
+       {
+          "variable":"cases",
+          "analysis_yielded":"absolute saddle point"
+       }
+    ]
+}]
 
 const emptyData = [
   {
@@ -45,6 +44,8 @@ const emptyData = [
     ],
   },
 ];
+
+
 
 const process_data = async (file: any) => {
   return await data_processing(file);
@@ -70,6 +71,24 @@ const App = () => {
     });
   };
 
+  const addKeyPoint = (time:string, attribute:string) => {
+    let newData = [...keyPointsData];
+  
+    var jsonPoints = [{ "variable": attribute, "point_value": "" + 1, "analysis_yielded": "<input>"}]
+    var jsonObj = { "time": time, "points": jsonPoints};
+  
+    newData.push(jsonObj);
+    // newData.sort( (a, b) => a.time.localeCompare(b.time));
+            
+  
+    newData.sort((a,b) => {
+        return new Date(a.time).getTime() - 
+            new Date(b.time).getTime()
+    });
+  
+    setKeyPointsData(newData);
+  }
+
   return (
     <div className="container">
       <input
@@ -84,6 +103,7 @@ const App = () => {
           <KeyPointsList
             data={keyPointsData}
             setData={setKeyPointsData}
+            addKeyPoints={addKeyPoint}
             disabled={uploadedCsvBool}
           />
         </div>
@@ -93,6 +113,7 @@ const App = () => {
             csv={dataCSV}
             keyPoints={keyPointsData}
             general={generalChartInfo}
+            addKeyPoints={addKeyPoint}
             setData={setKeyPointsData}
           />
         </div>
