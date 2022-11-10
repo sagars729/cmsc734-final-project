@@ -47,7 +47,6 @@ const emptyData = [
 
 const process_data = async (file:any) => {
   return await data_processing(file);
-  
 };
 
 const App = () => {
@@ -70,7 +69,6 @@ const App = () => {
 
     return (
       <div className="container">
-
         <input
           type="file"
           name="file"

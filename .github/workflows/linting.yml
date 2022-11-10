@@ -6,13 +6,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  python:
-    runs-on: ubuntu-latest
-    steps:
-     - uses: actions/checkout@v2  
-     - name: Python Linter
-       uses: sunnysid3up/python-linter@master
-       
   typescript:
     runs-on: ubuntu-latest
     steps:
