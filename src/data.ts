@@ -37,7 +37,6 @@ export function data_processing(
         })
 };
 
-
 function absolute_max_min(
     df: any,
     col: string

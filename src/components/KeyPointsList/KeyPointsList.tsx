@@ -3,7 +3,6 @@ import moment from 'moment';
 import React, { useState} from 'react';
 import './KeyPointsList.css';
 
-
 const UserInput = (props : any) => {
     //place holder values. these will be taken from shubham
     let counter = 1;
@@ -11,7 +10,6 @@ const UserInput = (props : any) => {
     const printData = (data:any) => {
         console.log(data);
     }
-
 
     // don't think we'll need this
     const componentDidUpdate = (id:any) => {

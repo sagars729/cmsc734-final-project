@@ -38,35 +38,37 @@ const emptyData = [
     time: "1111-11-11",
     points: [
       {
-        "variable": "",
-        "analysis_yielded": ""
-      }
-    ]
-  }
-]
+        variable: "",
+        analysis_yielded: "",
+      },
+    ],
+  },
+];
 
-const process_data = async (file:any) => {
+
+
+const process_data = async (file: any) => {
   return await data_processing(file);
-  
 };
-
 
 const App = () => {
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
-  const [keyPointsData, setKeyPointsData] = useState( emptyData );
+  const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
+  const [generalChartInfo, setChartInfo] = useState({
+    title: "COVID CASES IN THE US 2020- 2021",
+    "x-axis": "Time Frame",
+    "y-axis": "Cases (in thousands)",
+    date_format: "%Y-%m-%d",
+  });
 
   const changeHandler = (event: any) => {
-    // this.state.data = event.target.files[0];
-    // console.log(this.state.data);
-
-    process_data(event.target.files[0]).then( function(result) {
-      setDataCSV( event.target.files[0] );
+    process_data(event.target.files[0]).then(function (result) {
+      console.log(result);
+      setDataCSV(event.target.files[0]);
       setKeyPointsData(result);
       setUploadedCsvBool(false);
-      
-    } );
-
+    });
   };
 
   const addKeyPoint = (time:string, attribute:string) => {
@@ -87,28 +89,37 @@ const App = () => {
     setKeyPointsData(newData);
   }
 
-    return (
-      <div className="container">
-
-        <input
-          type="file"
-          name="file"
-          accept=".csv"
-          onChange={changeHandler}
-          style={{ display: "block", margin: "10px auto" }}
-        />
-        <div className="row">
-          <div className="col-md-6 borderStyle">
-            <KeyPointsList data={keyPointsData} setData={setKeyPointsData} addKeyPoints={addKeyPoint} disabled={uploadedCsvBool}/>
-          </div>
-          {/* <div className="m-2"></div> */}
-          <div className="col-md-6 borderStyle">
-            <LineChart data={dataCSV} keyPoints={keyPointsData} setData={setKeyPointsData} />
-          </div>
+  return (
+    <div className="container">
+      <input
+        type="file"
+        name="file"
+        accept=".csv"
+        onChange={changeHandler}
+        style={{ display: "block", margin: "10px auto" }}
+      />
+      <div className="row">
+        <div className="col-md-6 borderStyle">
+          <KeyPointsList
+            data={keyPointsData}
+            setData={setKeyPointsData}
+            addKeyPoints={addKeyPoint}
+            disabled={uploadedCsvBool}
+          />
+        </div>
+        {/* <div className="m-2"></div> */}
+        <div className="col-md-6 borderStyle">
+          <LineChart
+            csv={dataCSV}
+            keyPoints={keyPointsData}
+            general={generalChartInfo}
+            addKeyPoints={addKeyPoint}
+            setData={setKeyPointsData}
+          />
         </div>
       </div>
-    );
-  }
-
+    </div>
+  );
+};
 
 export default App;
