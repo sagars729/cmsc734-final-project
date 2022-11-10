@@ -62,9 +62,6 @@ const App = () => {
   });
 
   const changeHandler = (event: any) => {
-    // this.state.data = event.target.files[0];
-    // console.log(this.state.data);
-
     process_data(event.target.files[0]).then(function (result) {
       setDataCSV(event.target.files[0]);
       setKeyPointsData(result);
