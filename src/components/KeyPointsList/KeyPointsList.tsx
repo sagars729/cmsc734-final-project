@@ -3,6 +3,7 @@ import moment from 'moment';
 import React, { useState} from 'react';
 import './KeyPointsList.css';
 
+
 const UserInput = (props : any) => {
     //place holder values. these will be taken from shubham
     let counter = 1;
@@ -10,24 +11,7 @@ const UserInput = (props : any) => {
     const printData = (data:any) => {
         console.log(data);
     }
-    
-    const addKeyPoint = (time:string, attribute:string) => {
-        let newData = [...props.data];
 
-        var jsonPoints = [{ "variable": attribute, "point_value": "" + counter, "analysis_yielded": "<input>"}]
-        var jsonObj = { "time": time, "points": jsonPoints};
-
-        newData.push(jsonObj);
-        // newData.sort( (a, b) => a.time.localeCompare(b.time));
-                
-
-        newData.sort((a,b) => {
-            return new Date(a.time).getTime() - 
-                new Date(b.time).getTime()
-        });
-
-        props.setData(newData);
-    }
 
     // don't think we'll need this
     const componentDidUpdate = (id:any) => {
@@ -97,7 +81,7 @@ const UserInput = (props : any) => {
                         .format('YYYY-MM-DD');
 
                         var variableStr = "something";
-                        addKeyPoint(timeStamp, variableStr);
+                        props.addKeyPoints(timeStamp, variableStr);
                     } }
                     disabled={props.disabled}>
 

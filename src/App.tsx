@@ -50,6 +50,7 @@ const process_data = async (file:any) => {
   
 };
 
+
 const App = () => {
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
   const [keyPointsData, setKeyPointsData] = useState( emptyData );
@@ -68,6 +69,24 @@ const App = () => {
 
   };
 
+  const addKeyPoint = (time:string, attribute:string) => {
+    let newData = [...keyPointsData];
+  
+    var jsonPoints = [{ "variable": attribute, "point_value": "" + 1, "analysis_yielded": "<input>"}]
+    var jsonObj = { "time": time, "points": jsonPoints};
+  
+    newData.push(jsonObj);
+    // newData.sort( (a, b) => a.time.localeCompare(b.time));
+            
+  
+    newData.sort((a,b) => {
+        return new Date(a.time).getTime() - 
+            new Date(b.time).getTime()
+    });
+  
+    setKeyPointsData(newData);
+  }
+
     return (
       <div className="container">
 
@@ -80,7 +99,7 @@ const App = () => {
         />
         <div className="row">
           <div className="col-md-6 borderStyle">
-            <KeyPointsList data={keyPointsData} setData={setKeyPointsData} disabled={uploadedCsvBool}/>
+            <KeyPointsList data={keyPointsData} setData={setKeyPointsData} addKeyPoints={addKeyPoint} disabled={uploadedCsvBool}/>
           </div>
           {/* <div className="m-2"></div> */}
           <div className="col-md-6 borderStyle">
