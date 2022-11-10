@@ -2,7 +2,6 @@ import { conditionalExpression } from '@babel/types';
 import moment from 'moment';
 import React, { useState} from 'react';
 import './KeyPointsList.css';
-// import key_points from "../../json_data.json";
 
 const UserInput = (props : any) => {
     //place holder values. these will be taken from shubham
@@ -11,20 +10,12 @@ const UserInput = (props : any) => {
     const printData = (data:any) => {
         console.log(data);
     }
-
-    // lol i don't know how to add another point was i doing that correctly?
     
     const addKeyPoint = (time:string, attribute:string) => {
         let newData = [...props.data];
 
-        //temporarily adding fake dates
-        var i = moment()
-        .utcOffset('+08:30')
-        .format('MM-DD-YYYY');
-        
-
         var jsonPoints = [{ "variable": attribute, "point_value": "" + counter, "analysis_yielded": "<input>"}]
-        var jsonObj = { "time": i, "points": jsonPoints};
+        var jsonObj = { "time": time, "points": jsonPoints};
 
         newData.push(jsonObj);
         // newData.sort( (a, b) => a.time.localeCompare(b.time));
@@ -103,7 +94,7 @@ const UserInput = (props : any) => {
                 <button onClick={(e) => {
                         var timeStamp = moment()
                         .utcOffset('+08:30')
-                        .format('MM-DD-YYYY');
+                        .format('YYYY-MM-DD');
 
                         var variableStr = "something";
                         addKeyPoint(timeStamp, variableStr);

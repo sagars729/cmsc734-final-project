@@ -1,21 +1,28 @@
-{
-    "01-02-22 12:34:23":[
-       {
-          "variable":"cases",
-          "point_value":"131",
-          "analysis_yielded":"absolute maximum"
-       },
-       {
-          "variable":"deaths",
-          "point_value":"16",
-          "analysis_yielded":"highest rise"
-       }
-    ],
-    "04-14-20 08:51:14":[
-       {
-          "variable":"deaths",
-          "point_value":"43",
-          "analysis_yielded":"absolute maximum"
-       }
-    ]
-}
+[
+   {
+   "time": "2020-01-22",
+   "points": [
+      {
+         "variable":"cases",
+         "analysis_yielded":"absolute maximum"
+      }
+   ]
+   },
+   {
+   "time": "2021-04-14",
+   "points":[
+      {
+         "variable":"cases",
+         "analysis_yielded":"absolute minimum"
+      }
+   ]
+   },
+   {
+     "time": "2022-04-15",
+     "points":[
+        {
+           "variable":"cases",
+           "analysis_yielded":"absolute saddle point"
+        }
+     ]
+ }]

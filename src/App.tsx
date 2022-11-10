@@ -1,13 +1,12 @@
-import React, { Component, useState } from "react";
-import logo from "./logo.svg";
+import React, { useState } from "react";
 import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
-import UserEditPage from "./components/UserEditPage/UserEditPage";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
+import { data_processing } from "./data";
 
-const originalKeyPointsJson = [
+let originalKeyPointsJson = [
   {
-    time: "2014-08-20",
+    time: "2020-01-22",
     points: [
       {
         variable: "cases",
@@ -16,19 +15,19 @@ const originalKeyPointsJson = [
     ],
   },
   {
-    time: "2016-12-21",
+    time: "2021-04-14",
     points: [
       {
-        variable: "deaths",
+        variable: "cases",
         analysis_yielded: "absolute minimum",
       },
     ],
   },
   {
-    time: "2018-03-20",
+    time: "2022-04-15",
     points: [
       {
-        variable: "deaths",
+        variable: "cases",
         analysis_yielded: "absolute saddle point",
       },
     ],
@@ -37,7 +36,7 @@ const originalKeyPointsJson = [
 
 const emptyData = [
   {
-    time: "11-1-1",
+    time: "1111-11-11",
     points: [
       {
         variable: "",
@@ -46,6 +45,10 @@ const emptyData = [
     ],
   },
 ];
+
+const process_data = async (file: any) => {
+  return await data_processing(file);
+};
 
 const App = () => {
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
@@ -61,9 +64,12 @@ const App = () => {
   const changeHandler = (event: any) => {
     // this.state.data = event.target.files[0];
     // console.log(this.state.data);
-    setDataCSV(event.target.files[0]);
-    setKeyPointsData(originalKeyPointsJson);
-    setUploadedCsvBool(false);
+
+    process_data(event.target.files[0]).then(function (result) {
+      setDataCSV(event.target.files[0]);
+      setKeyPointsData(result);
+      setUploadedCsvBool(false);
+    });
   };
 
   return (
