@@ -5,11 +5,16 @@ import Papa from "papaparse";
 // Tooltip - Done
 // X-axis - Done
 // Hardcoded axis and title - Done
-// Multi trend
 // Json for data circle and line path - Done
-// Styling and resizing
-// Zoom
 // Horizontal line for time - Done
+
+// Zoom
+
+// Styling and resizing
+
+// Multi trend
+
+// Click on the chart
 
 import "./LineChart.css";
 import { zoomTransform } from "d3";
@@ -40,11 +45,9 @@ const LineChart = (props: any) => {
               props.keyPoints[index].points[0]["analysis_yielded"] === "";
           });
 
-          console.log(data);
-
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
-          const padding = { t: 10, r: 10, b: 30, l: 10 };
+          const padding = { t: 10, r: 10, b: 40, l: 10 };
           // Compute chart dimensions
           var chartWidth = width - padding.l - padding.r;
           var chartHeight = height - padding.t - padding.b;
@@ -61,7 +64,7 @@ const LineChart = (props: any) => {
                 return d.Date;
               }) as [Date, Date]
             )
-            .rangeRound([30, chartWidth]);
+            .range([0, chartWidth]);
 
           if (currentZoomState) {
             const newXScale = (currentZoomState as any).rescaleX(x);
@@ -81,13 +84,13 @@ const LineChart = (props: any) => {
             .rangeRound([chartHeight, 0]);
 
           //Adding Axes
-          svg
+          const xAxis = svg
             .append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(" + [0, chartHeight] + ")")
             .call(d3.axisBottom(x));
 
-          svg
+          const yAxis = svg
             .append("g")
             .attr("class", "y axis")
             .attr("transform", "translate(25,0)")
@@ -121,8 +124,100 @@ const LineChart = (props: any) => {
             .attr("font-family", "serif")
             .text(props.general["y-axis"]);
 
+          // // This allows to find the closest X index of the mouse:
+          // const bisect = d3.bisector(function (d: any) {
+          //   return d.Date;
+          // }).left;
+
+          // // Create the circle that travels along the curve of chart
+          // const focus = svg
+          //   .append("g")
+          //   .append("circle")
+          //   .style("fill", "red")
+          //   .attr("stroke", "black")
+          //   .attr("r", 8)
+          //   .style("opacity", 0);
+
+          // // Create the text that travels along the curve of chart
+          // const focusText = svg
+          //   .append("g")
+          //   .append("text")
+          //   .style("opacity", 0)
+          //   .style("z-index", "10")
+          //   .attr("text-anchor", "left")
+          //   .attr("alignment-baseline", "middle");
+
+          // // Create a rect on top of the svg area: this rectangle recovers mouse position
+          // svg
+          //   .append("rect")
+          //   .style("fill", "none")
+          //   .style("pointer-events", "all")
+          //   .attr("width", width)
+          //   .attr("height", height)
+          //   .on("mouseover", function () {
+          //     focus.style("opacity", 1);
+          //     focusText.style("opacity", 1);
+          //   })
+          //   .on("mousemove", function (event) {
+          //     // recover coordinate we need
+          //     const x0 = x.invert(d3.pointer(event)[0]);
+          //     const i = bisect(data, x0, 1);
+          //     const selectedData: any = data[i];
+          //     // console.log(selectedData, x0, i);
+          //     focus
+          //       .attr("cx", x(selectedData.Date))
+          //       .attr("cy", y(selectedData.Cases));
+          //     focusText
+          //       .html(
+          //         "x:" +
+          //           (selectedData.Date as Date).getMonth() +
+          //           "/" +
+          //           (selectedData.Date as Date).getFullYear() +
+          //           "  -  " +
+          //           "y:" +
+          //           selectedData.Cases
+          //       )
+          //       .attr("x", x(selectedData.Date) + 15)
+          //       .attr("y", y(selectedData.Cases));
+          //   })
+          //   .on("mouseout", function () {
+          //     focus.style("opacity", 0);
+          //     focusText.style("opacity", 0);
+          //   })
+          //   .on("click", function (event) {
+          //     const x0 = x.invert(d3.pointer(event)[0]);
+          //     const i = bisect(data, x0, 1);
+          //     const selectedData: any = data[i];
+          //     selectedData.highlight = true;
+          //     console.log(selectedData);
+          //   });
+
           // Adding Line Graph/ Path
-          svg
+
+          // Add a clipPath: everything out of this area won't be drawn.
+          const clip = svg
+            .append("defs")
+            .append("svg:clipPath")
+            .attr("id", "clip")
+            .append("svg:rect")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("x", 0)
+            .attr("y", 0);
+
+          // Add brushing
+          const brush = d3
+            .brushX() // Add the brush feature using the d3.brush function
+            .extent([
+              [0, 0],
+              [width, height],
+            ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+            .on("end", updateChart); // Each time the brush selection changes, trigger the 'updateChart' function
+
+          // Create the line variable: where both the line and the brush take place
+          const line = svg.append("g").attr("clip-path", "url(#clip)");
+
+          line
             .append("path")
             .datum(data)
             .attr("fill", "none")
@@ -139,6 +234,71 @@ const LineChart = (props: any) => {
                   return y(d.Cases);
                 }) as any
             );
+
+          line.append("g").attr("class", "brush").call(brush);
+
+          var idleTimeout: any = null;
+          function idled() {
+            idleTimeout = null;
+          }
+
+          // A function that update the chart for given boundaries
+          function updateChart(event: any) {
+            // What are the selected boundaries?
+            const extent = event.selection;
+            console.log(extent);
+            // If no selection, back to initial coordinate. Otherwise, update X axis domain
+            if (extent == null || extent == undefined) {
+              if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350)); // This allows to wait a little bit
+              // x.domain([4, 8]);
+              x.domain(
+                d3.extent(data, function (d: any) {
+                  return d.Date;
+                }) as [Date, Date]
+              );
+            } else {
+              x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+              line.select(".brush").call(brush.move as any, null); // This remove the grey brush area as soon as the selection has been done
+            }
+
+            // Update axis and line position
+            xAxis.transition().duration(1000).call(d3.axisBottom(x));
+            line
+              .transition()
+              .duration(1000)
+              .attr(
+                "d",
+                d3
+                  .line()
+                  .x(function (d: any) {
+                    return x(d.Date);
+                  })
+                  .y(function (d: any) {
+                    return y(d.Cases);
+                  }) as any
+              );
+          }
+
+          svg.on("dblclick", function () {
+            x.domain(
+              d3.extent(data, function (d: any) {
+                return d.Date;
+              }) as [Date, Date]
+            );
+
+            xAxis.transition().call(d3.axisBottom(x));
+            line.transition().attr(
+              "d",
+              d3
+                .line()
+                .x(function (d: any) {
+                  return x(d.Date);
+                })
+                .y(function (d: any) {
+                  return y(d.Cases);
+                }) as any
+            );
+          });
 
           // Tooltip On Hover
           const tooltip = d3
@@ -198,20 +358,6 @@ const LineChart = (props: any) => {
                 .style("top", event.pageY - 10 + "px")
                 .style("left", event.pageX + 10 + "px");
             });
-
-          const zoomBehaviour: any = d3
-            .zoom()
-            .scaleExtent([0.5, 5])
-            // .translateExtent([
-            //   [-100, 0],
-            //   [width + 100, height],
-            // ])
-            .on("zoom", () => {
-              const zoomState: any = zoomTransform(svg.node() as any);
-              setCurrentZoomState(zoomState);
-            });
-
-          // svg.call(zoomBehaviour);
 
           // Adding new key point highlight
           // console.log(chartHeight, chartWidth, width, height);

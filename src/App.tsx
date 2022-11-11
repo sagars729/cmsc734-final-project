@@ -55,7 +55,7 @@ const App = () => {
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
   const [generalChartInfo, setChartInfo] = useState({
-    title: "COVID CASES IN THE US 2020- 2021",
+    title: "",
     "x-axis": "Time Frame",
     "y-axis": "Cases (in thousands)",
     date_format: "%Y-%m-%d",
@@ -63,7 +63,6 @@ const App = () => {
 
   const changeHandler = (event: any) => {
     process_data(event.target.files[0]).then(function (result) {
-      console.log(result);
       setDataCSV(event.target.files[0]);
       setKeyPointsData(result);
       setUploadedCsvBool(false);
