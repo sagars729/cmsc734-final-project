@@ -4,35 +4,6 @@ import LineChart from "./components/LineChart/LineChart";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
 import { data_processing } from './data';
 
-let originalKeyPointsJson =  [
-  {
-  "time": "2020-01-22",
-  "points": [
-     {
-        "variable":"cases",
-        "analysis_yielded":"absolute maximum"
-     }
-  ]
-  },
-  {
-  "time": "2021-04-14",
-  "points":[
-     {
-        "variable":"cases",
-        "analysis_yielded":"absolute minimum"
-     }
-  ]
-  },
-  {
-    "time": "2022-04-15",
-    "points":[
-       {
-          "variable":"cases",
-          "analysis_yielded":"absolute saddle point"
-       }
-    ]
-}]
-
 const emptyData = [
   {
     time: "1111-11-11",
@@ -55,7 +26,7 @@ const App = () => {
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
-  
+
   const [generalChartInfo, setChartInfo] = useState({
     title: "COVID CASES IN THE US 2020- 2021",
     "x-axis": "Time Frame",
@@ -74,6 +45,8 @@ const App = () => {
 
   const addKeyPoint = (time:string, attribute:string, attrValue:number) => {
     let newData = [...keyPointsData];
+
+    //todo: if everyone likes it, we can edit the timestamp to look like Oct. 20, 2022 (it looks better)
   
     var jsonPoints = [{ "variable": attribute, "point_value": attrValue, "analysis_yielded": "<input>"}]
     var jsonObj = { "time": time, "points": jsonPoints};

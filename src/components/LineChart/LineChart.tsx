@@ -216,6 +216,8 @@ const LineChart = (props: any) => {
               selectedData.circle = 1;
               // var newData = [...props.keyPoints];
 
+
+              // TODO: for Harsh - auto scroll to the point on the left side when point is clicked on the graph
               props.addKeyPoints(formatDate(selectedData.Date), "Cases", selectedData.Cases);
               // newData.push({
               //   time: formatDate(selectedData.Date),
