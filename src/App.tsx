@@ -55,6 +55,7 @@ const App = () => {
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
+  
   const [generalChartInfo, setChartInfo] = useState({
     title: "COVID CASES IN THE US 2020- 2021",
     "x-axis": "Time Frame",
@@ -64,17 +65,17 @@ const App = () => {
 
   const changeHandler = (event: any) => {
     process_data(event.target.files[0]).then(function (result) {
-      console.log(result);
+      // console.log(result);
       setDataCSV(event.target.files[0]);
       setKeyPointsData(result);
       setUploadedCsvBool(false);
     });
   };
 
-  const addKeyPoint = (time:string, attribute:string) => {
+  const addKeyPoint = (time:string, attribute:string, attrValue:number) => {
     let newData = [...keyPointsData];
   
-    var jsonPoints = [{ "variable": attribute, "point_value": "" + 1, "analysis_yielded": "<input>"}]
+    var jsonPoints = [{ "variable": attribute, "point_value": attrValue, "analysis_yielded": "<input>"}]
     var jsonObj = { "time": time, "points": jsonPoints};
   
     newData.push(jsonObj);
@@ -103,7 +104,6 @@ const App = () => {
           <KeyPointsList
             data={keyPointsData}
             setData={setKeyPointsData}
-            addKeyPoints={addKeyPoint}
             disabled={uploadedCsvBool}
           />
         </div>

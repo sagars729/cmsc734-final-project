@@ -10,7 +10,7 @@
     border-radius: 8px;
 } */
 
-.keyPointTip::after {
+/* .keyPointTip::after {
     content: "";
     position: absolute;
     top: 100%;
@@ -19,4 +19,4 @@
     border-width: 5px;
     border-style: solid;
     border-color: black transparent transparent transparent;
-}
+} */
