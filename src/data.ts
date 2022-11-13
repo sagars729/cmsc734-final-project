@@ -24,12 +24,16 @@ export function data_processing(
             var key_points = []
 
             // find min/max of all colunns (1 for now)
-            for (var column of columns) {
-                key_points.push(absolute_max_min(df, column))
+            for (var col of columns) {
+                if(df.column(col).dtypes[0] === 'int32'){
+                    key_points.push(absolute_max(df, col))
+                    key_points.push(absolute_min(df, col))
+                } 
             }
 
             // find simple key points using df functions
             var final_json = JSON.parse(JSON.stringify(key_points))
+            console.log(final_json)
             return final_json
 
         }).catch(err => {
@@ -37,29 +41,54 @@ export function data_processing(
         })
 };
 
-function absolute_max_min(
+function absolute_max(
     df: any,
     col: string
 ): any {
     var date_col = df.columns[0]
     df = df.asType(col, "int32")
 
-    let col1_max = df[col].max({ axis: 0 })
-    let max_timestamps: string[] = df.loc({ rows: df[col].eq(col1_max) })[date_col].values
+    let col_max = df[col].max({ axis: 0 })
+    let max_timestamps: string[] = df.loc({ rows: df[col].eq(col_max) })[date_col].values
+
+    return create_point(col, col_max, "absolute minimum", max_timestamps[0])
+};
+
+function absolute_min(
+    df: any,
+    col: string
+): any {
+    var date_col = df.columns[0]
+    df = df.asType(col, "int32")
+
+    let col_min = df[col].min({ axis: 0 })
+    let min_timestamps: string[] = df.loc({ rows: df[col].eq(col_min) })[date_col].values
+
+    //how to account for multiple minimums?
+    // if(max_timestamps.length > 3){
+    //     return;
+    // }
+
+    return create_point(col, col_min, "absolute minimum", min_timestamps[0])
+};
+
+function create_point(
+    col: string,
+    col_max: number,
+    description: string,
+    time: any
+): any {
 
     let absolute_max: Point = {
         variable: col,
-        point_value: col1_max,
-        analysis_yielded: "absolute maximum",
+        point_value: col_max,
+        analysis_yielded: description,
     };
 
     let max_point: Timestamp = {
-        time: max_timestamps[0],
+        time: time,
         points: [absolute_max]
     }
 
     return max_point
-    // let col1_min = df[col1].min({ axis: 0 })
-    // let min_timestamps = df.loc({ rows: df[col1].eq(col1_min) })[date_col].values
-
 };
