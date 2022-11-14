@@ -9,6 +9,10 @@
   top: 10px;
 }
 
+.scrollable {
+  height: 100% !important;
+}
+
 .container,
 .container-fluid,
 .container-xxl,

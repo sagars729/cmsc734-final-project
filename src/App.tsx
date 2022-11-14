@@ -56,8 +56,10 @@ const process_data = async (file: any) => {
 
 const App = () => {
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
+  const [isLoadedInt, setIsLoadedInt] = useState(0);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
+
   const [generalChartInfo, setChartInfo] = useState({
     title: "COVID CASES IN THE US 2020- 2021",
     "x-axis": "Time Frame",
@@ -69,20 +71,29 @@ const App = () => {
 
   const changeHandler = (event: any) => {
     process_data(event.target.files[0]).then(function (result) {
-      console.log(result);
+      // console.log(result);
       setDataCSV(event.target.files[0]);
       setKeyPointsData(result);
+
+      setIsLoadedInt(1);
+      // TODO: call setPointsData() so the article has the most recent keypoints
+
       setUploadedCsvBool(false);
     });
   };
 
-  const addKeyPoint = (time:string, attribute:string) => {
+
+  const addKeyPoint = (time:string, attribute:string, attrValue:number) => {
     let newData = [...keyPointsData];
+
+    //todo: if everyone likes it, we can edit the timestamp to look like Oct. 20, 2022 (it looks better)
   
-    var jsonPoints = [{ "variable": attribute, "point_value": 1, "analysis_yielded": "<input>"}]
+    var jsonPoints = [{ "variable": attribute, "point_value": attrValue, "analysis_yielded": "<input>"}]
     var jsonObj = { "time": time, "points": jsonPoints};
   
     newData.push(jsonObj);
+    // newData.sort( (a, b) => a.time.localeCompare(b.time));
+            
   
     newData.sort((a,b) => {
         return new Date(a.time).getTime() - 
@@ -90,10 +101,10 @@ const App = () => {
     });
   
     setKeyPointsData(newData);
-  }
 
-  console.log(keyPointsData)
-  console.log(pointsData)
+    // TODO: call setPointsData() so the article has the most recent keypoints
+    // setPointsData(newData )
+  }
 
   return (
     <div className="container">
@@ -122,6 +133,8 @@ const App = () => {
                 csv={dataCSV}
                 keyPoints={keyPointsData}
                 general={generalChartInfo}
+                isLoadedInt={isLoadedInt}
+                setIsLoadedInt={setIsLoadedInt}
                 addKeyPoints={addKeyPoint}
                 setData={setKeyPointsData}
                 setPointsData={setPointsData}
