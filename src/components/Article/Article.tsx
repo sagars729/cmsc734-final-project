@@ -14,7 +14,7 @@ export interface PointType {
   [otherOptions: string]: unknown;
 }
 
-interface KeyPointType {
+export interface KeyPointType {
   time: string;
   points: PointType[];
 }
@@ -33,6 +33,7 @@ export const boxsx: object = {
       width: "100%",
       height: "100vh",
       color: "#e1e4e8",
+      overflow: "auto"
     }
 
 const Article = (props: ArticleProps) => {
@@ -55,8 +56,8 @@ const Article = (props: ArticleProps) => {
             <Grid xs={6}>
               <TextSection time={keyPoint.time} points={keyPoint.points} />
             </Grid>
-            <Grid xs={6}>
-              <ChartSection time={keyPoint.time} timeWindow={30} points={keyPoint.points} data={props.data}/>
+            <Grid xs={6} justifyContent="center" alignItems="center">
+              <ChartSection time={keyPoint.time} timeWindow={30} points={keyPoint.points} data={props.data} allPoints={props.keyPoints}/>
             </Grid>
           </>
         )}
