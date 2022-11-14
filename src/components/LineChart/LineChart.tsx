@@ -1,93 +1,105 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import Papa from "papaparse";
 
-// Tooltip
-// X-axis
-// Hardcoded axis and title
+// Tooltip - Done
+// X-axis - Done
+// Hardcoded axis and title - Done
+// Json for data circle and line path - Done
+// Horizontal line for time - Done
+// Zoom - Done
+// Click on the chart - Done Need zoom after clicking to fix the point
+// Styling and resizing
+// Resetting the graph to clear all
 // Multi trend
-// Json for data circle and line path
-// Styling
-// Horizontal line for time
 
 import "./LineChart.css";
+import { zoomTransform } from "d3";
 
 const LineChart = (props: any) => {
   const d3Chart = useRef<SVGSVGElement | null>(null);
+
   useEffect(() => {
-    if (props.data) {
-      Papa.parse(props.data, {
+    if (props.csv) {
+      Papa.parse(props.csv, {
         header: true,
         skipEmptyLines: true,
         complete: function (results) {
+          //console.log(props.keyPoints);
           const data = results.data;
           data.forEach(function (d: any, i: any) {
-            d.date = d3.timeParse("%Y-%m-%d")(d.date);
-            d.circle = i % 199 ? 0 : 1; //
-          });
-          var data2 = JSON.parse(JSON.stringify(data));
-          data2.forEach(function (d: any, i: any) {
-            d.date = d3.timeParse("%Y-%m-%d")(d.date);
-            d.value = i % 10 ? 100 : 0;
-            d.circle = i % 199 ? 0 : 1;
+            const index = props.keyPoints.findIndex(
+              (x: any) => x.time === d.Date
+            );
+            d.circle = index != -1 ? 1 : 0;
+            d.Date = d3.timeParse("%Y-%m-%d")(d.Date);
+            d.tooltip =
+              index != -1
+                ? props.keyPoints[index].points[0]["analysis_yielded"]
+                : "";
+            //console.log(d.circle);
           });
 
-          console.log(data2);
+          // console.log(data);
+          if (props.isLoadedInt == 1) {
+            console.log("set points data");
+            props.setIsLoadedInt(2);
+            props.setPointsData(data);
+          }
+          
 
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
-          const padding = { t: 40, r: 10, b: 40, l: 10 };
-          const svg = d3
-            .select(d3Chart.current)
-            .attr("transform", "translate(" + [padding.l, padding.t] + ")");
-
+          const padding = { t: 15, r: 0, b: 45, l: 25 };
           // Compute chart dimensions
           var chartWidth = width - padding.l - padding.r;
           var chartHeight = height - padding.t - padding.b;
+          var svg = d3
+            .select(d3Chart.current)
+            .attr("transform", "translate(" + [padding.l, padding.t] + ")");
 
-          console.log(chartWidth, chartHeight);
-          
+          svg.selectAll("*").remove();
+
+          //Scaling Chart
           const x = d3
-            .scaleLinear()
+            .scaleTime()
             .domain(
               d3.extent(data, function (d: any) {
-                return d.date;
+                return d.Date;
               }) as [Date, Date]
             )
-            .rangeRound([30, chartWidth]);
-          // console.log(
-          //   d3.extent(data, function (d: any) {
-          //     return d.Date;
-          //   }) as [Date, Date]
-          // );
+            .range([0, chartWidth]);
+
           const y = d3
             .scaleLinear()
             .domain([
               0,
               d3.max(data, function (d: any) {
-                return +d.value;
+                return +d.Cases;
               }) as number,
             ])
             .rangeRound([chartHeight, 0]);
 
-          svg
+          //Adding Axes
+          const xAxis = svg
             .append("g")
-            .attr("class", "x axis")
+            .attr("class", "x-axis")
             .attr("transform", "translate(" + [0, chartHeight] + ")")
             .call(d3.axisBottom(x));
 
-          svg
+          const yAxis = svg
             .append("g")
-            .attr("class", "y axis")
+            .attr("class", "y-axis")
             .attr("transform", "translate(25,0)")
             .call(d3.axisRight(y));
 
+          // Adding titles
           svg
             .append("text")
             .attr("class", "title")
             .attr("font-family", "cursive")
             .attr("transform", "translate(" + chartWidth / 4 + "," + 15 + ")")
-            .text("Title - Chart");
+            .text(props.general.title);
 
           svg
             .append("text")
@@ -97,108 +109,284 @@ const LineChart = (props: any) => {
               "translate(" + [chartWidth / 2, chartHeight + 35] + ")"
             )
             .attr("font-family", "serif")
-            .text("X-Axis");
+            .text(props.general["x-axis"]);
 
           svg
             .append("text")
             .attr("class", "label")
             .attr(
               "transform",
-              "translate(" + [5, chartWidth / 2] + ")  rotate(90)"
+              "translate(" + [5, chartWidth / 3] + ")  rotate(90)"
             )
             .attr("font-family", "serif")
-            .text("Y-Axis :)");
+            .text(props.general["y-axis"]);
 
-          svg
+          // const linesAndDots = svg
+          //   .selectAll("lines")
+          //   .data(data)
+          //   .enter()
+          //   .append("g");
+
+          const line2: any = d3
+            .line()
+            .defined((d: any) => !isNaN(d.Cases))
+            .x((d: any) => x(d.Date))
+            .y((d: any) => y(d.Cases));
+
+          const defs = svg
+            .append("defs")
+            .append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("x", padding.l)
+            .attr("width", chartWidth - padding.r)
+            .attr("height", chartHeight);
+
+          var path = svg
             .append("path")
             .datum(data)
+            .attr("class", "path")
             .attr("fill", "none")
+            .attr("clip-path", "url(#clip)")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
-            .attr(
-              "d",
-              d3
-                .line()
-                .x(function (d: any) {
-                  return x(d.date);
-                })
-                .y(function (d: any) {
-                  return y(d.value);
-                }) as any
-            );
+            .attr("d", line2);
 
-          svg
-            .append("path")
-            .datum(data2)
-            .attr("fill", "none")
-            .attr("stroke", "green")
-            .attr("stroke-width", 1.5)
-            .attr(
-              "d",
-              d3
-                .line()
-                .x(function (d: any) {
-                  return x(d.date);
-                })
-                .y(function (d: any) {
-                  return y(d.value);
-                }) as any
-            );
+          // // This allows to find the closest X index of the mouse:
+          const bisect = d3.bisector(function (d: any) {
+            return d.Date;
+          }).left;
 
-          // const data2: any = data.filter((e: any) => {
-          //   return e.circle;
-          // });
-          // console.log(data2);
-          const ele = svg
-            .selectAll("g")
-            .data(data)
-            .enter()
+          // // Create the circle that travels along the curve of chart
+          const focus = svg
             .append("g")
-            .attr("cursor", "pointer");
-
-          ele
             .append("circle")
+            .style("fill", "red")
+            .style("z-index", "100")
+            .attr("stroke", "black")
+            .attr("r", 4)
+            .style("opacity", 0);
+
+          // // Create the text that travels along the curve of chart
+          const focusText = svg
+            .append("text")
+            .style("opacity", 0)
+            .style("z-index", "200")
+            .style("background-color", "black")
+            .style("font-size", "13px")
+            .style("color", "#fff")
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "middle");
+
+          // // Create a rect on top of the svg area: this rectangle recovers mouse position
+          svg
+            .append("rect")
+            .style("fill", "none")
+            .attr("class", "path2")
+            .attr("clip-path", "url(#clip)")
+            .style("pointer-events", "all")
+            .attr("width", width)
+            .attr("height", height)
+            .on("mouseover", function () {
+              focus.style("opacity", 1);
+              focusText.style("opacity", 1);
+            })
+            .on("mousemove", function (event) {
+              // recover coordinate we need
+              const x0 = x.invert(d3.pointer(event)[0]);
+              const i = bisect(data, x0, 1);
+              const selectedData: any = data[i];
+              // console.log(selectedData, x0, i);
+              if (selectedData) {
+                focus
+                  .attr("cx", x(selectedData.Date))
+                  .attr("cy", y(selectedData.Cases));
+                focusText
+                  .html(
+                    "Date:" +
+                      (selectedData.Date as Date).getMonth() +
+                      "/" +
+                      (selectedData.Date as Date).getFullYear() +
+                      ""
+                  )
+                  .attr("x", x(selectedData.Date) + 15)
+                  .attr("y", y(selectedData.Cases));
+              }
+            })
+            .on("mouseout", function () {
+              focus.style("opacity", 0);
+              focusText.style("opacity", 0);
+            })
+            .on("click", function (event) {
+              const x0 = x.invert(d3.pointer(event)[0]);
+              const i = bisect(data, x0, 1);
+              const selectedData: any = data[i];
+              selectedData.circle = 1;
+              // var newData = [...props.keyPoints];
+
+
+              // TODO: for Harsh - auto scroll to the point on the left side when point is clicked on the graph
+              props.addKeyPoints(formatDate(selectedData.Date), "Cases", selectedData.Cases);
+              // newData.push({
+              //   time: formatDate(selectedData.Date),
+              //   points: [
+              //     {
+              //       analysis_yielded: "",
+              //       point_value: selectedData.Cases,
+              //       variable: "Cases",
+              //     },
+              //   ],
+              // });
+              // props.setData(newData);
+            });
+
+          function formatDate(d: Date) {
+            var month = "" + (d.getMonth() + 1),
+              day = "" + d.getDate(),
+              year = d.getFullYear();
+
+            if (month.length < 2) month = "0" + month;
+            if (day.length < 2) day = "0" + day;
+
+            return [year, month, day].join("-");
+          }
+
+          // Tooltip On Hover
+          const tooltip = d3
+            .select("body")
+            .append("div")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "hidden")
+            .style("background-color", "black")
+            .style("font-size", "13px")
+            .style("color", "#fff")
+            .attr("class", "keyPointTip");
+
+          // Adding data Key points circle
+          var circles = svg
+            .selectAll(".myDot")
+            .data(data)
+            .join("circle")
+            .attr("clip-path", "url(#clip)")
             .attr("r", function (d: any) {
-              return d.circle == 1 ? "5" : "0";
+              return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
             })
             .attr("opacity", 1)
-            .style("fill", "red")
+            .style("fill", function (d: any) {
+              return d.circle == 1 ? "red" : d.highlight ? "pink" : "";
+            })
             .style("stroke", "black")
             .style("stroke-width", "0.2")
             .attr("cx", function (d: any) {
-              return x(d.date);
+              return x(d.Date);
             })
             .attr("cy", function (d: any) {
-              return y(d.value);
+              return y(d.Cases);
+            })
+            .on("mouseover", function () {
+              d3.select(this).style("fill", "lightgreen");
+              tooltip.text(
+                (d3.select(this) as any)._groups[0][0]["__data__"][
+                  "tooltip"
+                ] as string
+              );
+              tooltip.transition().duration(200);
+              tooltip.style("visibility", "visible");
+            })
+            .on("mouseout", function () {
+              d3.select(this).style(
+                "fill",
+                (d3.select(this) as any)._groups[0][0]["__data__"]["circle"] ==
+                  1
+                  ? "red"
+                  : "pink"
+              );
+              tooltip.transition().duration(500);
+              tooltip.style("visibility", "hidden");
+            })
+            .on("mousemove", function (event: any) {
+              tooltip
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px");
             });
 
-          svg
-            .append("line")
-            .attr("x1", x(d3.timeParse("%Y-%m-%d")("2017-12-17") as Date)) //<<== change your code here
-            .attr("y1", 0)
-            .attr("x2", x(d3.timeParse("%Y-%m-%d")("2017-12-17") as Date)) //<<== and here
-            .attr("y2", height - padding.t - padding.b)
-            .style("stroke-width", 0.5)
-            .style("stroke", "red")
-            .style("fill", "none");
+          svg.call(zoom);
 
-          ele
-            .append("text")
+          function zoom() {
+            const extent: any = [
+              [padding.l, padding.t],
+              [chartWidth - padding.r, chartHeight - padding.t],
+            ];
 
-            .text(function (d: any) {
-              return d.circle ? "Tooltip" : "";
-            })
-            .attr("opacity", 0)
-            .attr("margin", "10px")
-            .attr("transform", function (d: any) {
-              return "translate(" + x(d.date) + "," + y(d.value) + ")";
-            })
-            .on("mouseover", function (d, i) {
-              d3.select(this).attr("opacity", "1");
-            })
-            .on("mouseout", function (d, i) {
-              d3.select(this).attr("opacity", "0");
-            });
+            const zooming: any = d3
+              .zoom()
+              .scaleExtent([1, 8])
+              .translateExtent(extent)
+              .extent(extent)
+              .on("zoom", zoomed);
+
+            svg.call(zooming);
+
+            function zoomed(event: any) {
+              x.range(
+                [padding.l, chartWidth - padding.r].map((d) =>
+                  event.transform.applyX(d)
+                )
+              );
+
+              svg.select(".path").attr("d", line2);
+              circles.remove();
+              circles = svg
+                .selectAll(".myDot")
+                .data(data)
+                .join("circle")
+                .attr("clip-path", "url(#clip)")
+                .attr("r", function (d: any) {
+                  return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+                })
+                .attr("opacity", 1)
+                .style("fill", function (d: any) {
+                  return d.circle == 1 ? "red" : d.highlight ? "pink" : "";
+                })
+                .style("stroke", "black")
+                .style("stroke-width", "0.2")
+                .attr("cx", function (d: any) {
+                  return x(d.Date);
+                })
+                .attr("cy", function (d: any) {
+                  return y(d.Cases);
+                })
+                .on("mouseover", function () {
+                  d3.select(this).style("fill", "lightgreen");
+                  tooltip.text(
+                    (d3.select(this) as any)._groups[0][0]["__data__"][
+                      "tooltip"
+                    ] as string
+                  );
+                  tooltip.transition().duration(200);
+                  tooltip.style("visibility", "visible");
+                })
+                .on("mouseout", function () {
+                  d3.select(this).style(
+                    "fill",
+                    (d3.select(this) as any)._groups[0][0]["__data__"][
+                      "circle"
+                    ] == 1
+                      ? "red"
+                      : "pink"
+                  );
+                  tooltip.transition().duration(500);
+                  tooltip.style("visibility", "hidden");
+                })
+                .on("mousemove", function (event: any) {
+                  tooltip
+                    .style("top", event.pageY - 10 + "px")
+                    .style("left", event.pageX + 10 + "px");
+                });
+              svg.select(".x-axis").call(d3.axisBottom(x) as any);
+            }
+          }
         },
       });
     }
