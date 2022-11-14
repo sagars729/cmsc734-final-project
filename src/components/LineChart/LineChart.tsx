@@ -40,6 +40,14 @@ const LineChart = (props: any) => {
             //console.log(d.circle);
           });
 
+          // console.log(data);
+          if (props.isLoadedInt == 1) {
+            console.log("set points data");
+            props.setIsLoadedInt(2);
+            props.setPointsData(data);
+          }
+          
+
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
           const padding = { t: 15, r: 0, b: 45, l: 25 };

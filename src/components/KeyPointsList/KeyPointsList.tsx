@@ -73,15 +73,16 @@ const UserInput = (props : any) => {
             ))}
             
             <br></br>
+            
             <button onClick={(e) => {
-                printData(props.data)
-                }  }
+                    printData(props.data);
+                    props.setRenderArticle(true);
+                }}
                 disabled={props.disabled}>
-                submit data!
+                Generate Article
             </button>
                 
-                
-        </div>
+            </div>                
     )
 }
 
