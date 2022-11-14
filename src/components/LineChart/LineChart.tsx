@@ -41,6 +41,7 @@ const LineChart = (props: any) => {
           });
 
           console.log(data);
+          props.setPointsData(data);
 
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));

@@ -86,10 +86,11 @@ const UserInput = (props : any) => {
                     add key_point
                 </button>
                 <button onClick={(e) => {
-                    printData(props.data)
-                    }  }
+                      printData(props.data);
+                      props.setRenderArticle(true);
+                    }}
                     disabled={props.disabled}>
-                    submit data!
+                    Generate Article
                 </button>
                 
             </div>
