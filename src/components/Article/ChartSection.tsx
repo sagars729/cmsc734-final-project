@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import React, {useState, useEffect, RefObject } from 'react'
-import {PointType} from './Article';
+import {PointType, KeyPointType} from './Article';
 import {DSVRowArray} from 'd3-dsv';
 import './ChartSection.css';
 
@@ -9,6 +9,7 @@ interface ChartSectionProps {
   timeWindow: number;
   points: PointType[];
   data: DSVRowArray; 
+  allPoints: KeyPointType[];
 }
 
 const ChartSection = (props: ChartSectionProps) => {
@@ -55,7 +56,7 @@ const ChartSection = (props: ChartSectionProps) => {
       .attr("class", "x label")
       .attr("text-anchor", "end")
       .attr("x", width/2 + loff)
-      .attr("y", height + toff)
+      .attr("y", height + toff + textOff)
       .text("Time");
 
     svg.append('g')
@@ -79,12 +80,27 @@ const ChartSection = (props: ChartSectionProps) => {
         .x((d) => xScale(((d as unknown) as { Date: number }).Date))
         .y((d) => yScale(((d as unknown) as { Cases: number }).Cases/1000)))
 
+    props.allPoints
+      .filter((point) => {
+        const candDate: number = new Date(point.time).getTime();
+        return candDate >= (date.getTime() - winDays) && candDate <= (date.getTime() + winDays);
+      })
+      .forEach((point) =>
+        point.points.forEach((p) => 
+          svg.append('circle')
+            .attr('cx', xScale(new Date(point.time)))
+            .attr('cy', yScale(p.point_value / 1000))
+            .attr('r', 3)
+            .attr('fill', 'yellow')
+        )
+    )
+      
     props.points.forEach((point) =>
       svg.append('circle')
         .attr('cx', xScale(date))
         .attr('cy', yScale(point.point_value / 1000))
         .attr('r', 5)
-        .attr('fill', 'yellow')
+        .attr('fill', 'red')
     )
   }
 
