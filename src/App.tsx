@@ -2,38 +2,39 @@ import React, { useState } from "react";
 import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
-import { data_processing } from './data';
-import Article from "./components/Article/Article"
-import {DSVRowArray} from 'd3-dsv';
+import { data_processing } from "./data";
+import Article from "./components/Article/Article";
+import { DSVRowArray } from "d3-dsv";
 
-let originalKeyPointsJson =  [
+let originalKeyPointsJson = [
   {
-  "time": "2020-01-22",
-  "points": [
-     {
-        "variable":"cases",
-        "analysis_yielded":"absolute maximum"
-     }
-  ]
+    time: "2020-01-22",
+    points: [
+      {
+        variable: "cases",
+        analysis_yielded: "absolute maximum",
+      },
+    ],
   },
   {
-  "time": "2021-04-14",
-  "points":[
-     {
-        "variable":"cases",
-        "analysis_yielded":"absolute minimum"
-     }
-  ]
+    time: "2021-04-14",
+    points: [
+      {
+        variable: "cases",
+        analysis_yielded: "absolute minimum",
+      },
+    ],
   },
   {
-    "time": "2022-04-15",
-    "points":[
-       {
-          "variable":"cases",
-          "analysis_yielded":"absolute saddle point"
-       }
-    ]
-}]
+    time: "2022-04-15",
+    points: [
+      {
+        variable: "cases",
+        analysis_yielded: "absolute saddle point",
+      },
+    ],
+  },
+];
 
 const emptyData = [
   {
@@ -48,8 +49,6 @@ const emptyData = [
   },
 ];
 
-
-
 const process_data = async (file: any) => {
   return await data_processing(file);
 };
@@ -59,6 +58,7 @@ const App = () => {
   const [isLoadedInt, setIsLoadedInt] = useState(0);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
+  const [variable, setVariable] = useState(["Date", "Cases", "Deaths"]);
 
   const [generalChartInfo, setChartInfo] = useState({
     title: "COVID CASES IN THE US 2020- 2021",
@@ -82,33 +82,36 @@ const App = () => {
     });
   };
 
-
-  const addKeyPoint = (time:string, attribute:string, attrValue:number) => {
+  const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
 
     //todo: if everyone likes it, we can edit the timestamp to look like Oct. 20, 2022 (it looks better)
-  
-    var jsonPoints = [{ "variable": attribute, "point_value": attrValue, "analysis_yielded": "<input>"}]
-    var jsonObj = { "time": time, "points": jsonPoints};
-  
+
+    var jsonPoints = [
+      {
+        variable: attribute,
+        point_value: attrValue,
+        analysis_yielded: "<input>",
+      },
+    ];
+    var jsonObj = { time: time, points: jsonPoints };
+
     newData.push(jsonObj);
     // newData.sort( (a, b) => a.time.localeCompare(b.time));
-            
-  
-    newData.sort((a,b) => {
-        return new Date(a.time).getTime() - 
-            new Date(b.time).getTime()
+
+    newData.sort((a, b) => {
+      return new Date(a.time).getTime() - new Date(b.time).getTime();
     });
-  
+
     setKeyPointsData(newData);
 
     // TODO: call setPointsData() so the article has the most recent keypoints
     // setPointsData(newData )
-  }
+  };
 
   return (
     <div className="container">
-      {!renderArticle  || !pointsData ? (
+      {!renderArticle || !pointsData ? (
         <div id="author-view">
           <input
             type="file"
@@ -134,6 +137,7 @@ const App = () => {
                 keyPoints={keyPointsData}
                 general={generalChartInfo}
                 isLoadedInt={isLoadedInt}
+                variable={variable}
                 setIsLoadedInt={setIsLoadedInt}
                 addKeyPoints={addKeyPoint}
                 setData={setKeyPointsData}
