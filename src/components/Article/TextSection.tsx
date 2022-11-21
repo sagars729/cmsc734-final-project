@@ -1,15 +1,11 @@
 import Typography from '@mui/material/Typography';
-import {textsx, PointType} from './Article';
-
-interface TextSectionProps {
-  time: string;
-  points: PointType[];
-}
+import {PointType, TextSectionProps} from './ArticleTypes';
+import {textsx} from './ArticleConstants';
 
 const TextSection = (props: TextSectionProps) => {
   return (
     <>
-      <Typography variant="h3" gutterBottom align="left" sx={textsx}>
+      <Typography variant="h4" gutterBottom align="left" sx={textsx}>
         {props.time}
       </Typography>
       {props.points.map((point) => 
