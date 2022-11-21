@@ -3,7 +3,7 @@ import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
 import { data_processing } from './data';
-import Article from "./components/Article/Article"
+import ArticleContainer from "./components/Article/ArticleContainer"
 import {DSVRowArray} from 'd3-dsv';
 
 let originalKeyPointsJson =  [
@@ -143,12 +143,9 @@ const App = () => {
           </div>
         </div>
       ) : (
-        <Article
+        <ArticleContainer
           data={pointsData}
           keyPoints={keyPointsData}
-          title={"The Rise and Fall of Covid Cases in the United States"}
-          byline={"CMSC734 Group Project"}
-          date={"11-14-2022"}
         />
       )}
     </div>

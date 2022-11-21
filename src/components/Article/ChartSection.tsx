@@ -1,16 +1,6 @@
 import * as d3 from 'd3'
 import React, {useState, useEffect, RefObject } from 'react'
-import {PointType, KeyPointType} from './Article';
-import {DSVRowArray} from 'd3-dsv';
-import './ChartSection.css';
-
-interface ChartSectionProps {
-  time: string;
-  timeWindow: number;
-  points: PointType[];
-  data: DSVRowArray; 
-  allPoints: KeyPointType[];
-}
+import {PointType, KeyPointType, ChartSectionProps} from './ArticleTypes';
 
 const ChartSection = (props: ChartSectionProps) => {
   const ref: RefObject<HTMLDivElement> = React.createRef()
@@ -32,14 +22,16 @@ const ChartSection = (props: ChartSectionProps) => {
       return candDate >= (date.getTime() - winDays) && candDate <= (date.getTime() + winDays);
     })
 
+    d3.select(ref.current).selectAll('svg').remove()
+
     const svg = d3.select(ref.current)
       .append('svg')
       .attr('width', width + loff)
       .attr('height', height + boff + toff);
-    
+
     const xScale = d3.scaleTime()
       // @ts-ignore TS2352
-      .domain(d3.extent(data, (d) => d.Date) as [Date, Date]) 
+      .domain(d3.extent(data, (d) => new Date(d.Date)) as [Date, Date]) 
       .range([loff, width + loff])
 
     const yScale = d3.scaleLinear()
@@ -50,6 +42,7 @@ const ChartSection = (props: ChartSectionProps) => {
     svg.append('g')
        .attr('transform', `translate(0, ${height + toff})`)
        .attr('class', "chartAxis")
+       .attr('stroke', props.axisLabelColor)
        .call(d3.axisBottom(xScale))
 
     svg.append("text")
@@ -57,27 +50,30 @@ const ChartSection = (props: ChartSectionProps) => {
       .attr("text-anchor", "end")
       .attr("x", width/2 + loff)
       .attr("y", height + toff + textOff)
+      .attr("fill", props.axisLabelColor)
       .text("Time");
 
     svg.append('g')
       .attr('transform', `translate(${loff}, ${toff})`)
       .attr('class', "chartAxis")
+       .attr('stroke', props.axisLabelColor)
       .call(d3.axisLeft(yScale))
 
     svg.append("text")
       .attr('transform', `translate(${loff - textOff}, ${height/2 - textOff + toff}) rotate(270)`)
       .attr("class", "y label")
       .attr("text-anchor", "end")
-      .text("Cases (in thousands)");
+      .attr("fill", props.axisLabelColor)
+      .text("Cases (in thousands)")
 
     svg.append('path')
       .datum(data)
       .attr('fill', 'none')
-      .attr('stroke', "white")
+      .attr('stroke', props.lineColor)
       .attr('stroke-width', 1.5)
       // @ts-ignore TS2345
       .attr('d', d3.line()
-        .x((d) => xScale(((d as unknown) as { Date: number }).Date))
+        .x((d) => xScale(new Date(((d as unknown) as { Date: number }).Date)))
         .y((d) => yScale(((d as unknown) as { Cases: number }).Cases/1000)))
 
     props.allPoints
@@ -91,7 +87,7 @@ const ChartSection = (props: ChartSectionProps) => {
             .attr('cx', xScale(new Date(point.time)))
             .attr('cy', yScale(p.point_value / 1000))
             .attr('r', 3)
-            .attr('fill', 'yellow')
+            .attr('fill', props.secondaryPointColor)
         )
     )
       
@@ -100,7 +96,7 @@ const ChartSection = (props: ChartSectionProps) => {
         .attr('cx', xScale(date))
         .attr('cy', yScale(point.point_value / 1000))
         .attr('r', 5)
-        .attr('fill', 'red')
+        .attr('fill', props.primaryPointColor)
     )
   }
 
