@@ -146,6 +146,7 @@ const App = () => {
         <ArticleContainer
           data={pointsData}
           keyPoints={keyPointsData}
+          setRenderArticle={setRenderArticle}
         />
       )}
     </div>
