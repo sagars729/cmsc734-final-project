@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import * as $ from 'jquery';
 import {Box} from '@mui/system';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -145,24 +144,6 @@ const Builder = (props: BuilderProps) => {
           </Grid>
         </Grid>
       </Box>
-
-     <Box sx={{
-       width: "25%",
-       border: `2px dashed ${props.color}`,
-       backgroundColor: `${props.backgroundColor}`,
-       padding: "1%",
-       margin: "2%",
-     }} onClick={(e) => {
-       // @ts-ignore TS2345
-       props.setTitle($("#article-title-input").val())
-       // @ts-ignore TS2345
-       props.setByline($("#article-byline-input").val())
-			 // @ts-ignore TS2345
-       props.setDate($("#article-date-input").val())
-       props.setShowBuilder(false);
-     }}>
-       Click Here to Generate Article!
-     </Box>
     </div>
   )
 }

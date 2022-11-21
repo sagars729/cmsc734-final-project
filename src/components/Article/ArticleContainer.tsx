@@ -3,6 +3,7 @@ import {Box} from '@mui/system';
 
 import Article from './Article';
 import Builder from './Builder';
+import NavButtons from './NavButtons';
 import {PointType, KeyPointType, ArticleContainerProps} from './ArticleTypes';
 
 const ArticleContainer = (props: ArticleContainerProps) => {
@@ -36,13 +37,9 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            lineColor={lineColor}
            setBackgroundColor={setBackgroundColor}
            setColor={setColor}
-           setTitle={setTitle}
-           setByline={setByline}
-           setDate={setDate}
            setPrimaryPointColor={setPrimaryPointColor}
            setSecondaryPointColor={setSecondaryPointColor}
            setLineColor={setLineColor}
-           setShowBuilder={setShowBuilder}
          />
        ) : (
          <Article
@@ -56,7 +53,17 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            secondaryPointColor={secondaryPointColor}
            lineColor={lineColor}
          />
-       )} 
+       )}
+       <NavButtons
+         color={color}
+         backgroundColor={backgroundColor}
+         showBuilder={showBuilder}
+         setShowBuilder={setShowBuilder}
+         setTitle={setTitle}
+         setByline={setByline}
+         setDate={setDate}
+         setRenderArticle={props.setRenderArticle}
+       />
     </Box>     
   )
 
