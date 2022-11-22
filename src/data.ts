@@ -14,9 +14,10 @@ interface Timestamp {
 }
 
 export function data_processing(
-    input_data: any
+    input_data: any,
+    selectedColumns: any
 ): any {
-    return readCSV(input_data)
+    return readCSV(input_data, selectedColumns)
         .then((df) => {
             // assume date column is first
             // df.drop({ columns: [''], inplace: true });
