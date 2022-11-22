@@ -20,7 +20,7 @@ const LineChart = (props: any) => {
   const d3Chart = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (props.csv) {
+    if (props.csv && !props.showAttrSelection) {
       Papa.parse(props.csv, {
         header: true,
         skipEmptyLines: true,
