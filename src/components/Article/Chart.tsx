@@ -1,32 +1,37 @@
 import * as d3 from 'd3'
 import React, {useState, useEffect, RefObject } from 'react'
-import {PointType, KeyPointType, ChartSectionProps} from './ArticleTypes';
+import {PointType, KeyPointType, ChartProps} from './ArticleTypes';
 
-const ChartSection = (props: ChartSectionProps) => {
+
+const Chart = (props: ChartProps) => {
   const ref: RefObject<HTMLDivElement> = React.createRef()
-  const date: Date = new Date(props.time)
-  const winDays: number = props.timeWindow * 1000 * 60 * 60 * 24;
+  const dateFilter = (point: any) => {
+      const candDate: number = (new Date(point.Date).getTime())
+        || (new Date(point.time).getTime())
+        || 0;
+      
+      return candDate >= props.startDate.getTime() &&
+             candDate <= props.endDate.getTime();
+  }
 
   useEffect(() => draw())
   const draw = () => {
-    const width: number = 500;
-    const height: number = 250;
+    const width: number = props.width || 500;
+    const height: number = props.height || 250;
     const loff: number = 75;
+    const roff: number = 75;
     const boff: number = 50;
     const toff: number = 10;
     const textOff: number = 40;
 
-    const data = props.data.filter((d) => {
-      // @ts-ignore TS2769
-      const candDate: number = new Date(d.Date).getTime();
-      return candDate >= (date.getTime() - winDays) && candDate <= (date.getTime() + winDays);
-    })
+    // @ts-ignore TS2769
+    const data = props.data.filter(dateFilter)
 
     d3.select(ref.current).selectAll('svg').remove()
 
     const svg = d3.select(ref.current)
       .append('svg')
-      .attr('width', width + loff)
+      .attr('width', width + loff + roff)
       .attr('height', height + boff + toff);
 
     const xScale = d3.scaleTime()
@@ -39,8 +44,31 @@ const ChartSection = (props: ChartSectionProps) => {
       .domain(d3.extent(data, (d) => parseInt(d.Cases)/1000) as [number, number])
       .range([height + toff, toff])
 
+    var brushStartDate: Date | null = null;
+    var brushEndDate: Date | null = null;
+
+    if (props.enableBrush) {
+      const brushmove = (event: { selection: number[] }) => {
+        brushStartDate = xScale.invert(event.selection[0])
+        brushEndDate = xScale.invert(event.selection[1])
+      }
+      const brushend = () => {
+        if (props.setBrushStartDate && props.setBrushEndDate) {
+         props.setBrushStartDate(brushStartDate) 
+         props.setBrushEndDate(brushEndDate) 
+        }
+      }
+
+      const brush = d3.brushX()
+        .extent([[loff, 1], [width + loff, height + toff + 9]])
+        .on("brush", brushmove)
+        .on("end", brushend)
+      // @ts-ignore TS2345
+      svg.call(brush);
+    }
+
     svg.append('g')
-       .attr('transform', `translate(0, ${height + toff})`)
+       .attr('transform', `translate(0, ${height + toff + 10})`)
        .attr('class', "chartAxis")
        .attr('stroke', props.axisLabelColor)
        .call(d3.axisBottom(xScale))
@@ -56,7 +84,7 @@ const ChartSection = (props: ChartSectionProps) => {
     svg.append('g')
       .attr('transform', `translate(${loff}, ${toff})`)
       .attr('class', "chartAxis")
-       .attr('stroke', props.axisLabelColor)
+      .attr('stroke', props.axisLabelColor)
       .call(d3.axisLeft(yScale))
 
     svg.append("text")
@@ -76,28 +104,33 @@ const ChartSection = (props: ChartSectionProps) => {
         .x((d) => xScale(new Date(((d as unknown) as { Date: number }).Date)))
         .y((d) => yScale(((d as unknown) as { Cases: number }).Cases/1000)))
 
-    props.allPoints
-      .filter((point) => {
-        const candDate: number = new Date(point.time).getTime();
-        return candDate >= (date.getTime() - winDays) && candDate <= (date.getTime() + winDays);
-      })
+    props.keyPoints
+      // @ts-ignore TS2769
+      .filter(dateFilter)
       .forEach((point) =>
-        point.points.forEach((p) => 
-          svg.append('circle')
+        point.points.forEach((p) => {
+          const circle = svg.append('circle')
             .attr('cx', xScale(new Date(point.time)))
             .attr('cy', yScale(p.point_value / 1000))
             .attr('r', 3)
             .attr('fill', props.secondaryPointColor)
-        )
-    )
-      
-    props.points.forEach((point) =>
-      svg.append('circle')
-        .attr('cx', xScale(date))
-        .attr('cy', yScale(point.point_value / 1000))
-        .attr('r', 5)
-        .attr('fill', props.primaryPointColor)
-    )
+        })
+      );
+
+    if (props.focusDate) {
+      props.keyPoints
+        // @ts-ignore TS2532
+        .filter((keyPoint) => (new Date(keyPoint.time)).getTime() == props.focusDate.getTime())
+        .forEach((point) =>
+          point.points.forEach((p) => {
+            const circle = svg.append('circle')
+              .attr('cx', xScale(new Date(point.time)))
+              .attr('cy', yScale(p.point_value / 1000))
+              .attr('r', 3)
+              .attr('fill', props.primaryPointColor)
+          })
+        );
+    }
   }
 
   return (
@@ -106,4 +139,4 @@ const ChartSection = (props: ChartSectionProps) => {
   )
 }
 
-export default ChartSection
+export default Chart

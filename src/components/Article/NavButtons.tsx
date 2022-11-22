@@ -21,11 +21,11 @@ const NavButton = (props: NavButtonProps) => (
 );
 
 const NavButtons = (props: NavButtonsProps) => {
-  const GenerateButton = (
+  const BuildSectionNextButton = (
     <NavButton
       color={props.color}
       backgroundColor={props.backgroundColor}
-      label="Click Here to Generate Article!"
+      label="Set Article Sections"
       onClick={() => {
         // @ts-ignore TS2345
         props.setTitle($("#article-title-input").val())
@@ -33,7 +33,20 @@ const NavButtons = (props: NavButtonsProps) => {
         props.setByline($("#article-byline-input").val())
 	      // @ts-ignore TS2345
         props.setDate($("#article-date-input").val())
+
         props.setShowBuilder(false);
+        props.setShowSectionBuilder(true);
+      }}
+    />
+  )
+  const BuildSectionBackButton = (
+    <NavButton
+      color={props.color}
+      backgroundColor={props.backgroundColor}
+      label="Set Article Sections"
+      onClick={() => {
+        props.setShowBuilder(false);
+        props.setShowSectionBuilder(true);
       }}
     />
   )
@@ -43,7 +56,23 @@ const NavButtons = (props: NavButtonsProps) => {
       backgroundColor={props.backgroundColor}
       label="Return to Article Builder"
       onClick={() => {
+        props.setShowSectionBuilder(false);
         props.setShowBuilder(true);
+      }}
+    />
+  )
+  const GenerateArticleButton = (
+    <NavButton
+      color={props.color}
+      backgroundColor={props.backgroundColor}
+      label="Generate Article!"
+      onClick={() => {
+        props.setSections(props.sections.map((section, i) => {
+	        // @ts-ignore TS2345
+          return Object.assign({}, section, {header: $("#article-section-header-" + i).val()})
+        }))
+
+        props.setShowSectionBuilder(false);
       }}
     />
   )
@@ -63,9 +92,20 @@ const NavButtons = (props: NavButtonsProps) => {
       {props.showBuilder ? (
         <>
         {RenderArticleButton}
-        {GenerateButton}
+        {BuildSectionNextButton}
         </>
-      ) : BuildButton}
+      ) : <></>}
+      {props.showSectionBuilder ? (
+        <>
+        {BuildButton}
+        {GenerateArticleButton}
+        </>
+      ) : <></>}
+      {(!props.showSectionBuilder && !props.showBuilder) ? (
+        <>
+        {BuildSectionBackButton}
+        </>
+      ) : <></>}
     </Box>
   )
 }
