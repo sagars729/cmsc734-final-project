@@ -79,7 +79,6 @@ const LineChart = (props: any) => {
           var svg = d3
             .select(d3Chart.current)
             .attr("transform", "translate(" + [0, padding.t] + ")");
-
           svg.selectAll("*").remove();
 
           //Scaling Chart
@@ -111,13 +110,6 @@ const LineChart = (props: any) => {
               }) as number,
             ])
             .rangeRound([chartHeight, 0]);
-
-          // Add X axis label:
-          // svg
-          //   .append("text")
-          //   .attr("x", chartWidth - 100)
-          //   .attr("y", chartHeight + padding.t + 20)
-          //   .text(props.general["x-axis"]);
 
           // // Y axis label:
           // svg
@@ -216,19 +208,8 @@ const LineChart = (props: any) => {
               .attr("r", 4)
               .style("opacity", 0);
           }
-
-          // // Create the text that travels along the curve of chart
-          const focusText = svg
-            .append("text")
-            .style("opacity", 0)
-            .style("z-index", "200")
-            .style("background-color", "black")
-            .style("font-size", "13px")
-            .style("color", "#fff")
-            .attr("text-anchor", "left")
-            .attr("alignment-baseline", "middle");
-
           // // Create a rect on top of the svg area: this rectangle recovers mouse position
+          var xTitle: any;
           svg
             .append("rect")
             .style("fill", "none")
@@ -242,7 +223,6 @@ const LineChart = (props: any) => {
               if (yVar2 != "") {
                 focus2.style("opacity", 1);
               }
-              focusText.style("opacity", 1);
             })
             .on("mousemove", function (event) {
               if (props.focusVar == yVar2) {
@@ -275,34 +255,43 @@ const LineChart = (props: any) => {
                   .attr("cx", x(selectedData2.date))
                   .attr("cy", y1(selectedData2.value));
               }
-              var text2 = "";
-
+              var text1 = [selectedData1.value];
               if (yVar2 != "" && selectedData2) {
-                text2 = yVar2 + ": " + selectedData2.value;
+                text1.push(selectedData2.value);
               }
-              var text1 =
-                "Date:" +
-                (selectedData1.date as Date).getMonth() +
-                "/" +
-                (selectedData1.date as Date).getFullYear() +
-                " <br />" +
-                yVar +
-                ": " +
-                selectedData1.value +
-                "<br />" +
-                text2 +
-                "";
-              focusText
-                .html(text1)
-                .attr("x", x(selectedData1.date) + 15)
-                .attr("y", y0(selectedData1.value));
+              // props.setHoverData({
+              //   date:
+              //     (selectedData1.date as Date).getMonth() +
+              //     "/" +
+              //     (selectedData1.date as Date).getFullYear(),
+              //   value: text1,
+              // });
+              if (xTitle) xTitle.remove();
+              xTitle = svg
+                .append("text")
+                .attr("x", 0)
+                .attr("y", chartHeight + padding.t + 20)
+                .text(
+                  "Date: " +
+                    (selectedData1.date as Date).getMonth() +
+                    "/" +
+                    (selectedData1.date as Date).getFullYear() +
+                    " " +
+                    (selectedData1 && selectedData1.value
+                      ? yVar + ": " + selectedData1.value
+                      : "") +
+                    " " +
+                    (yVar2 != "" && selectedData2 && selectedData2.value
+                      ? yVar2 + ": " + selectedData2.value
+                      : "")
+                );
             })
             .on("mouseout", function () {
+              if (xTitle) xTitle.remove();
               focus1.style("opacity", 0);
               if (yVar2 != "") {
                 focus2.style("opacity", 0);
               }
-              focusText.style("opacity", 0);
               if (props.focusVar == yVar2) {
                 d3.selectAll(".path") // Fade the non-selected names in the legend
                   .style("opacity", 1);

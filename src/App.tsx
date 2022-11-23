@@ -62,6 +62,7 @@ const App = () => {
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
   const [focus, setFocusChange] = useState("");
+  const [hoverData, setHoverData] = useState({ date: "", value: [] });
   const [generalChartInfo, setChartInfo] = useState({
     date_format: "%Y-%m-%d",
   });
@@ -101,8 +102,6 @@ const App = () => {
     setFocusChange(e.target.value);
   };
   const changeColor = (e: any) => {
-    console.log(focus, selectedColumns[2]);
-
     if (focus == selectedColumns[2])
       return { backgroundColor: "pink", color: "black" };
     else {
@@ -155,45 +154,68 @@ const App = () => {
             style={{ display: "block", margin: "10px auto" }}
           />
           <span className="row">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                border: "solid",
-                marginBottom: "5px",
-                padding: "10px",
-              }}
-            >
-              <div>
-                <span style={{ fontWeight: "bold" }}>
-                  <u>Focus and Legend</u>{" "}
-                </span>
-                <select onChange={handleFocusChange} style={changeColor(this)}>
-                  {selectedColumns.slice(1).map((col) => (
-                    <option value={col} key={col}>
-                      {col}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
-                  {chartTitle}
-                </p>
-              </div>
-              <div style={{ display: "flex" }}>
-                <p>
-                  <b>X-axis:</b> {selectedColumns[0]}
-                </p>
-                <span style={{ margin: "5px" }}></span>
-                <p>
-                  <b>Y-axis:</b>
-                  {getYAxis()}
-                </p>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  border: "solid",
+                  marginBottom: "5px",
+                  padding: "10px",
+                }}
+              >
+                <div>
+                  <span style={{ fontWeight: "bold" }}>
+                    <u>Focus and Legend</u>{" "}
+                  </span>
+                  <select
+                    onChange={handleFocusChange}
+                    style={changeColor(this)}
+                  >
+                    {selectedColumns.slice(1).map((col) => (
+                      <option value={col} key={col}>
+                        {col}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
+                    {chartTitle}
+                  </p>
+                </div>
+                <div style={{ display: "flex" }}>
+                  <p>
+                    <b>X-axis:</b> {selectedColumns[0]}
+                  </p>
+                  <span style={{ margin: "5px" }}></span>
+                  <p>
+                    <b>Y-axis:</b>
+                    {getYAxis()}
+                  </p>
+                </div>
+                {hoverData.date ? (
+                  <div>
+                    <span>
+                      <b>Date: </b> {hoverData.date}
+                    </span>
+                    <br />
+                    <span>
+                      <b>{selectedColumns[1]}: </b>
+                      {hoverData.value[0]}
+                    </span>
+                    <br />
+                    {selectedColumns[2] ? (
+                      <span>
+                        <b>{selectedColumns[2]}: </b>
+                        {hoverData.value[1]}
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
             </div>
           </span>
-
           <div className="row">
             <div className="col-md-6 borderStyle">
               {showAttrSelection && dataCSV ? (
@@ -227,6 +249,7 @@ const App = () => {
                 setIsLoadedInt={setIsLoadedInt}
                 addKeyPoints={addKeyPoint}
                 setData={setKeyPointsData}
+                setHoverData={setHoverData}
                 setPointsData={setPointsData}
               />
             </div>
