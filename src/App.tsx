@@ -61,8 +61,7 @@ const App = () => {
   const [isLoadedInt, setIsLoadedInt] = useState(0);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
-  const [variable, setVariable] = useState(["Date", "Cases", "Deaths"]);
-  const [focus, setFocusChange] = useState(variable[1]);
+  const [focus, setFocusChange] = useState(selectedColumns[1]);
   const [generalChartInfo, setChartInfo] = useState({
     title: "COVID CASES IN THE US 2020- 2021",
     "x-axis": "Time Frame",
@@ -99,7 +98,7 @@ const App = () => {
     setFocusChange(e.target.value);
   };
   const changeColor = (e: any) => {
-    if (focus == variable[1])
+    if (focus == selectedColumns[1])
       return { backgroundColor: "steelblue", color: "white" };
     else {
       return { backgroundColor: "pink", color: "black" };
@@ -159,9 +158,9 @@ const App = () => {
                   <u>Focus and Legend</u>{" "}
                 </span>
                 <select onChange={handleFocusChange} style={changeColor(this)}>
-                  {variable.slice(1).map((fruit) => (
-                    <option value={fruit} key={fruit}>
-                      {fruit}
+                  {selectedColumns.slice(1).map((col) => (
+                    <option value={col} key={col}>
+                      {col}
                     </option>
                   ))}
                 </select>
@@ -210,7 +209,7 @@ const App = () => {
                 showAttrSelection={showAttrSelection}
                 keyPoints={keyPointsData}
                 general={generalChartInfo}
-                variable={variable}
+                variable={selectedColumns}
                 focusVar={focus}
                 isLoadedInt={isLoadedInt}
                 setIsLoadedInt={setIsLoadedInt}
