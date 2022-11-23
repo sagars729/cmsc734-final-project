@@ -330,12 +330,13 @@ const LineChart = (props: any) => {
               }
 
               // TODO: for Harsh - auto scroll to the point on the left side when point is clicked on the graph
-              props.addKeyPoints(
-                formatDate(selectedData1.date),
-                yVar,
-                selectedData1.value
-              );
-              if (yVar2 != "") {
+              if (props.focusVar == yVar)
+                props.addKeyPoints(
+                  formatDate(selectedData1.date),
+                  yVar,
+                  selectedData1.value
+                );
+              else {
                 props.addKeyPoints(
                   formatDate(selectedData2.date),
                   yVar2,
