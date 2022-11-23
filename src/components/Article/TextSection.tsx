@@ -12,6 +12,13 @@ const TextSection = (props: TextSectionProps) => {
              candDate <= props.endDate.getTime();
   }
 
+  const getsx = (date: Date) => {
+    if (props.focusDate && date.getTime() == props.focusDate.getTime()) {
+      return Object.assign({}, textsx, {color: "red"})
+    }
+    return textsx
+  }
+
   return (
     <>
       <Typography variant="h4" gutterBottom align="left" sx={textsx}>
@@ -21,7 +28,8 @@ const TextSection = (props: TextSectionProps) => {
       {props.keyPoints.filter(dateFilter).map((keyPoint) => (
         <>
         {keyPoint.points.map((point) => ( 
-          <Typography variant="body1" gutterBottom align="left" sx={textsx}>
+          <Typography variant="body1" gutterBottom align="left"
+            sx={getsx(new Date(keyPoint.time))}>
             {point.analysis_yielded}
           </Typography>
         ))}
