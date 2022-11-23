@@ -59,11 +59,11 @@ const App = () => {
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
   const [variable, setVariable] = useState(["Date", "Cases", "Deaths"]);
-
+  const [focus, setFocusChange] = useState(variable[1]);
   const [generalChartInfo, setChartInfo] = useState({
     title: "COVID CASES IN THE US 2020- 2021",
     "x-axis": "Time Frame",
-    "y-axis": "Cases (in thousands)",
+    "y-axis": "Cases",
     date_format: "%Y-%m-%d",
   });
   const [renderArticle, setRenderArticle] = useState<boolean>(false);
@@ -81,7 +81,16 @@ const App = () => {
       setUploadedCsvBool(false);
     });
   };
-
+  const handleFocusChange = (e: any) => {
+    setFocusChange(e.target.value);
+  };
+  const changeColor = (e: any) => {
+    if (focus == variable[1])
+      return { backgroundColor: "steelblue", color: "white" };
+    else {
+      return { backgroundColor: "pink", color: "black" };
+    }
+  };
   const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
 
@@ -120,6 +129,44 @@ const App = () => {
             onChange={changeHandler}
             style={{ display: "block", margin: "10px auto" }}
           />
+          <span className="row">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                border: "solid",
+                marginBottom: "5px",
+                padding: "10px",
+              }}
+            >
+              <div>
+                <span style={{ fontWeight: "bold" }}>
+                  <u>Focus and Legend</u>{" "}
+                </span>
+                <select onChange={handleFocusChange} style={changeColor(this)}>
+                  {variable.slice(1).map((fruit) => (
+                    <option value={fruit} key={fruit}>
+                      {fruit}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
+                  {generalChartInfo.title}
+                </p>
+              </div>
+              <div style={{ display: "flex" }}>
+                <p>
+                  <b>X-axis:</b> {generalChartInfo["x-axis"]}
+                </p>
+                <span style={{ margin: "5px" }}></span>
+                <p>
+                  <b>Y-axis:</b> {generalChartInfo["y-axis"]}
+                </p>
+              </div>
+            </div>
+          </span>
           <div className="row">
             <div className="col-md-6 borderStyle">
               <KeyPointsList
@@ -138,6 +185,7 @@ const App = () => {
                 general={generalChartInfo}
                 isLoadedInt={isLoadedInt}
                 variable={variable}
+                focusVar={focus}
                 setIsLoadedInt={setIsLoadedInt}
                 addKeyPoints={addKeyPoint}
                 setData={setKeyPointsData}

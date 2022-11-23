@@ -18,7 +18,7 @@ const LineChart = (props: any) => {
           var xVar: string = "";
           var yVar: string = "";
           var yVar2: string = "";
-          console.log(props.variable);
+          console.log(props.keyPoints);
           if (props.variable) {
             xVar = props.variable[0];
             yVar = props.variable[1];
@@ -65,9 +65,7 @@ const LineChart = (props: any) => {
             }
           });
 
-          console.log(data1, data2);
           if (props.isLoadedInt == 1) {
-            console.log("set points data");
             props.setIsLoadedInt(2);
             props.setPointsData(data);
           }
@@ -80,7 +78,7 @@ const LineChart = (props: any) => {
           var chartHeight = height - padding.t - padding.b;
           var svg = d3
             .select(d3Chart.current)
-            .attr("transform", "translate(" + [padding.l, padding.t] + ")");
+            .attr("transform", "translate(" + [0, padding.t] + ")");
 
           svg.selectAll("*").remove();
 
@@ -114,6 +112,21 @@ const LineChart = (props: any) => {
             ])
             .rangeRound([chartHeight, 0]);
 
+          // Add X axis label:
+          // svg
+          //   .append("text")
+          //   .attr("x", chartWidth - 100)
+          //   .attr("y", chartHeight + padding.t + 20)
+          //   .text(props.general["x-axis"]);
+
+          // // Y axis label:
+          // svg
+          //   .append("text")
+          //   .attr("transform", "rotate(-90)")
+          //   .attr("y", -padding.l + 20)
+          //   .attr("x", -padding.t)
+          //   .text(props.general["y-axis"]);
+
           //Adding Axes
           const xAxis = svg
             .append("g")
@@ -124,23 +137,15 @@ const LineChart = (props: any) => {
           const yAxisLeft = svg
             .append("g")
             .attr("class", "y-axis1")
-            .attr("transform", "translate(25,0)")
             .call(d3.axisRight(y0));
           var yAxisRight: any;
           if (yVar2 != "") {
             yAxisRight = svg
               .append("g")
               .attr("class", "y-axis2")
-              .attr("transform", "translate(" + chartWidth + ",0)")
-              .call(d3.axisRight(y1));
+              .attr("transform", "translate(" + (chartWidth + 25) + ",0)")
+              .call(d3.axisLeft(y1));
           }
-          // Adding titles
-          svg
-            .append("text")
-            .attr("class", "title")
-            .attr("font-family", "cursive")
-            .attr("transform", "translate(" + chartWidth / 4 + "," + 15 + ")")
-            .text(props.general.title);
 
           const line1: any = d3
             .line()
@@ -181,7 +186,7 @@ const LineChart = (props: any) => {
               .attr("class", "path1")
               .attr("fill", "none")
               .attr("clip-path", "url(#clip)")
-              .attr("stroke", "green")
+              .attr("stroke", "pink")
               .attr("stroke-width", 1.5)
               .attr("d", line2);
           }
@@ -195,7 +200,7 @@ const LineChart = (props: any) => {
           const focus1 = svg
             .append("g")
             .append("circle")
-            .style("fill", "pink")
+            .style("fill", "green")
             .style("z-index", "100")
             .attr("stroke", "black")
             .attr("r", 4)
@@ -205,7 +210,7 @@ const LineChart = (props: any) => {
             focus2 = svg
               .append("g")
               .append("circle")
-              .style("fill", "pink")
+              .style("fill", "green")
               .style("z-index", "100")
               .attr("stroke", "black")
               .attr("r", 4)
@@ -230,8 +235,8 @@ const LineChart = (props: any) => {
             .attr("class", "path2")
             .attr("clip-path", "url(#clip)")
             .style("pointer-events", "all")
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", chartWidth)
+            .attr("height", chartHeight)
             .on("mouseover", function () {
               focus1.style("opacity", 1);
               if (yVar2 != "") {
@@ -240,11 +245,13 @@ const LineChart = (props: any) => {
               focusText.style("opacity", 1);
             })
             .on("mousemove", function (event) {
-              console.log(event, this);
-              // var selectthegraphs = $(".").not(this); //select all the rest of the lines, except the one you are hovering on and drop their opacity
-              // d3.selectAll(":not(.").style("opacity", 0.2);
-              // d3.selectAll(".path1") // Fade the non-selected names in the legend
-              //   .style("opacity", 0.2);
+              if (props.focusVar == yVar2) {
+                d3.selectAll(".path") // Fade the non-selected names in the legend
+                  .style("opacity", 0.2);
+              } else {
+                d3.selectAll(".path1") // Fade the non-selected names in the legend
+                  .style("opacity", 0.2);
+              }
               // recover coordinate we need
               const x0 = x.invert(d3.pointer(event)[0]);
               const i = bisect(data1, x0, 1);
@@ -270,7 +277,7 @@ const LineChart = (props: any) => {
               }
               var text2 = "";
 
-              if (yVar2 != "") {
+              if (yVar2 != "" && selectedData2) {
                 text2 = yVar2 + ": " + selectedData2.value;
               }
               var text1 =
@@ -296,8 +303,13 @@ const LineChart = (props: any) => {
                 focus2.style("opacity", 0);
               }
               focusText.style("opacity", 0);
-              // d3.selectAll(".path1") // Fade the non-selected names in the legend
-              //   .style("opacity", 1);
+              if (props.focusVar == yVar2) {
+                d3.selectAll(".path") // Fade the non-selected names in the legend
+                  .style("opacity", 1);
+              } else {
+                d3.selectAll(".path1") // Fade the non-selected names in the legend
+                  .style("opacity", 1);
+              }
             })
             .on("click", function (event) {
               const x0 = x.invert(d3.pointer(event)[0]);
@@ -344,64 +356,115 @@ const LineChart = (props: any) => {
           }
 
           // Tooltip On Hover
-          // const tooltip = d3
-          //   .select("body")
-          //   .append("div")
-          //   .style("position", "absolute")
-          //   .style("z-index", "10")
-          //   .style("visibility", "hidden")
-          //   .style("background-color", "black")
-          //   .style("font-size", "13px")
-          //   .style("color", "#fff")
-          //   .attr("class", "keyPointTip");
+          const tooltip = d3
+            .select("body")
+            .append("div")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "hidden")
+            .style("background-color", "black")
+            .style("font-size", "13px")
+            .style("color", "#fff")
+            .attr("class", "keyPointTip");
 
-          // // Adding data Key points circle
-          // var circles = svg
-          //   .selectAll(".myDot")
-          //   .data(applyZoomAndFocusOn == 0 ? data1 : data2)
-          //   .join("circle")
-          //   .attr("clip-path", "urzl(#clip)")
-          //   .attr("r", function (d: any) {
-          //     return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
-          //   })
-          //   .attr("opacity", 1)
-          //   .style("fill", function (d: any) {
-          //     return d.circle == 1 ? "red" : d.highlight ? "pink" : "";
-          //   })
-          //   .style("stroke", "black")
-          //   .style("stroke-width", "0.2")
-          //   .attr("cx", function (d: any) {
-          //     return x(d.date);
-          //   })
-          //   .attr("cy", function (d: any) {
-          //     return applyZoomAndFocusOn == 0 ? y0(d.value) : y1(d.value);
-          //   })
-          //   .on("mouseover", function () {
-          //     d3.select(this).style("fill", "lightgreen");
-          //     tooltip.text(
-          //       (d3.select(this) as any)._groups[0][0]["__data__"][
-          //         "tooltip"
-          //       ] as string
-          //     );
-          //     tooltip.transition().duration(200);
-          //     tooltip.style("visibility", "visible");
-          //   })
-          //   .on("mouseout", function () {
-          //     d3.select(this).style(
-          //       "fill",
-          //       (d3.select(this) as any)._groups[0][0]["__data__"]["circle"] ==
-          //         1
-          //         ? "red"
-          //         : "pink"
-          //     );
-          //     tooltip.transition().duration(500);
-          //     tooltip.style("visibility", "hidden");
-          //   })
-          //   .on("mousemove", function (event: any) {
-          //     tooltip
-          //       .style("top", event.pageY - 10 + "px")
-          //       .style("left", event.pageX + 10 + "px");
-          //   });
+          // Adding data Key points circle
+          var circles1 = svg
+            .selectAll(".myDot")
+            .data(data1)
+            .join("circle")
+            .attr("clip-path", "urzl(#clip)")
+            .attr("r", function (d: any) {
+              return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+            })
+            .attr("opacity", 1)
+            .style("fill", function (d: any) {
+              return d.circle == 1 ? "green" : d.highlight ? "green" : "";
+            })
+            .style("stroke", "black")
+            .style("stroke-width", "0.2")
+            .attr("cx", function (d: any) {
+              return x(d.date);
+            })
+            .attr("cy", function (d: any) {
+              return y0(d.value);
+            })
+            .on("mouseover", function () {
+              d3.select(this).style("fill", "yellow");
+              tooltip.text(
+                (d3.select(this) as any)._groups[0][0]["__data__"][
+                  "tooltip"
+                ] as string
+              );
+              tooltip.transition().duration(200);
+              tooltip.style("visibility", "visible");
+            })
+            .on("mouseout", function () {
+              d3.select(this).style(
+                "fill",
+                (d3.select(this) as any)._groups[0][0]["__data__"]["circle"] ==
+                  1
+                  ? "green"
+                  : "green"
+              );
+              tooltip.transition().duration(500);
+              tooltip.style("visibility", "hidden");
+            })
+            .on("mousemove", function (event: any) {
+              tooltip
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px");
+            });
+
+          var circles2: any;
+          if (yVar2 != "") {
+            circles2 = svg
+              .selectAll(".myDot")
+              .data(data2)
+              .join("circle")
+              .attr("clip-path", "urzl(#clip)")
+              .attr("r", function (d: any) {
+                return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+              })
+              .attr("opacity", 1)
+              .style("fill", function (d: any) {
+                return d.circle == 1 ? "green" : d.highlight ? "green" : "";
+              })
+              .style("stroke", "black")
+              .style("stroke-width", "0.2")
+              .attr("cx", function (d: any) {
+                return x(d.date);
+              })
+              .attr("cy", function (d: any) {
+                return y1(d.value);
+              })
+              .on("mouseover", function () {
+                d3.select(this).style("fill", "yellow");
+                tooltip.text(
+                  (d3.select(this) as any)._groups[0][0]["__data__"][
+                    "tooltip"
+                  ] as string
+                );
+                tooltip.transition().duration(200);
+                tooltip.style("visibility", "visible");
+              })
+              .on("mouseout", function () {
+                d3.select(this).style(
+                  "fill",
+                  (d3.select(this) as any)._groups[0][0]["__data__"][
+                    "circle"
+                  ] == 1
+                    ? "green"
+                    : "green"
+                );
+                tooltip.transition().duration(500);
+                tooltip.style("visibility", "hidden");
+              })
+              .on("mousemove", function (event: any) {
+                tooltip
+                  .style("top", event.pageY - 10 + "px")
+                  .style("left", event.pageX + 10 + "px");
+              });
+          }
 
           svg.call(zoom);
 
@@ -431,54 +494,105 @@ const LineChart = (props: any) => {
               if (yVar2 != "") {
                 svg.select(".path1").attr("d", line2);
               }
-              // circles.remove();
-              // circles = svg
-              //   .selectAll(".myDot")
-              //   .data(applyZoomAndFocusOn == 0 ? data1 : data2)
-              //   .join("circle")
-              //   .attr("clip-path", "url(#clip)")
-              //   .attr("r", function (d: any) {
-              //     return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
-              //   })
-              //   .attr("opacity", 1)
-              //   .style("fill", function (d: any) {
-              //     return d.circle == 1 ? "red" : d.highlight ? "pink" : "";
-              //   })
-              //   .style("stroke", "black")
-              //   .style("stroke-width", "0.2")
-              //   .attr("cx", function (d: any) {
-              //     return x(d.date);
-              //   })
-              //   .attr("cy", function (d: any) {
-              //     return applyZoomAndFocusOn == 0 ? y0(d.value) : y1(d.value);
-              //   })
-              //   .on("mouseover", function () {
-              //     d3.select(this).style("fill", "lightgreen");
-              //     tooltip.text(
-              //       (d3.select(this) as any)._groups[0][0]["__data__"][
-              //         "tooltip"
-              //       ] as string
-              //     );
-              //     tooltip.transition().duration(200);
-              //     tooltip.style("visibility", "visible");
-              //   })
-              //   .on("mouseout", function () {
-              //     d3.select(this).style(
-              //       "fill",
-              //       (d3.select(this) as any)._groups[0][0]["__data__"][
-              //         "circle"
-              //       ] == 1
-              //         ? "red"
-              //         : "pink"
-              //     );
-              //     tooltip.transition().duration(500);
-              //     tooltip.style("visibility", "hidden");
-              //   })
-              //   .on("mousemove", function (event: any) {
-              //     tooltip
-              //       .style("top", event.pageY - 10 + "px")
-              //       .style("left", event.pageX + 10 + "px");
-              //   });
+              circles1.remove();
+              circles1 = svg
+                .selectAll(".myDot")
+                .data(data1)
+                .join("circle")
+                .attr("clip-path", "url(#clip)")
+                .attr("r", function (d: any) {
+                  return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+                })
+                .attr("opacity", 1)
+                .style("fill", function (d: any) {
+                  return d.circle == 1 ? "green" : d.highlight ? "green" : "";
+                })
+                .style("stroke", "black")
+                .style("stroke-width", "0.2")
+                .attr("cx", function (d: any) {
+                  return x(d.date);
+                })
+                .attr("cy", function (d: any) {
+                  return y0(d.value);
+                })
+                .on("mouseover", function () {
+                  d3.select(this).style("fill", "yellow");
+                  tooltip.text(
+                    (d3.select(this) as any)._groups[0][0]["__data__"][
+                      "tooltip"
+                    ] as string
+                  );
+                  tooltip.transition().duration(200);
+                  tooltip.style("visibility", "visible");
+                })
+                .on("mouseout", function () {
+                  d3.select(this).style(
+                    "fill",
+                    (d3.select(this) as any)._groups[0][0]["__data__"][
+                      "circle"
+                    ] == 1
+                      ? "green"
+                      : "green"
+                  );
+                  tooltip.transition().duration(500);
+                  tooltip.style("visibility", "hidden");
+                })
+                .on("mousemove", function (event: any) {
+                  tooltip
+                    .style("top", event.pageY - 10 + "px")
+                    .style("left", event.pageX + 10 + "px");
+                });
+
+              if (yVar2 != "") {
+                circles2.remove();
+                circles2 = svg
+                  .selectAll(".myDot")
+                  .data(data2)
+                  .join("circle")
+                  .attr("clip-path", "url(#clip)")
+                  .attr("r", function (d: any) {
+                    return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+                  })
+                  .attr("opacity", 1)
+                  .style("fill", function (d: any) {
+                    return d.circle == 1 ? "green" : d.highlight ? "green" : "";
+                  })
+                  .style("stroke", "black")
+                  .style("stroke-width", "0.2")
+                  .attr("cx", function (d: any) {
+                    return x(d.date);
+                  })
+                  .attr("cy", function (d: any) {
+                    return y1(d.value);
+                  })
+                  .on("mouseover", function () {
+                    d3.select(this).style("fill", "yellow");
+                    tooltip.text(
+                      (d3.select(this) as any)._groups[0][0]["__data__"][
+                        "tooltip"
+                      ] as string
+                    );
+                    tooltip.transition().duration(200);
+                    tooltip.style("visibility", "visible");
+                  })
+                  .on("mouseout", function () {
+                    d3.select(this).style(
+                      "fill",
+                      (d3.select(this) as any)._groups[0][0]["__data__"][
+                        "circle"
+                      ] == 1
+                        ? "green"
+                        : "green"
+                    );
+                    tooltip.transition().duration(500);
+                    tooltip.style("visibility", "hidden");
+                  })
+                  .on("mousemove", function (event: any) {
+                    tooltip
+                      .style("top", event.pageY - 10 + "px")
+                      .style("left", event.pageX + 10 + "px");
+                  });
+              }
               svg.select(".x-axis").call(d3.axisBottom(x) as any);
             }
           }
