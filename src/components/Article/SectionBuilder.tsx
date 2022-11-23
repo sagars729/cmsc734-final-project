@@ -48,6 +48,10 @@ const SectionBuilder = (props: SectionBuilderProps) => {
         startDate: brushStartDate,
         endDate: brushEndDate,
         header: "",
+        keyTimes: props.keyPoints.filter((point) => {
+          const candDate: Date = new Date(point.time);
+          return candDate >= brushStartDate && candDate <= brushEndDate;
+        }).map((point) => new Date(point.time))
       }]));
     }
     setBrushStartDate(null);

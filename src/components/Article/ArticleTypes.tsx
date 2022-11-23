@@ -18,6 +18,7 @@ export interface SectionType {
   startDate: Date;
   endDate: Date;
   header: string;
+  keyTimes: Date[];
 }
 
 // Props Types
@@ -44,6 +45,7 @@ export interface TextSectionProps {
   header: string;
   startDate: Date;
   endDate: Date;
+  focusDate?: Date;
   keyPoints: KeyPointType[];
 }
 
