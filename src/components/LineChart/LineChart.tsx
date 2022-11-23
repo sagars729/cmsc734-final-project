@@ -18,7 +18,6 @@ const LineChart = (props: any) => {
           var xVar: string = "";
           var yVar: string = "";
           var yVar2: string = "";
-          console.log(props.keyPoints);
           if (props.variable) {
             xVar = props.variable[0];
             yVar = props.variable[1];
@@ -66,6 +65,7 @@ const LineChart = (props: any) => {
           });
 
           if (props.isLoadedInt == 1) {
+            console.log("set points data");
             props.setIsLoadedInt(2);
             props.setPointsData(data);
           }

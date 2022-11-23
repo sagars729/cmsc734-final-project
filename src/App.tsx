@@ -3,8 +3,9 @@ import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
 import { data_processing } from "./data";
-// import Article from "./components/Article/Article";
+import ArticleContainer from "./components/Article/ArticleContainer";
 import { DSVRowArray } from "d3-dsv";
+import AttrSelection from "./components/AttrSelection/AttrSelection";
 
 let originalKeyPointsJson = [
   {
@@ -49,11 +50,13 @@ const emptyData = [
   },
 ];
 
-const process_data = async (file: any) => {
-  return await data_processing(file);
+const process_data = async (file: any, selectedColumns: any) => {
+  return await data_processing(file, selectedColumns);
 };
 
 const App = () => {
+  const [selectedColumns, setSelectedColumns] = useState([]);
+  const [showAttrSelection, setShowAttrSelection] = useState(false);
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
   const [isLoadedInt, setIsLoadedInt] = useState(0);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
@@ -66,13 +69,23 @@ const App = () => {
     "y-axis": "Cases",
     date_format: "%Y-%m-%d",
   });
+
   const [renderArticle, setRenderArticle] = useState<boolean>(false);
   const [pointsData, setPointsData] = useState<DSVRowArray | null>(null);
 
   const changeHandler = (event: any) => {
-    process_data(event.target.files[0]).then(function (result) {
-      // console.log(result);
+    if (dataCSV != event.target.files[0]) {
+      setSelectedColumns([]);
       setDataCSV(event.target.files[0]);
+      setShowAttrSelection(true);
+    }
+  };
+
+  const btnProcessData = () => {
+    setShowAttrSelection(false);
+    // console.log("btn proccess - selectedColumns = " + selectedColumns)
+    process_data(dataCSV, selectedColumns).then(function (result) {
+      // console.log(result);
       setKeyPointsData(result);
 
       setIsLoadedInt(1);
@@ -81,6 +94,7 @@ const App = () => {
       setUploadedCsvBool(false);
     });
   };
+
   const handleFocusChange = (e: any) => {
     setFocusChange(e.target.value);
   };
@@ -91,6 +105,7 @@ const App = () => {
       return { backgroundColor: "pink", color: "black" };
     }
   };
+
   const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
 
@@ -167,25 +182,37 @@ const App = () => {
               </div>
             </div>
           </span>
+
           <div className="row">
             <div className="col-md-6 borderStyle">
-              <KeyPointsList
-                data={keyPointsData}
-                setData={setKeyPointsData}
-                addKeyPoints={addKeyPoint}
-                disabled={uploadedCsvBool}
-                setRenderArticle={setRenderArticle}
-              />
+              {showAttrSelection && dataCSV ? (
+                <AttrSelection
+                  show={showAttrSelection}
+                  setSelectedColumns={setSelectedColumns}
+                  selectedColumns={selectedColumns}
+                  csv={dataCSV}
+                  btnProcessData={btnProcessData}
+                />
+              ) : (
+                <KeyPointsList
+                  data={keyPointsData}
+                  setData={setKeyPointsData}
+                  addKeyPoints={addKeyPoint}
+                  disabled={uploadedCsvBool}
+                  setRenderArticle={setRenderArticle}
+                />
+              )}
             </div>
             {/* <div className="m-2"></div> */}
             <div className="col-md-6 borderStyle">
               <LineChart
                 csv={dataCSV}
+                showAttrSelection={showAttrSelection}
                 keyPoints={keyPointsData}
                 general={generalChartInfo}
-                isLoadedInt={isLoadedInt}
                 variable={variable}
                 focusVar={focus}
+                isLoadedInt={isLoadedInt}
                 setIsLoadedInt={setIsLoadedInt}
                 addKeyPoints={addKeyPoint}
                 setData={setKeyPointsData}
@@ -195,14 +222,11 @@ const App = () => {
           </div>
         </div>
       ) : (
-        // <Article
-        //   data={pointsData}
-        //   keyPoints={keyPointsData}
-        //   title={"The Rise and Fall of Covid Cases in the United States"}
-        //   byline={"CMSC734 Group Project"}
-        //   date={"11-14-2022"}
-        // />
-        <span></span>
+        <ArticleContainer
+          data={pointsData}
+          keyPoints={keyPointsData}
+          setRenderArticle={setRenderArticle}
+        />
       )}
     </div>
   );

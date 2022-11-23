@@ -1,32 +1,10 @@
-import { conditionalExpression } from '@babel/types';
-import moment from 'moment';
-import React, { useState} from 'react';
+import React from 'react';
 import './KeyPointsList.css';
 
 const UserInput = (props : any) => {
-    //place holder values. these will be taken from shubham
-    let counter = 1;
 
     const printData = (data:any) => {
         console.log(data);
-    }
-    
-    const addKeyPoint = (time:string, attribute:string) => {
-        let newData = [...props.data];
-
-        var jsonPoints = [{ "variable": attribute, "point_value": "" + counter, "analysis_yielded": "<input>"}]
-        var jsonObj = { "time": time, "points": jsonPoints};
-
-        newData.push(jsonObj);
-        // newData.sort( (a, b) => a.time.localeCompare(b.time));
-                
-
-        newData.sort((a,b) => {
-            return new Date(a.time).getTime() - 
-                new Date(b.time).getTime()
-        });
-
-        props.setData(newData);
     }
 
     // don't think we'll need this
@@ -63,57 +41,48 @@ const UserInput = (props : any) => {
     
     // the keypoints function is not adding to the overall data
     return (
-        <div>
-            <div className="centered">
-                <h1> Key Points </h1>
-                {props.data.map((item:any) => (
+        <div className="centered">
+            <h1> Key Points </h1>
+            {props.data.map((item:any, idx:number) => (
 
-                    <div id={item.time} key={item.time} className="parent">
-                        <h4>{item.time}</h4>
-                        <div>
-                            {item.points.map( (point:any, i:number) => (
-                                <div key={i + "_" + point.variable} className="child">
-                                    <p>Variable: {point.variable}</p>
-                                    <textarea 
-                                        defaultValue={point.analysis_yielded}
-                                        onChange={(e) => {
-                                            point.analysis_yielded = e.target.value;
-                                        }}>   
-                                    </textarea>
-                                    <div>
-                                        <button onClick={ (e) => deletePoint(item.time, i)} disabled={props.disabled}>
-                                            delete key_point
-                                        </button>
-                                    </div>
+                <div id={item.time} key={item.time} className="parent">
+                    <h4>{item.time}</h4>
+                    <div>
+                        {item.points.map( (point:any, pointIndex:number) => (
+                            <div key={pointIndex + "_" + point.variable} className="child">
+                                <p>Variable: {point.variable}</p>
+                                <textarea 
+                                    defaultValue={point.analysis_yielded}
+                                    onChange={(e) => {
+                                        let newData = [...props.data];
+                                        newData.at(idx).points.at(pointIndex).analysis_yielded = e.target.value;
+                                        props.setData(newData);
+                                        
+                                        // point.analysis_yielded = e.target.value;
+                                    }}>   
+                                </textarea>
+                                <div>
+                                    <button onClick={ (e) => deletePoint(item.time, pointIndex)} disabled={props.disabled}>
+                                        delete key_point
+                                    </button>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                </div>
+            ))}
+            
+            <br></br>
+            
+            <button onClick={(e) => {
+                    printData(props.data);
+                    props.setRenderArticle(true);
+                }}
+                disabled={props.disabled}>
+                Generate Article
+            </button>
                 
-                <button onClick={(e) => {
-                        var timeStamp = moment()
-                        .utcOffset('+08:30')
-                        .format('YYYY-MM-DD');
-
-                        var variableStr = "something";
-                        addKeyPoint(timeStamp, variableStr);
-                    } }
-                    disabled={props.disabled}>
-
-                    add key_point
-                </button>
-                <button onClick={(e) => {
-                    printData(props.data)
-                    }  }
-                    disabled={props.disabled}>
-                    submit data!
-                </button>
-                
-            </div>
-
-                
-        </div>
+            </div>                
     )
 }
 
