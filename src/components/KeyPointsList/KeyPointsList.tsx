@@ -55,9 +55,8 @@ const UserInput = (props : any) => {
                                     defaultValue={point.analysis_yielded}
                                     onChange={(e) => {
                                         let newData = [...props.data];
-                                        newData.at(idx).points.at(pointIndex).analysis_yielded = e.target.value;
+                                        newData[idx].points[pointIndex].analysis_yielded = e.target.value;
                                         props.setData(newData);
-                                        
                                         // point.analysis_yielded = e.target.value;
                                     }}>   
                                 </textarea>

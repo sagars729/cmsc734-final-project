@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
+import { DSVRowArray } from "d3-dsv";
 import { data_processing } from "./data";
 import ArticleContainer from "./components/Article/ArticleContainer";
-import { DSVRowArray } from "d3-dsv";
 import AttrSelection from "./components/AttrSelection/AttrSelection";
 
 let originalKeyPointsJson = [

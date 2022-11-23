@@ -1,43 +1,59 @@
-import React, { useEffect } from 'react';
 import Typography from '@mui/material/Typography';
-import {Box} from '@mui/system';
-import "@fontsource/playfair-display"
 import Grid from '@mui/material/Grid';
+import React, {useState, useEffect, RefObject } from 'react'
+
 import TextSection from './TextSection';
-import ChartSection from './ChartSection';
-import {DSVRowArray} from 'd3-dsv';
+import Chart from './Chart';
 
-export interface PointType {
-  analysis_yielded: string;
-  variable: string;
-  point_value: number;
-  [otherOptions: string]: unknown;
-}
+import {KeyPointType, ArticleProps} from './ArticleTypes';
+import {textsx} from './ArticleConstants';
 
-interface KeyPointType {
-  time: string;
-  points: PointType[];
-}
-
-interface ArticleProps {
-  data: DSVRowArray;
-  keyPoints: KeyPointType[];
-  title: string;
-  byline: string;
-  date: string;
-}
-
-export const textsx: object = {fontFamily: "Playfair Display"}
-export const boxsx: object = {
-      backgroundColor: "#646f77",
-      width: "100%",
-      height: "100vh",
-      color: "#e1e4e8",
-    }
 
 const Article = (props: ArticleProps) => {
+  console.log("rendering")
+  const [currentScene, setCurrentScene] = useState<number>(0);
+  const [currentSubScene, setCurrentSubScene] = useState<number>(0);
+
+  const section = props.sections[currentScene]
+
+  const transition = (direction: number) => {
+    const lowerBoundary: boolean = currentSubScene == 0 && direction == -1;
+    const upperBoundary: boolean = (currentSubScene == section.keyTimes.length - 1)
+      && (direction == 1);
+    if (lowerBoundary && currentScene == 0) {
+      console.log("Hit Top")
+    } else if (upperBoundary && currentScene == (props.sections.length - 1)) {
+      console.log("Hit Bottom")
+    } else if (lowerBoundary || upperBoundary) {
+      setCurrentSubScene(0);
+      setCurrentScene(currentScene + direction)
+    } else {
+      setCurrentSubScene(currentSubScene + direction)
+    }
+  }
+
+  useEffect(() => {
+    const keyup = (e: any) => { 
+      if (e.code === "ArrowUp") transition(-1);
+      else if (e.code === "ArrowDown") transition(1);
+    };
+
+    window.addEventListener('keyup', keyup); 
+    return () => window.removeEventListener('keyup', keyup) 
+  });
+
+  // window.addEventListener('scroll', () => {
+  //   if (window.scrollY === 0) {
+  //     transition()
+  //   } else if (window.scrollY < 0) {
+  //     direction = -1
+  //   } else {
+  //     direction = 1
+  //   }
+  // });
+
   return (
-    <Box sx={boxsx}>
+    <div id="article" style={{margin:"5%"}}>
       {/** Article Title **/}
       <Typography variant="h2" component="h1" gutterBottom align="center" sx={textsx}>
          {props.title}
@@ -49,19 +65,37 @@ const Article = (props: ArticleProps) => {
       </Typography>
 
       {/** Article Sections **/}
+      <div id="scroll" onScroll={(event) => console.log("hello world")}>
       <Grid container spacing={2} sx={{margin: "16px"}}>
-        {props.keyPoints.map((keyPoint) => 
           <>
             <Grid xs={6}>
-              <TextSection time={keyPoint.time} points={keyPoint.points} />
+              <TextSection
+                header={section.header}
+                startDate={section.startDate}
+                endDate={section.endDate}
+                focusDate={section.keyTimes[currentSubScene]}
+                keyPoints={props.keyPoints}
+              /> 
             </Grid>
-            <Grid xs={6}>
-              <ChartSection time={keyPoint.time} timeWindow={30} points={keyPoint.points} data={props.data}/>
+            <Grid xs={6} justifyContent="center" alignItems="center">
+              <Chart
+                startDate={section.startDate}
+                endDate={section.endDate}
+                focusDate={section.keyTimes[currentSubScene]}
+                data={props.data}
+                keyPoints={props.keyPoints}
+                axisLabelColor={props.axisLabelColor}
+                primaryPointColor={props.primaryPointColor}
+                secondaryPointColor={props.secondaryPointColor}
+                lineColor={props.lineColor}
+                width={500}
+                height={250}
+              />
             </Grid>
           </>
-        )}
       </Grid>
-    </Box>     
+      </div>
+    </div>
   )
 
 }
