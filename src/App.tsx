@@ -63,11 +63,9 @@ const App = () => {
   const [dataCSV, setDataCSV] = useState();
   const [focus, setFocusChange] = useState(selectedColumns[1]);
   const [generalChartInfo, setChartInfo] = useState({
-    title: "COVID CASES IN THE US 2020- 2021",
-    "x-axis": "Time Frame",
-    "y-axis": "Cases",
     date_format: "%Y-%m-%d",
   });
+  const [chartTitle, setTitle] = useState("");
 
   const [renderArticle, setRenderArticle] = useState<boolean>(false);
   const [pointsData, setPointsData] = useState<DSVRowArray | null>(null);
@@ -75,6 +73,7 @@ const App = () => {
   const changeHandler = (event: any) => {
     if (dataCSV != event.target.files[0]) {
       setSelectedColumns([]);
+      setTitle(event.target.files[0].name.split(".")[0]);
       setDataCSV(event.target.files[0]);
       setShowAttrSelection(true);
     }
@@ -131,7 +130,13 @@ const App = () => {
     // TODO: call setPointsData() so the article has the most recent keypoints
     // setPointsData(newData )
   };
-
+  const getYAxis = () => {
+    return (
+      (selectedColumns[1] ? selectedColumns[1] : "") +
+      (selectedColumns[2] ? " / " : "") +
+      (selectedColumns[2] ? selectedColumns[2] : "")
+    );
+  };
   return (
     <div className="container">
       {!renderArticle || !pointsData ? (
@@ -167,16 +172,17 @@ const App = () => {
               </div>
               <div>
                 <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
-                  {generalChartInfo.title}
+                  {chartTitle}
                 </p>
               </div>
               <div style={{ display: "flex" }}>
                 <p>
-                  <b>X-axis:</b> {generalChartInfo["x-axis"]}
+                  <b>X-axis:</b> {selectedColumns[0]}
                 </p>
                 <span style={{ margin: "5px" }}></span>
                 <p>
-                  <b>Y-axis:</b> {generalChartInfo["y-axis"]}
+                  <b>Y-axis:</b>
+                  {getYAxis()}
                 </p>
               </div>
             </div>
