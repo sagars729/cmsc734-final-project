@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
@@ -61,7 +61,7 @@ const App = () => {
   const [isLoadedInt, setIsLoadedInt] = useState(0);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
-  const [focus, setFocusChange] = useState(selectedColumns[1]);
+  const [focus, setFocusChange] = useState("");
   const [generalChartInfo, setChartInfo] = useState({
     date_format: "%Y-%m-%d",
   });
@@ -69,6 +69,10 @@ const App = () => {
 
   const [renderArticle, setRenderArticle] = useState<boolean>(false);
   const [pointsData, setPointsData] = useState<DSVRowArray | null>(null);
+
+  useEffect(() => {
+    setFocusChange(selectedColumns[1]);
+  }, [selectedColumns]); //and in the array tag the state you want to watch for
 
   const changeHandler = (event: any) => {
     if (dataCSV != event.target.files[0]) {
@@ -97,10 +101,12 @@ const App = () => {
     setFocusChange(e.target.value);
   };
   const changeColor = (e: any) => {
-    if (focus == selectedColumns[1])
-      return { backgroundColor: "steelblue", color: "white" };
-    else {
+    console.log(focus, selectedColumns[2]);
+
+    if (focus == selectedColumns[2])
       return { backgroundColor: "pink", color: "black" };
+    else {
+      return { backgroundColor: "steelblue", color: "white" };
     }
   };
 
