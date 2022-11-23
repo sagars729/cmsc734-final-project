@@ -14,6 +14,12 @@ export interface KeyPointType {
   points: PointType[];
 }
 
+export interface SectionType {
+  startDate: Date;
+  endDate: Date;
+  header: string;
+}
+
 // Props Types
 export interface ArticleContainerProps {
   data: DSVRowArray;
@@ -24,6 +30,7 @@ export interface ArticleContainerProps {
 export interface ArticleProps {
   data: DSVRowArray;
   keyPoints: KeyPointType[];
+  sections: SectionType[];
   title: string;
   byline: string;
   date: string;
@@ -34,8 +41,10 @@ export interface ArticleProps {
 }
 
 export interface TextSectionProps {
-  time: string;
-  points: PointType[];
+  header: string;
+  startDate: Date;
+  endDate: Date;
+  keyPoints: KeyPointType[];
 }
 
 export interface ChartSectionProps {
@@ -48,6 +57,23 @@ export interface ChartSectionProps {
   primaryPointColor: string;
   secondaryPointColor: string;
   lineColor: string;
+}
+
+export interface ChartProps {
+  startDate: Date;
+  endDate: Date;
+  data: DSVRowArray; 
+  keyPoints: KeyPointType[];
+  width?: number;
+  height?: number;
+  axisLabelColor: string;
+  primaryPointColor: string;
+  secondaryPointColor: string;
+  lineColor: string;
+  setBrushStartDate?: Dispatch<SetStateAction<Date | null>>;
+  setBrushEndDate?: Dispatch<SetStateAction<Date | null>>;
+  enableBrush?: boolean;
+  focusDate?: Date;
 }
 
 export interface BuilderProps {
@@ -81,12 +107,16 @@ export interface NavButtonsProps {
   color: string;
   backgroundColor: string;
   showBuilder: boolean;
+  showSectionBuilder: boolean;
+  sections: SectionType[];
   // variable setters
   setTitle: Dispatch<SetStateAction<string>>;
   setByline: Dispatch<SetStateAction<string>>;
   setDate: Dispatch<SetStateAction<string>>;
+  setSections: Dispatch<SetStateAction<SectionType[]>>;
   // navigation setters
   setShowBuilder: Dispatch<SetStateAction<boolean>>;
+  setShowSectionBuilder: Dispatch<SetStateAction<boolean>>;
   setRenderArticle: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -95,4 +125,17 @@ export interface NavButtonProps {
   backgroundColor: string;
   label: string;
   onClick: () => void;
+}
+
+export interface SectionBuilderProps {
+  data: DSVRowArray; 
+  keyPoints: KeyPointType[];
+  color: string;
+  backgroundColor: string;
+  axisLabelColor: string;
+  primaryPointColor: string;
+  secondaryPointColor: string;
+  lineColor: string;
+  sections: SectionType[];
+  setSections: Dispatch<SetStateAction<SectionType[]>>;
 }

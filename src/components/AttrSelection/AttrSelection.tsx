@@ -31,7 +31,7 @@ const AttrSelection = (props:any) => {
                 let col = results.meta['fields'];
                 const data = results.data;
                 // console.log(data.at(1));
-                setFirstRow(data.at(1));
+                setFirstRow(data[1]);
                 setColumnHeaders( results.meta['fields']);
                 
                 let newSelections = [...props.selectedColumns];

@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import "@fontsource/playfair-display"
 
 import TextSection from './TextSection';
-import ChartSection from './ChartSection';
+import Chart from './Chart';
 
 import {KeyPointType} from './ArticleTypes';
 
@@ -36,7 +36,7 @@ const exampleKeyPoints: KeyPointType[] = [
   {
     time: "2022-11-16",
     points: [{
-      analysis_yielded: exampleText,
+      analysis_yielded: "",
       variable: 'Cases',
       point_value: 95000
     }]
@@ -52,7 +52,7 @@ const exampleKeyPoints: KeyPointType[] = [
   {
     time: "2022-11-26",
     points: [{
-      analysis_yielded: exampleText,
+      analysis_yielded: "",
       variable: 'Cases',
       point_value: 95000
     }]
@@ -83,7 +83,12 @@ const examplePoints: object[] = [
 ]
 
 export const ExampleText = () => (
-  <TextSection time={exampleTextHeader} points={exampleKeyPoints[1].points}/>
+  <TextSection
+    startDate={new Date("2022-11-11")}
+    endDate={new Date("2022-12-01")}
+    header={exampleTextHeader}
+    keyPoints={exampleKeyPoints}
+  />
 );
 
 interface ExampleChartProps {
@@ -93,16 +98,18 @@ interface ExampleChartProps {
   lineColor: string;
 }
 export const ExampleChart = (props: ExampleChartProps) => (
-  <ChartSection 
-    time="2022-11-21"
-    timeWindow={10}
-    points={exampleKeyPoints[1].points}
-    allPoints={exampleKeyPoints}
+  <Chart
+    startDate={new Date("2022-11-11")}
+    endDate={new Date("2022-12-01")}
+    focusDate={new Date("2022-11-21")}
     // @ts-ignore TS2741
     data={examplePoints}
+    keyPoints={exampleKeyPoints}
     axisLabelColor={props.color}
     primaryPointColor={props.primaryPointColor}
     secondaryPointColor={props.secondaryPointColor}
     lineColor={props.lineColor}
+    width={500}
+    height={250}
   />
 );

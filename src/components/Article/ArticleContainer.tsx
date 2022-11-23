@@ -3,8 +3,14 @@ import {Box} from '@mui/system';
 
 import Article from './Article';
 import Builder from './Builder';
+import SectionBuilder from './SectionBuilder';
 import NavButtons from './NavButtons';
-import {PointType, KeyPointType, ArticleContainerProps} from './ArticleTypes';
+import {
+  PointType,
+  KeyPointType,
+  SectionType,
+  ArticleContainerProps
+} from './ArticleTypes';
 
 const ArticleContainer = (props: ArticleContainerProps) => {
   const [title, setTitle] = useState<string>("The Rise and Fall of COVID-19 in the United States");
@@ -16,6 +22,9 @@ const ArticleContainer = (props: ArticleContainerProps) => {
   const [secondaryPointColor, setSecondaryPointColor] = useState<string>("#ffc107");
   const [lineColor, setLineColor] = useState<string>("#ffffff");
   const [showBuilder, setShowBuilder] = useState<boolean>(true);
+  const [showSectionBuilder, setShowSectionBuilder] = useState<boolean>(false);
+  const [sections, setSections] = useState<SectionType[]>([]);
+
 
   return (
     <Box sx={{
@@ -41,7 +50,22 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            setSecondaryPointColor={setSecondaryPointColor}
            setLineColor={setLineColor}
          />
-       ) : (
+       ) : (<></>)}
+       {showSectionBuilder ? (
+         <SectionBuilder 
+           data={props.data}
+           keyPoints={props.keyPoints}
+           color={color}
+           backgroundColor={backgroundColor}
+           axisLabelColor={color}
+           primaryPointColor={primaryPointColor}
+           secondaryPointColor={secondaryPointColor}
+           lineColor={lineColor}
+           sections={sections}
+           setSections={setSections}
+         />
+       ): (<></>)}
+       {(!showSectionBuilder && !showBuilder) ? (
          <Article
            title={title}
            date={date}
@@ -52,12 +76,17 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            primaryPointColor={primaryPointColor}
            secondaryPointColor={secondaryPointColor}
            lineColor={lineColor}
+           sections={sections}
          />
-       )}
+       ) : (<></>)}
        <NavButtons
          color={color}
          backgroundColor={backgroundColor}
          showBuilder={showBuilder}
+         showSectionBuilder={showSectionBuilder}
+         sections={sections}
+         setSections={setSections}
+         setShowSectionBuilder={setShowSectionBuilder}
          setShowBuilder={setShowBuilder}
          setTitle={setTitle}
          setByline={setByline}

@@ -2,7 +2,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 
 import TextSection from './TextSection';
-import ChartSection from './ChartSection';
+import Chart from './Chart';
 
 import {KeyPointType, ArticleProps} from './ArticleTypes';
 import {textsx} from './ArticleConstants';
@@ -23,26 +23,32 @@ const Article = (props: ArticleProps) => {
 
       {/** Article Sections **/}
       <Grid container spacing={2} sx={{margin: "16px"}}>
-        {props.keyPoints.map((keyPoint) => 
+        {props.sections.map((section) => (
           <>
             <Grid xs={6}>
-              <TextSection time={keyPoint.time} points={keyPoint.points} />
+              <TextSection
+                header={section.header}
+                startDate={section.startDate}
+                endDate={section.endDate}
+                keyPoints={props.keyPoints}
+              /> 
             </Grid>
             <Grid xs={6} justifyContent="center" alignItems="center">
-              <ChartSection
-                time={keyPoint.time}
-                timeWindow={30}
-                points={keyPoint.points}
+              <Chart
+                startDate={section.startDate}
+                endDate={section.endDate}
                 data={props.data}
-                allPoints={props.keyPoints}
+                keyPoints={props.keyPoints}
                 axisLabelColor={props.axisLabelColor}
                 primaryPointColor={props.primaryPointColor}
                 secondaryPointColor={props.secondaryPointColor}
                 lineColor={props.lineColor}
+                width={500}
+                height={250}
               />
             </Grid>
           </>
-        )}
+        ))}
       </Grid>
     </div>
   )
