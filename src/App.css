@@ -9,11 +9,7 @@
   top: 10px;
 }
 
-.scrollable {
-  height: 100% !important;
-}
-
-.container,
+/* .container,
 .container-fluid,
 .container-xxl,
 .container-xl,
@@ -24,4 +20,15 @@
   padding-right: 0px !important;
   margin: 0px !important;
   max-width: 100% !important;
+} */
+
+.container {
+  max-width: 96% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.nopadding {
+  padding: 0 !important;
+  margin: 0 !important;
 }

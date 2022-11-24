@@ -1,4 +1,7 @@
 import React from 'react';
+import { BsArrowsAngleContract } from 'react-icons/bs';
+import { BsArrowsAngleExpand } from 'react-icons/bs';
+
 
 import './KeyPointsList.css';
 
@@ -62,38 +65,24 @@ const KeyPointsList = (props : any) => {
         let str = "" + monthNames[d.getMonth()] + " " + d.getDate() + dateOrdinal(d.getDate()) + ", " + d.getFullYear();        
         return str;
     }
+
+    const expandKP = () => {
+        props.setExpandKeyPoints(true);
+    }
+
+    const collapseKP = () => {
+        props.setExpandKeyPoints(false);
+    }
     
     // the keypoints function is not adding to the overall data
     return (
         <div className="centered">
+            { !props.isKeyPointsExpanded ? (
+                <BsArrowsAngleExpand className="top-right" onClick={() => expandKP()}/>
+            ) : (
+                <BsArrowsAngleContract className="top-right" onClick={() => collapseKP()} />
+            )}
             <h1> Key Points </h1>
-            {/* {props.data.map((item:any, idx:number) => (
-
-                <div id={item.time} key={item.time} className="parent">
-                    <h4>{convertTime(item.time)}</h4>
-                    <div>
-                        {item.points.map( (point:any, pointIndex:number) => (
-                            <div key={pointIndex + "_" + point.variable} className="child">
-                                <p>Variable: {point.variable}</p>
-                                <textarea 
-                                    defaultValue={point.analysis_yielded}
-                                    onChange={(e) => {
-                                        let newData = [...props.data];
-                                        newData[idx].points[pointIndex].analysis_yielded = e.target.value;
-                                        props.setData(newData);
-                                        // point.analysis_yielded = e.target.value;
-                                    }}>   
-                                </textarea>
-                                <div>
-                                    <button onClick={ (e) => deletePoint(item.time, pointIndex)} disabled={props.disabled}>
-                                        delete key_point
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            ))} */}
 
 <div className="container">
     {props.data.map( (item:any, idx:number) =>

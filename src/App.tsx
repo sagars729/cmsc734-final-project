@@ -6,29 +6,15 @@ import { data_processing } from './data';
 import ArticleContainer from "./components/Article/ArticleContainer"
 import {DSVRowArray} from 'd3-dsv';
 import AttrSelection from "./components/AttrSelection/AttrSelection";
-
+import { BsArrowsAngleContract } from 'react-icons/bs';
+import { BsArrowsAngleExpand } from 'react-icons/bs';
 const emptyData = [
   {
-    time: "2022-11-11",
+    time: "1111-11-11",
     points: [
       {
-        variable: "a",
-        analysis_yielded: "1",
-        point_value: 0,
-      },
-      {
-        variable: "b",
-        analysis_yielded: "2",
-        point_value: 0,
-      },
-    ],
-  },
-  {
-    time: "2022-05-11",
-    points: [
-      {
-        variable: "a2",
-        analysis_yielded: "1",
+        variable: "X",
+        analysis_yielded: "Y",
         point_value: 0,
       },
     ],
@@ -49,6 +35,12 @@ const App = () => {
   const [isLoadedInt, setIsLoadedInt] = useState(0);
   const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
+  const [isKeyPointsExpanded, setExpandKeyPoints] = useState(false);
+  const [isChartExpanded, setExpandChart] = useState(false);
+
+  const halfPageClassName = "col-md-6 borderStyle nopadding";
+  const fullPageClassName = "col-md-12 borderStyle nopadding";
+
 
   const [generalChartInfo, setChartInfo] = useState({
     title: "COVID CASES IN THE US 2020- 2021",
@@ -93,6 +85,14 @@ const App = () => {
     setKeyPointsData(newData);
   }
 
+const expandChart = () => {
+  setExpandChart(true);
+}
+
+const collapseChart = () => {
+  setExpandChart(false);
+}
+
   return (
     <div className="container">
       {!renderArticle  || !pointsData ? (
@@ -107,8 +107,9 @@ const App = () => {
 
 
           <div className="row">
-            <div className="col-md-6 borderStyle">
+            <div className={isKeyPointsExpanded && !isChartExpanded? fullPageClassName : halfPageClassName} hidden={isChartExpanded? true : false}>
             { showAttrSelection && dataCSV ? (
+              
               <AttrSelection 
               show={showAttrSelection} 
               setSelectedColumns={setSelectedColumns}
@@ -124,12 +125,21 @@ const App = () => {
               addKeyPoints={addKeyPoint}
               disabled={uploadedCsvBool}
               setRenderArticle={setRenderArticle}
+              isKeyPointsExpanded={isKeyPointsExpanded}
+              setExpandKeyPoints={setExpandKeyPoints}
+              isChartExpanded={isChartExpanded}
             />
             )}
 
             </div>
             {/* <div className="m-2"></div> */}
-            <div className="col-md-6 borderStyle">
+
+            <div className={!isKeyPointsExpanded && isChartExpanded ? fullPageClassName : halfPageClassName} hidden={isKeyPointsExpanded? true : false}>
+              { !isChartExpanded ? (
+                  <BsArrowsAngleExpand className="top-right" onClick={() => expandChart()}/>
+              ) : (
+                  <BsArrowsAngleContract className="top-right" onClick={() => collapseChart()} />
+              )}
               <LineChart
                 csv={dataCSV}
                 showAttrSelection={showAttrSelection}

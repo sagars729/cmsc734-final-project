@@ -392,14 +392,17 @@ const LineChart = (props: any) => {
     }
   });
   return (
-    <div id="d3ChartId">
-      <svg
-        style={{
-          width: "100%",
-          height: "620px",
-        }}
-        ref={d3Chart}
-      ></svg>
+    <div>
+      
+      <div id="d3ChartId">
+        <svg
+          style={{
+            width: "98%",
+            height: "600px",
+          }}
+          ref={d3Chart}
+        ></svg>
+      </div>
     </div>
   );
 };
