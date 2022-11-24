@@ -7,42 +7,28 @@ import ArticleContainer from "./components/Article/ArticleContainer"
 import {DSVRowArray} from 'd3-dsv';
 import AttrSelection from "./components/AttrSelection/AttrSelection";
 
-let originalKeyPointsJson =  [
-  {
-  "time": "2020-01-22",
-  "points": [
-     {
-        "variable":"cases",
-        "analysis_yielded":"absolute maximum"
-     }
-  ]
-  },
-  {
-  "time": "2021-04-14",
-  "points":[
-     {
-        "variable":"cases",
-        "analysis_yielded":"absolute minimum"
-     }
-  ]
-  },
-  {
-    "time": "2022-04-15",
-    "points":[
-       {
-          "variable":"cases",
-          "analysis_yielded":"absolute saddle point"
-       }
-    ]
-}]
-
 const emptyData = [
   {
-    time: "1111-11-11",
+    time: "2022-11-11",
     points: [
       {
-        variable: "",
-        analysis_yielded: "",
+        variable: "a",
+        analysis_yielded: "1",
+        point_value: 0,
+      },
+      {
+        variable: "b",
+        analysis_yielded: "2",
+        point_value: 0,
+      },
+    ],
+  },
+  {
+    time: "2022-05-11",
+    points: [
+      {
+        variable: "a2",
+        analysis_yielded: "1",
         point_value: 0,
       },
     ],
@@ -84,39 +70,27 @@ const App = () => {
 
   const btnProcessData = () => {
     setShowAttrSelection(false);
-    // console.log("btn proccess - selectedColumns = " + selectedColumns)
     process_data(dataCSV, selectedColumns).then(function (result) {
-      // console.log(result);
       setKeyPointsData(result);
 
       setIsLoadedInt(1);
-      // TODO: call setPointsData() so the article has the most recent keypoints
-
       setUploadedCsvBool(false);
     });
   }
 
   const addKeyPoint = (time:string, attribute:string, attrValue:number) => {
     let newData = [...keyPointsData];
-
-    //todo: if everyone likes it, we can edit the timestamp to look like Oct. 20, 2022 (it looks better)
   
     var jsonPoints = [{ "variable": attribute, "point_value": attrValue, "analysis_yielded": "<input>"}]
     var jsonObj = { "time": time, "points": jsonPoints};
   
-    newData.push(jsonObj);
-    // newData.sort( (a, b) => a.time.localeCompare(b.time));
-            
-  
+    newData.push(jsonObj);  
     newData.sort((a,b) => {
         return new Date(a.time).getTime() - 
             new Date(b.time).getTime()
     });
   
     setKeyPointsData(newData);
-
-    // TODO: call setPointsData() so the article has the most recent keypoints
-    // setPointsData(newData )
   }
 
   return (
