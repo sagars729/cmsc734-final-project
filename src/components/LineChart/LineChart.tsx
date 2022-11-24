@@ -276,11 +276,11 @@ const LineChart = (props: any) => {
                     (selectedData1.date as Date).getMonth() +
                     "/" +
                     (selectedData1.date as Date).getFullYear() +
-                    " " +
+                    "     " +
                     (selectedData1 && selectedData1.value
                       ? yVar + ": " + selectedData1.value
                       : "") +
-                    " " +
+                    "     " +
                     (yVar2 != "" && selectedData2 && selectedData2.value
                       ? yVar2 + ": " + selectedData2.value
                       : "")
