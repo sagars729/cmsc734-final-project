@@ -63,6 +63,7 @@ const App = () => {
   const [dataCSV, setDataCSV] = useState();
   const [focus, setFocusChange] = useState("");
   const [hoverData, setHoverData] = useState({ date: "", value: [] });
+  const [resize, setResize] = useState("");
   const [generalChartInfo, setChartInfo] = useState({
     date_format: "%Y-%m-%d",
   });
@@ -245,6 +246,7 @@ const App = () => {
                 general={generalChartInfo}
                 variable={selectedColumns}
                 focusVar={focus}
+                setResize={setResize}
                 isLoadedInt={isLoadedInt}
                 setIsLoadedInt={setIsLoadedInt}
                 addKeyPoints={addKeyPoint}

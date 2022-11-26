@@ -79,6 +79,13 @@ const LineChart = (props: any) => {
           var svg = d3
             .select(d3Chart.current)
             .attr("transform", "translate(" + [0, padding.t] + ")");
+          // .attr("preserveAspectRatio", "xMinYMin meet")
+          // .attr("viewBox", "0 0 " + width + " " + height + " ");
+
+          d3.select(window).on("resize.updatesvg", function updateWindow() {
+            props.setResize(new Date());
+          });
+
           svg.selectAll("*").remove();
 
           //Scaling Chart
