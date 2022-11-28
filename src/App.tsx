@@ -93,8 +93,6 @@ const App = () => {
       setKeyPointsData(result);
 
       setIsLoadedInt(1);
-      // TODO: call setPointsData() so the article has the most recent keypoints
-
       setUploadedCsvBool(false);
     });
   };
