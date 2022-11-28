@@ -86,7 +86,25 @@ const App = () => {
 
   const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
+    
+    // let oldJsonPointsIdx = keyPointsData.findIndex(function (x) {return x.time === time});
+    // var jsonPoints =
+    //   {
+    //     variable: attribute,
+    //     point_value: attrValue,
+    //     analysis_yielded: "<input>",
+    //   };
 
+
+    // if (oldJsonPointsIdx > -1) {
+    //   newData[oldJsonPointsIdx].points.push(jsonPoints);
+    // } else {
+    //   let arr = [jsonPoints]
+    //   var jsonObj = { time: time, points: arr };
+
+    //   newData.push(jsonObj);
+
+    // }
     var jsonPoints = [
       {
         variable: attribute,
@@ -95,7 +113,6 @@ const App = () => {
       },
     ];
     var jsonObj = { time: time, points: jsonPoints };
-
     newData.push(jsonObj);
 
     newData.sort((a, b) => {
@@ -221,7 +238,8 @@ const App = () => {
               )}
             </div>
             {/* <div className="m-2"></div> */}
-            <div className={!isKeyPointsExpanded && isChartExpanded ? fullPageClassName : halfPageClassName} hidden={isKeyPointsExpanded? true : false}>
+            <div className={!isKeyPointsExpanded && isChartExpanded ? fullPageClassName : halfPageClassName} 
+            hidden={isKeyPointsExpanded? true : false} >
               { !isChartExpanded ? (
                   <BsArrowsAngleExpand className="top-right" onClick={() => expandChart()}/>
               ) : (
@@ -241,6 +259,7 @@ const App = () => {
                 setData={setKeyPointsData}
                 setHoverData={setHoverData}
                 setPointsData={setPointsData}
+                // isShowingAttrSelection={showAttrSelection}
               />
             </div>
           </div>

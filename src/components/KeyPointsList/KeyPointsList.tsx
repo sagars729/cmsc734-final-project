@@ -82,7 +82,7 @@ const KeyPointsList = (props : any) => {
             ) : (
                 <BsArrowsAngleContract className="top-right" onClick={() => collapseKP()} />
             )}
-            <h1> Key Points </h1>
+            <h1> {props.data.length} Key Point(s) </h1>
 
 <div className="container">
     {props.data.map( (item:any, idx:number) =>

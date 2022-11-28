@@ -1,7 +1,7 @@
   /* If you want the content centered horizontally and vertically */
   .centered {
     text-align: center;
-    height: 600px;
+    height: 620px;
     position:relative;
     overflow-y: scroll;
   }
