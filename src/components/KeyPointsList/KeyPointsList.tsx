@@ -1,7 +1,15 @@
 import React from 'react';
+import { BsArrowsAngleContract } from 'react-icons/bs';
+import { BsArrowsAngleExpand } from 'react-icons/bs';
+
+
 import './KeyPointsList.css';
 
-const UserInput = (props : any) => {
+const KeyPointsList = (props : any) => {
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
+    ];
 
     const printData = (data:any) => {
         console.log(data);
@@ -38,38 +46,92 @@ const UserInput = (props : any) => {
         props.setData(newData);        
 
     }
+
+    function dateOrdinal(date:any) {
+        if (date > 3 && date < 21) return 'th';
+        switch (date % 10) {
+          case 1:  return "st";
+          case 2:  return "nd";
+          case 3:  return "rd";
+          default: return "th";
+        }
+    }
+
+    function convertTime(time:any) {
+        var date = new Date(time)
+        var userTimezoneOffset = date.getTimezoneOffset() * 60000;
+        var d = new Date(date.getTime() + userTimezoneOffset);
+
+        let str = "" + monthNames[d.getMonth()] + " " + d.getDate() + dateOrdinal(d.getDate()) + ", " + d.getFullYear();        
+        return str;
+    }
+
+    const expandKP = () => {
+        props.setExpandKeyPoints(true);
+    }
+
+    const collapseKP = () => {
+        props.setExpandKeyPoints(false);
+    }
     
     // the keypoints function is not adding to the overall data
     return (
         <div className="centered">
+            { !props.isKeyPointsExpanded ? (
+                <BsArrowsAngleExpand className="top-right" onClick={() => expandKP()}/>
+            ) : (
+                <BsArrowsAngleContract className="top-right" onClick={() => collapseKP()} />
+            )}
             <h1> Key Points </h1>
-            {props.data.map((item:any, idx:number) => (
 
-                <div id={item.time} key={item.time} className="parent">
-                    <h4>{item.time}</h4>
-                    <div>
-                        {item.points.map( (point:any, pointIndex:number) => (
-                            <div key={pointIndex + "_" + point.variable} className="child">
-                                <p>Variable: {point.variable}</p>
-                                <textarea 
-                                    defaultValue={point.analysis_yielded}
-                                    onChange={(e) => {
-                                        let newData = [...props.data];
-                                        newData[idx].points[pointIndex].analysis_yielded = e.target.value;
-                                        props.setData(newData);
-                                        // point.analysis_yielded = e.target.value;
-                                    }}>   
-                                </textarea>
-                                <div>
-                                    <button onClick={ (e) => deletePoint(item.time, pointIndex)} disabled={props.disabled}>
-                                        delete key_point
+<div className="container">
+    {props.data.map( (item:any, idx:number) =>
+        <div className="row">
+            <div className="col-lg">
+                <div className="card card-margin">
+                    <div className="card-header no-border">
+                        <h5 className="card-title">{convertTime(item.time)}</h5>
+                    </div>
+
+                    {item.points.map( (point:any, pointIdx:number) => (
+                        <div className="card-body pt-0">
+                            <div className="widget-49">
+                                <div className="widget-49-title-wrapper">
+                                    
+                                    <div className="widget-49-meeting-info">
+                                        <span className="widget-49-pro-title">Variable: {point.variable}</span>
+                                    </div>
+                                </div>
+                                <ol className="widget-49-meeting-points">
+                                    <div className="form-outline">
+                                        <textarea className="form-control" value={point.analysis_yielded}
+                                        onChange={(e) => {
+                                            let newData = [...props.data];
+                                            newData[idx].points[pointIdx].analysis_yielded = e.target.value;
+                                            props.setData(newData);
+                                            // point.analysis_yielded = e.target.value;
+                                        }}>
+
+                                        </textarea>
+                                    </div>
+                                </ol>
+                                <div className="widget-49-meeting-action">
+                                    <button
+                                    onClick={ (e) => deletePoint(item.time, pointIdx)} disabled={props.disabled}
+                                    >
+                                        Delete Key Point
                                     </button>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
+
                 </div>
-            ))}
+            </div>
+        </div>
+    )}
+</div>
+
             
             <br></br>
             
@@ -85,4 +147,4 @@ const UserInput = (props : any) => {
     )
 }
 
-export default UserInput;
+export default KeyPointsList;

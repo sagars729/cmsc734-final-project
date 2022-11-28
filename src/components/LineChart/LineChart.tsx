@@ -601,8 +601,8 @@ const LineChart = (props: any) => {
     <div id="d3ChartId">
       <svg
         style={{
-          width: "100%",
-          height: "620px",
+          width: "98%",
+          height: "600px",
         }}
         ref={d3Chart}
       ></svg>
