@@ -1,11 +1,14 @@
 import React from 'react';
 import { BsArrowsAngleContract } from 'react-icons/bs';
 import { BsArrowsAngleExpand } from 'react-icons/bs';
+import EditorConvertToHTML from '../TextEditor/TextEditor';
 
 
 import './KeyPointsList.css';
 
 const KeyPointsList = (props : any) => {
+
+    
 
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
@@ -86,7 +89,7 @@ const KeyPointsList = (props : any) => {
 
 <div className="container">
     {props.data.map( (item:any, idx:number) =>
-        <div className="row">
+        <div className="row" key={`item_${item}_${idx}`}> 
             <div className="col-lg">
                 <div className="card card-margin">
                     <div className="card-header no-border">
@@ -94,7 +97,7 @@ const KeyPointsList = (props : any) => {
                     </div>
 
                     {item.points.map( (point:any, pointIdx:number) => (
-                        <div className="card-body pt-0">
+                        <div className="card-body pt-0" key={`item_${item}_pointIndex_${pointIdx}`}>
                             <div className="widget-49">
                                 <div className="widget-49-title-wrapper">
                                     
@@ -113,7 +116,9 @@ const KeyPointsList = (props : any) => {
                                         }}>
 
                                         </textarea>
+                                      
                                     </div>
+                                    
                                 </ol>
                                 <div className="widget-49-meeting-action">
                                     <button
@@ -148,3 +153,10 @@ const KeyPointsList = (props : any) => {
 }
 
 export default KeyPointsList;
+
+// <EditorConvertToHTML 
+//                                     data={props.data}
+//                                     idx={idx}
+//                                     pointIdx={pointIdx}
+//                                     currVal={props.data[idx].points[pointIdx].analysis_yielded}
+//                                     setData={props.setData}/>
