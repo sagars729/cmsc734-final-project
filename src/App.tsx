@@ -6,8 +6,8 @@ import { DSVRowArray } from "d3-dsv";
 import { data_processing } from "./data";
 import ArticleContainer from "./components/Article/ArticleContainer";
 import AttrSelection from "./components/AttrSelection/AttrSelection";
-import { BsArrowsAngleContract } from 'react-icons/bs';
-import { BsArrowsAngleExpand } from 'react-icons/bs';
+import { BsArrowsAngleContract } from "react-icons/bs";
+import { BsArrowsAngleExpand } from "react-icons/bs";
 
 const emptyData = [
   {
@@ -53,6 +53,10 @@ const App = () => {
     setFocusChange(selectedColumns[1]);
   }, [selectedColumns]); //and in the array tag the state you want to watch for
 
+  useEffect(() => {
+    setFocusChange(selectedColumns[1]);
+  }, [selectedColumns]); //and in the array tag the state you want to watch for
+
   const changeHandler = (event: any) => {
     if (dataCSV != event.target.files[0]) {
       setSelectedColumns([]);
@@ -66,7 +70,11 @@ const App = () => {
     setShowAttrSelection(false);
     process_data(dataCSV, selectedColumns).then(function (result) {
       // console.log(result);
-      setKeyPointsData(result);
+      if (typeof result !== "undefined") {
+        setKeyPointsData(result);
+      } else {
+        setKeyPointsData([]);
+      }
 
       setIsLoadedInt(1);
       setUploadedCsvBool(false);
@@ -84,9 +92,21 @@ const App = () => {
     }
   };
 
+  function getFormattedDate(date: any) {
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return month + "/" + day + "/" + year;
+  }
+
   const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
-    
+
     // let oldJsonPointsIdx = keyPointsData.findIndex(function (x) {return x.time === time});
     // var jsonPoints =
     //   {
@@ -94,7 +114,6 @@ const App = () => {
     //     point_value: attrValue,
     //     analysis_yielded: "<input>",
     //   };
-
 
     // if (oldJsonPointsIdx > -1) {
     //   newData[oldJsonPointsIdx].points.push(jsonPoints);
@@ -112,7 +131,8 @@ const App = () => {
         analysis_yielded: "<input>",
       },
     ];
-    var jsonObj = { time: time, points: jsonPoints };
+    var newtime = getFormattedDate(new Date(time));
+    var jsonObj = { time: newtime, points: jsonPoints };
     newData.push(jsonObj);
 
     newData.sort((a, b) => {
@@ -120,7 +140,6 @@ const App = () => {
     });
 
     setKeyPointsData(newData);
-
   };
 
   const getYAxis = () => {
@@ -133,11 +152,11 @@ const App = () => {
 
   const expandChart = () => {
     setExpandChart(true);
-  }
-  
+  };
+
   const collapseChart = () => {
     setExpandChart(false);
-  }
+  };
 
   return (
     <div className="container">
@@ -151,7 +170,14 @@ const App = () => {
             style={{ display: "block", margin: "10px auto" }}
           />
           <span className="row">
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                paddingLeft: 0,
+                paddingRight: 0,
+              }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -214,7 +240,14 @@ const App = () => {
             </div>
           </span>
           <div className="row">
-            <div className={isKeyPointsExpanded && !isChartExpanded? fullPageClassName : halfPageClassName} hidden={isChartExpanded? true : false}>
+            <div
+              className={
+                isKeyPointsExpanded && !isChartExpanded
+                  ? fullPageClassName
+                  : halfPageClassName
+              }
+              hidden={isChartExpanded ? true : false}
+            >
               {showAttrSelection && dataCSV ? (
                 <AttrSelection
                   show={showAttrSelection}
@@ -222,7 +255,6 @@ const App = () => {
                   selectedColumns={selectedColumns}
                   csv={dataCSV}
                   btnProcessData={btnProcessData}
-                  
                 />
               ) : (
                 <KeyPointsList
@@ -238,12 +270,24 @@ const App = () => {
               )}
             </div>
             {/* <div className="m-2"></div> */}
-            <div className={!isKeyPointsExpanded && isChartExpanded ? fullPageClassName : halfPageClassName} 
-            hidden={isKeyPointsExpanded? true : false} >
-              { !isChartExpanded ? (
-                  <BsArrowsAngleExpand className="top-right" onClick={() => expandChart()}/>
+            <div
+              className={
+                !isKeyPointsExpanded && isChartExpanded
+                  ? fullPageClassName
+                  : halfPageClassName
+              }
+              hidden={isKeyPointsExpanded ? true : false}
+            >
+              {!isChartExpanded ? (
+                <BsArrowsAngleExpand
+                  className="top-right"
+                  onClick={() => expandChart()}
+                />
               ) : (
-                  <BsArrowsAngleContract className="top-right" onClick={() => collapseChart()} />
+                <BsArrowsAngleContract
+                  className="top-right"
+                  onClick={() => collapseChart()}
+                />
               )}
               <LineChart
                 csv={dataCSV}
