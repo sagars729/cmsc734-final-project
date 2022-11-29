@@ -78,13 +78,14 @@ const KeyPointsList = (props: any) => {
   function convertTime(time: any) {
     let arr = time.split('-');
     let m = (parseInt(arr[1])-1)
+    let d = parseInt(arr[2])
 
     let str =
       "" +
       monthNames[m] +
       " " +
-      arr[2] +
-      dateOrdinal(arr[2]) +
+      d +
+      dateOrdinal(d) +
       ", " +
       arr[0];
     return str;
@@ -129,7 +130,7 @@ const KeyPointsList = (props: any) => {
                       <div className="widget-49-title-wrapper">
                         <div className="widget-49-meeting-info">
                           <span className="widget-49-pro-title">
-                            Variable: {point.variable}
+                            {`(Variable, Value) : (${point.variable},  ${point.point_value})`}
                           </span>
                         </div>
                       </div>
