@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box } from "@mui/system";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import { alpha, styled } from "@mui/material/styles";
-import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
 
 import { BuilderProps, ColorPickerProps } from "./ArticleTypes";
 import {

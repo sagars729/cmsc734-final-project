@@ -1,11 +1,11 @@
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import React, { useState, useEffect, RefObject } from "react";
+import React, { useState, useEffect } from "react";
 
 import TextSection from "./TextSection";
 import Chart from "./Chart";
 
-import { KeyPointType, ArticleProps } from "./ArticleTypes";
+import { ArticleProps } from "./ArticleTypes";
 import { textsx } from "./ArticleConstants";
 
 const Article = (props: ArticleProps) => {
@@ -17,15 +17,15 @@ const Article = (props: ArticleProps) => {
 
 	const transition = (direction: number) => {
 		const lowerBoundary: boolean =
-			currentSubScene == 0 && direction == -1;
+			currentSubScene === 0 && direction === -1;
 		const upperBoundary: boolean =
-			currentSubScene == section.keyTimes.length - 1 &&
-			direction == 1;
-		if (lowerBoundary && currentScene == 0) {
+			currentSubScene === section.keyTimes.length - 1 &&
+			direction === 1;
+		if (lowerBoundary && currentScene === 0) {
 			console.log("Hit Top");
 		} else if (
 			upperBoundary &&
-			currentScene == props.sections.length - 1
+			currentScene === props.sections.length - 1
 		) {
 			console.log("Hit Bottom");
 		} else if (lowerBoundary || upperBoundary) {
