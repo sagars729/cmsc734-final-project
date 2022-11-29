@@ -1,93 +1,278 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import LineChart from "./components/LineChart/LineChart";
 import KeyPointsList from "./components/KeyPointsList/KeyPointsList";
-import { data_processing } from './data';
-
-let originalKeyPointsJson =  [
-  {
-  "time": "2020-01-22",
-  "points": [
-     {
-        "variable":"cases",
-        "analysis_yielded":"absolute maximum"
-     }
-  ]
-  },
-  {
-  "time": "2021-04-14",
-  "points":[
-     {
-        "variable":"cases",
-        "analysis_yielded":"absolute minimum"
-     }
-  ]
-  },
-  {
-    "time": "2022-04-15",
-    "points":[
-       {
-          "variable":"cases",
-          "analysis_yielded":"absolute saddle point"
-       }
-    ]
-}]
+import { DSVRowArray } from "d3-dsv";
+import { data_processing } from "./data";
+import ArticleContainer from "./components/Article/ArticleContainer";
+import AttrSelection from "./components/AttrSelection/AttrSelection";
+import { BsArrowsAngleContract } from 'react-icons/bs';
+import { BsArrowsAngleExpand } from 'react-icons/bs';
 
 const emptyData = [
   {
     time: "1111-11-11",
     points: [
       {
-        "variable": "",
-        "analysis_yielded": ""
-      }
-    ]
-  }
-]
+        variable: "",
+        analysis_yielded: "",
+        point_value: 0,
+      },
+    ],
+  },
+];
 
-const process_data = async (file:any) => {
-  return await data_processing(file);
+const process_data = async (file: any, selectedColumns: any) => {
+  return await data_processing(file, selectedColumns);
 };
 
 const App = () => {
+  const [selectedColumns, setSelectedColumns] = useState([]);
+  const [showAttrSelection, setShowAttrSelection] = useState(false);
   const [uploadedCsvBool, setUploadedCsvBool] = useState(true);
-  const [keyPointsData, setKeyPointsData] = useState( emptyData );
+  const [isLoadedInt, setIsLoadedInt] = useState(0);
+  const [keyPointsData, setKeyPointsData] = useState(emptyData);
   const [dataCSV, setDataCSV] = useState();
+  const [focus, setFocusChange] = useState("");
+  const [hoverData, setHoverData] = useState({ date: "", value: [] });
+  const [resize, setResize] = useState("");
+  const [generalChartInfo, setChartInfo] = useState({
+    date_format: "%Y-%m-%d",
+  });
+  const [chartTitle, setTitle] = useState("");
+
+  const [renderArticle, setRenderArticle] = useState<boolean>(false);
+  const [pointsData, setPointsData] = useState<DSVRowArray | null>(null);
+  const [isKeyPointsExpanded, setExpandKeyPoints] = useState(false);
+  const [isChartExpanded, setExpandChart] = useState(false);
+
+  const halfPageClassName = "col-md-6 borderStyle nopadding";
+  const fullPageClassName = "col-md-12 borderStyle nopadding";
+
+  useEffect(() => {
+    setFocusChange(selectedColumns[1]);
+  }, [selectedColumns]); //and in the array tag the state you want to watch for
 
   const changeHandler = (event: any) => {
-    // this.state.data = event.target.files[0];
-    // console.log(this.state.data);
+    if (dataCSV != event.target.files[0]) {
+      setSelectedColumns([]);
+      setTitle(event.target.files[0].name.split(".")[0]);
+      setDataCSV(event.target.files[0]);
+      setShowAttrSelection(true);
+    }
+  };
 
-    process_data(event.target.files[0]).then( function(result) {
-      setDataCSV( event.target.files[0] );
+  const btnProcessData = () => {
+    setShowAttrSelection(false);
+    process_data(dataCSV, selectedColumns).then(function (result) {
+      // console.log(result);
       setKeyPointsData(result);
+
+      setIsLoadedInt(1);
       setUploadedCsvBool(false);
-      
-    } );
+    });
+  };
+
+  const handleFocusChange = (e: any) => {
+    setFocusChange(e.target.value);
+  };
+  const changeColor = (e: any) => {
+    if (focus == selectedColumns[2])
+      return { backgroundColor: "pink", color: "black" };
+    else {
+      return { backgroundColor: "steelblue", color: "white" };
+    }
+  };
+
+  const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
+    let newData = [...keyPointsData];
+    
+    // let oldJsonPointsIdx = keyPointsData.findIndex(function (x) {return x.time === time});
+    // var jsonPoints =
+    //   {
+    //     variable: attribute,
+    //     point_value: attrValue,
+    //     analysis_yielded: "<input>",
+    //   };
+
+
+    // if (oldJsonPointsIdx > -1) {
+    //   newData[oldJsonPointsIdx].points.push(jsonPoints);
+    // } else {
+    //   let arr = [jsonPoints]
+    //   var jsonObj = { time: time, points: arr };
+
+    //   newData.push(jsonObj);
+
+    // }
+    var jsonPoints = [
+      {
+        variable: attribute,
+        point_value: attrValue,
+        analysis_yielded: "<input>",
+      },
+    ];
+    var jsonObj = { time: time, points: jsonPoints };
+    newData.push(jsonObj);
+
+    newData.sort((a, b) => {
+      return new Date(a.time).getTime() - new Date(b.time).getTime();
+    });
+
+    setKeyPointsData(newData);
 
   };
 
+  const getYAxis = () => {
     return (
-      <div className="container">
-        <input
-          type="file"
-          name="file"
-          accept=".csv"
-          onChange={changeHandler}
-          style={{ display: "block", margin: "10px auto" }}
-        />
-        <div className="row">
-          <div className="col-md-6 borderStyle">
-            <KeyPointsList data={keyPointsData} setData={setKeyPointsData} disabled={uploadedCsvBool}/>
-          </div>
-          {/* <div className="m-2"></div> */}
-          <div className="col-md-6 borderStyle">
-            <LineChart data={dataCSV} keyPoints={keyPointsData} setData={setKeyPointsData} />
-          </div>
-        </div>
-      </div>
+      (selectedColumns[1] ? selectedColumns[1] : "") +
+      (selectedColumns[2] ? " / " : "") +
+      (selectedColumns[2] ? selectedColumns[2] : "")
     );
+  };
+
+  const expandChart = () => {
+    setExpandChart(true);
+  }
+  
+  const collapseChart = () => {
+    setExpandChart(false);
   }
 
+  return (
+    <div className="container">
+      {!renderArticle || !pointsData ? (
+        <div id="author-view">
+          <input
+            type="file"
+            name="file"
+            accept=".csv"
+            onChange={changeHandler}
+            style={{ display: "block", margin: "10px auto" }}
+          />
+          <span className="row">
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  border: "solid",
+                  marginBottom: "5px",
+                  padding: "10px",
+                }}
+              >
+                <div>
+                  <span style={{ fontWeight: "bold" }}>
+                    <u>Focus and Legend</u>{" "}
+                  </span>
+                  <select
+                    onChange={handleFocusChange}
+                    style={changeColor(this)}
+                  >
+                    {selectedColumns.slice(1).map((col) => (
+                      <option value={col} key={col}>
+                        {col}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
+                    {chartTitle}
+                  </p>
+                </div>
+                <div style={{ display: "flex" }}>
+                  <p>
+                    <b>X-axis:</b> {selectedColumns[0]}
+                  </p>
+                  <span style={{ margin: "5px" }}></span>
+                  <p>
+                    <b>Y-axis:</b>
+                    {getYAxis()}
+                  </p>
+                </div>
+                {hoverData.date ? (
+                  <div>
+                    <span>
+                      <b>Date: </b> {hoverData.date}
+                    </span>
+                    <br />
+                    <span>
+                      <b>{selectedColumns[1]}: </b>
+                      {hoverData.value[0]}
+                    </span>
+                    <br />
+                    {selectedColumns[2] ? (
+                      <span>
+                        <b>{selectedColumns[2]}: </b>
+                        {hoverData.value[1]}
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </span>
+          <div className="row">
+            <div className={isKeyPointsExpanded && !isChartExpanded? fullPageClassName : halfPageClassName} hidden={isChartExpanded? true : false}>
+              {showAttrSelection && dataCSV ? (
+                <AttrSelection
+                  show={showAttrSelection}
+                  setSelectedColumns={setSelectedColumns}
+                  selectedColumns={selectedColumns}
+                  csv={dataCSV}
+                  btnProcessData={btnProcessData}
+                  
+                />
+              ) : (
+                <KeyPointsList
+                  data={keyPointsData}
+                  setData={setKeyPointsData}
+                  addKeyPoints={addKeyPoint}
+                  disabled={uploadedCsvBool}
+                  setRenderArticle={setRenderArticle}
+                  isKeyPointsExpanded={isKeyPointsExpanded}
+                  setExpandKeyPoints={setExpandKeyPoints}
+                  isChartExpanded={isChartExpanded}
+                />
+              )}
+            </div>
+            {/* <div className="m-2"></div> */}
+            <div className={!isKeyPointsExpanded && isChartExpanded ? fullPageClassName : halfPageClassName} 
+            hidden={isKeyPointsExpanded? true : false} >
+              { !isChartExpanded ? (
+                  <BsArrowsAngleExpand className="top-right" onClick={() => expandChart()}/>
+              ) : (
+                  <BsArrowsAngleContract className="top-right" onClick={() => collapseChart()} />
+              )}
+              <LineChart
+                csv={dataCSV}
+                showAttrSelection={showAttrSelection}
+                keyPoints={keyPointsData}
+                general={generalChartInfo}
+                variable={selectedColumns}
+                focusVar={focus}
+                setResize={setResize}
+                isLoadedInt={isLoadedInt}
+                setIsLoadedInt={setIsLoadedInt}
+                addKeyPoints={addKeyPoint}
+                setData={setKeyPointsData}
+                setHoverData={setHoverData}
+                setPointsData={setPointsData}
+                // isShowingAttrSelection={showAttrSelection}
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <ArticleContainer
+          data={pointsData}
+          keyPoints={keyPointsData}
+          setRenderArticle={setRenderArticle}
+        />
+      )}
+    </div>
+  );
+};
 
 export default App;

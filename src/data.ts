@@ -14,26 +14,24 @@ interface Timestamp {
 }
 
 export function data_processing(
-    input_data: any
+    input_data: any,
+    selectedColumns: any
 ): any {
-    return readCSV(input_data)
+    return readCSV(input_data, selectedColumns)
         .then((df) => {
-            // assume date column is first
-            // df.drop({ columns: [''], inplace: true });
-            var columns = df.columns.slice(1,)
+            // we know date column is first
+            var columns = selectedColumns.slice(1,)
             var key_points = []
 
             // find min/max of all colunns (1 for now)
-            for (var col of columns) {
-                if(df.column(col).dtypes[0] === 'int32'){
-                    key_points.push(absolute_max(df, col))
-                    key_points.push(absolute_min(df, col))
+            for (var column of columns) {
+                if(df.column(column).dtypes[0] === 'int32'){
+                    key_points.push(absolute_max_min(df, column))
                 } 
             }
 
             // find simple key points using df functions
             var final_json = JSON.parse(JSON.stringify(key_points))
-            console.log(final_json)
             return final_json
 
         }).catch(err => {
@@ -41,20 +39,7 @@ export function data_processing(
         })
 };
 
-function absolute_max(
-    df: any,
-    col: string
-): any {
-    var date_col = df.columns[0]
-    df = df.asType(col, "int32")
-
-    let col_max = df[col].max({ axis: 0 })
-    let max_timestamps: string[] = df.loc({ rows: df[col].eq(col_max) })[date_col].values
-
-    return create_point(col, col_max, "absolute minimum", max_timestamps[0])
-};
-
-function absolute_min(
+function absolute_max_min(
     df: any,
     col: string
 ): any {

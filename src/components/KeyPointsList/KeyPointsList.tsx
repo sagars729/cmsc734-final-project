@@ -1,32 +1,21 @@
-import { conditionalExpression } from '@babel/types';
-import moment from 'moment';
-import React, { useState} from 'react';
+import React from 'react';
+import { BsArrowsAngleContract } from 'react-icons/bs';
+import { BsArrowsAngleExpand } from 'react-icons/bs';
+import EditorConvertToHTML from '../TextEditor/TextEditor';
+
+
 import './KeyPointsList.css';
 
-const UserInput = (props : any) => {
-    //place holder values. these will be taken from shubham
-    let counter = 1;
+const KeyPointsList = (props : any) => {
+
+    
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
+    ];
 
     const printData = (data:any) => {
         console.log(data);
-    }
-    
-    const addKeyPoint = (time:string, attribute:string) => {
-        let newData = [...props.data];
-
-        var jsonPoints = [{ "variable": attribute, "point_value": "" + counter, "analysis_yielded": "<input>"}]
-        var jsonObj = { "time": time, "points": jsonPoints};
-
-        newData.push(jsonObj);
-        // newData.sort( (a, b) => a.time.localeCompare(b.time));
-                
-
-        newData.sort((a,b) => {
-            return new Date(a.time).getTime() - 
-                new Date(b.time).getTime()
-        });
-
-        props.setData(newData);
     }
 
     // don't think we'll need this
@@ -60,61 +49,114 @@ const UserInput = (props : any) => {
         props.setData(newData);        
 
     }
+
+    function dateOrdinal(date:any) {
+        if (date > 3 && date < 21) return 'th';
+        switch (date % 10) {
+          case 1:  return "st";
+          case 2:  return "nd";
+          case 3:  return "rd";
+          default: return "th";
+        }
+    }
+
+    function convertTime(time:any) {
+        var date = new Date(time)
+        var userTimezoneOffset = date.getTimezoneOffset() * 60000;
+        var d = new Date(date.getTime() + userTimezoneOffset);
+
+        let str = "" + monthNames[d.getMonth()] + " " + d.getDate() + dateOrdinal(d.getDate()) + ", " + d.getFullYear();        
+        return str;
+    }
+
+    const expandKP = () => {
+        props.setExpandKeyPoints(true);
+    }
+
+    const collapseKP = () => {
+        props.setExpandKeyPoints(false);
+    }
     
     // the keypoints function is not adding to the overall data
     return (
-        <div>
-            <div className="centered">
-                <h1> Key Points </h1>
-                {props.data.map((item:any) => (
+        <div className="centered">
+            { !props.isKeyPointsExpanded ? (
+                <BsArrowsAngleExpand className="top-right" onClick={() => expandKP()}/>
+            ) : (
+                <BsArrowsAngleContract className="top-right" onClick={() => collapseKP()} />
+            )}
+            <h1> {props.data.length} Key Point(s) </h1>
 
-                    <div id={item.time} key={item.time} className="parent">
-                        <h4>{item.time}</h4>
-                        <div>
-                            {item.points.map( (point:any, i:number) => (
-                                <div key={i + "_" + point.variable} className="child">
-                                    <p>Variable: {point.variable}</p>
-                                    <textarea 
-                                        defaultValue={point.analysis_yielded}
-                                        onChange={(e) => {
-                                            point.analysis_yielded = e.target.value;
-                                        }}>   
-                                    </textarea>
-                                    <div>
-                                        <button onClick={ (e) => deletePoint(item.time, i)} disabled={props.disabled}>
-                                            delete key_point
-                                        </button>
+<div className="container">
+    {props.data.map( (item:any, idx:number) =>
+        <div className="row" key={`item_${item}_${idx}`}> 
+            <div className="col-lg">
+                <div className="card card-margin">
+                    <div className="card-header no-border">
+                        <h5 className="card-title">{convertTime(item.time)}</h5>
+                    </div>
+
+                    {item.points.map( (point:any, pointIdx:number) => (
+                        <div className="card-body pt-0" key={`item_${item}_pointIndex_${pointIdx}`}>
+                            <div className="widget-49">
+                                <div className="widget-49-title-wrapper">
+                                    
+                                    <div className="widget-49-meeting-info">
+                                        <span className="widget-49-pro-title">Variable: {point.variable}</span>
                                     </div>
                                 </div>
-                            ))}
+                                <ol className="widget-49-meeting-points">
+                                    <div className="form-outline">
+                                        <textarea className="form-control" value={point.analysis_yielded}
+                                        onChange={(e) => {
+                                            let newData = [...props.data];
+                                            newData[idx].points[pointIdx].analysis_yielded = e.target.value;
+                                            props.setData(newData);
+                                            // point.analysis_yielded = e.target.value;
+                                        }}>
+
+                                        </textarea>
+                                      
+                                    </div>
+                                    
+                                </ol>
+                                <div className="widget-49-meeting-action">
+                                    <button
+                                    onClick={ (e) => deletePoint(item.time, pointIdx)} disabled={props.disabled}
+                                    >
+                                        Delete Key Point
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                ))}
-                
-                <button onClick={(e) => {
-                        var timeStamp = moment()
-                        .utcOffset('+08:30')
-                        .format('YYYY-MM-DD');
+                    ))}
 
-                        var variableStr = "something";
-                        addKeyPoint(timeStamp, variableStr);
-                    } }
-                    disabled={props.disabled}>
-
-                    add key_point
-                </button>
-                <button onClick={(e) => {
-                    printData(props.data)
-                    }  }
-                    disabled={props.disabled}>
-                    submit data!
-                </button>
-                
+                </div>
             </div>
-
-                
         </div>
+    )}
+</div>
+
+            
+            <br></br>
+            
+            <button onClick={(e) => {
+                    printData(props.data);
+                    props.setRenderArticle(true);
+                }}
+                disabled={props.disabled}>
+                Generate Article
+            </button>
+                
+            </div>                
     )
 }
 
-export default UserInput;
+export default KeyPointsList;
+
+// <EditorConvertToHTML 
+//                                     data={props.data}
+//                                     idx={idx}
+//                                     pointIdx={pointIdx}
+//                                     currVal={props.data[idx].points[pointIdx].analysis_yielded}
+//                                     setData={props.setData}/>
