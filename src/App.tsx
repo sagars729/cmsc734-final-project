@@ -164,6 +164,8 @@ const App = () => {
             accept=".csv"
             onChange={changeHandler}
             style={{ display: "block", margin: "10px auto" }}
+            className="form-control"
+            id="formFile"
           />
           <span className="row">
             <div
