@@ -11,6 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Prepare
-        run: npm install
+        run: npm install --legacy-peer-deps
       - name: eslint
         uses: icrawl/action-eslint@v1
