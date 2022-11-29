@@ -37,7 +37,6 @@ const App = () => {
   const [hoverData, setHoverData] = useState({ date: "", value: [] });
   const [resize, setResize] = useState("");
   const [chartTitle, setTitle] = useState("");
-
   const [renderArticle, setRenderArticle] = useState<boolean>(false);
   const [pointsData, setPointsData] = useState<DSVRowArray | null>(null);
   const [isKeyPointsExpanded, setExpandKeyPoints] = useState(false);
@@ -89,6 +88,18 @@ const App = () => {
     }
   };
 
+  function getFormattedDate(date: any) {
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return month + "/" + day + "/" + year;
+  }
+
   const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
 
@@ -116,7 +127,8 @@ const App = () => {
         analysis_yielded: "<input>",
       },
     ];
-    var jsonObj = { time: time, points: jsonPoints };
+    var newtime = getFormattedDate(new Date(time));
+    var jsonObj = { time: newtime, points: jsonPoints };
     newData.push(jsonObj);
 
     newData.sort((a, b) => {

@@ -76,18 +76,11 @@ const KeyPointsList = (props: any) => {
   }
 
   function convertTime(time: any) {
-    let arr = time.split('-');
-    let m = (parseInt(arr[1])-1)
-    let d = parseInt(arr[2])
+    let arr = time.split("-");
+    let m = parseInt(arr[1]) - 1;
+    let d = parseInt(arr[2]);
 
-    let str =
-      "" +
-      monthNames[m] +
-      " " +
-      d +
-      dateOrdinal(d) +
-      ", " +
-      arr[0];
+    let str = "" + monthNames[m] + " " + d + dateOrdinal(d) + ", " + arr[0];
     return str;
   }
 
