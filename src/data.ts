@@ -19,9 +19,8 @@ export function data_processing(
 ): any {
     return readCSV(input_data, selectedColumns)
         .then((df) => {
-            // assume date column is first
-            // df.drop({ columns: [''], inplace: true });
-            var columns = df.columns.slice(1,)
+            // we know date column is first
+            var columns = selectedColumns.slice(1,)
             var key_points = []
 
             // find min/max of all colunns (1 for now)
