@@ -25,7 +25,6 @@ const LineChart = (props: any) => {
               yVar2 = props.variable[2];
             }
           }
-          console.log(results);
 
           // const applyZoomAndFocusOn: any = props.variable == "Cases" ? 0 : 1;
           data.forEach(function (d: any, i: any) {
@@ -66,8 +65,26 @@ const LineChart = (props: any) => {
             }
           });
 
+          data1.sort(function (a: any, b: any) {
+            var keyA = a.date,
+              keyB = b.date;
+            // Compare the 2 dates
+            if (keyA < keyB) return -1;
+            if (keyA > keyB) return 1;
+            return 0;
+          });
+          if (data2) {
+            data2.sort(function (a: any, b: any) {
+              var keyA = a.date,
+                keyB = b.date;
+              // Compare the 2 dates
+              if (keyA < keyB) return -1;
+              if (keyA > keyB) return 1;
+              return 0;
+            });
+          }
+
           if (props.isLoadedInt == 1) {
-            console.log("set points data");
             props.setIsLoadedInt(2);
             props.setPointsData(data);
           }
@@ -98,7 +115,7 @@ const LineChart = (props: any) => {
                 return d.date;
               }) as [any, any]
             )
-            .range([20, chartWidth]);
+            .range([40, chartWidth]);
 
           const y0 = d3
             .scaleLinear()
@@ -220,11 +237,10 @@ const LineChart = (props: any) => {
           }
           // // Create a rect on top of the svg area: this rectangle recovers mouse position
           var xTitle: any;
+
           svg
             .append("rect")
             .style("fill", "none")
-            .attr("class", "path2")
-            .attr("clip-path", "url(#clip)")
             .style("pointer-events", "all")
             .attr("width", chartWidth)
             .attr("height", chartHeight)
@@ -235,13 +251,6 @@ const LineChart = (props: any) => {
               }
             })
             .on("mousemove", function (event) {
-              if (props.focusVar == yVar2) {
-                d3.selectAll(".path") // Fade the non-selected names in the legend
-                  .style("opacity", 0.2);
-              } else {
-                d3.selectAll(".path1") // Fade the non-selected names in the legend
-                  .style("opacity", 0.2);
-              }
               // recover coordinate we need
               const x0 = x.invert(d3.pointer(event)[0]);
               const i = bisect(data1, x0, 1);
@@ -249,12 +258,12 @@ const LineChart = (props: any) => {
               if (yVar2 != "") {
                 j = bisect(data2, x0, 1);
               }
+
               const selectedData1: any = data1[i];
               var selectedData2: any;
               if (yVar2 != "") {
                 selectedData2 = data2[j];
               }
-
               if (selectedData1) {
                 focus1
                   .attr("cx", x(selectedData1.date))
@@ -265,7 +274,8 @@ const LineChart = (props: any) => {
                   .attr("cx", x(selectedData2.date))
                   .attr("cy", y1(selectedData2.value));
               }
-              var text1 = [selectedData1.value];
+              var text1 = [];
+              if (selectedData1) text1 = [selectedData1.value];
               if (yVar2 != "" && selectedData2) {
                 text1.push(selectedData2.value);
               }
@@ -279,7 +289,7 @@ const LineChart = (props: any) => {
               if (xTitle) xTitle.remove();
               xTitle = svg
                 .append("text")
-                .attr("x", 0)
+                .attr("x", 40)
                 .attr("y", chartHeight + padding.t + 20)
                 .text(
                   // "Date: " +
@@ -293,11 +303,19 @@ const LineChart = (props: any) => {
                   (selectedData1 && selectedData1.value
                     ? yVar + ": " + selectedData1.value
                     : "") +
-                    "     " +
+                    "       " +
                     (yVar2 != "" && selectedData2 && selectedData2.value
                       ? yVar2 + ": " + selectedData2.value
                       : "")
                 );
+
+              if (props.focusVar == yVar2) {
+                d3.selectAll(".path") // Fade the non-selected names in the legend
+                  .style("opacity", 0.2);
+              } else {
+                d3.selectAll(".path1") // Fade the non-selected names in the legend
+                  .style("opacity", 0.2);
+              }
             })
             .on("mouseout", function () {
               if (xTitle) xTitle.remove();
@@ -611,6 +629,8 @@ const LineChart = (props: any) => {
         style={{
           width: "98%",
           height: "600px",
+          overflowY: "unset",
+          overflowX: "hidden",
         }}
         ref={d3Chart}
       ></svg>

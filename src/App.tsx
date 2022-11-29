@@ -36,11 +36,7 @@ const App = () => {
   const [focus, setFocusChange] = useState("");
   const [hoverData, setHoverData] = useState({ date: "", value: [] });
   const [resize, setResize] = useState("");
-  const [generalChartInfo, setChartInfo] = useState({
-    date_format: "%Y-%m-%d",
-  });
   const [chartTitle, setTitle] = useState("");
-
   const [renderArticle, setRenderArticle] = useState<boolean>(false);
   const [pointsData, setPointsData] = useState<DSVRowArray | null>(null);
   const [isKeyPointsExpanded, setExpandKeyPoints] = useState(false);
@@ -293,7 +289,6 @@ const App = () => {
                 csv={dataCSV}
                 showAttrSelection={showAttrSelection}
                 keyPoints={keyPointsData}
-                general={generalChartInfo}
                 variable={selectedColumns}
                 focusVar={focus}
                 setResize={setResize}
