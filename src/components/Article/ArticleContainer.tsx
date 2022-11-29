@@ -6,8 +6,6 @@ import Builder from './Builder';
 import SectionBuilder from './SectionBuilder';
 import NavButtons from './NavButtons';
 import {
-  PointType,
-  KeyPointType,
   SectionType,
   ArticleContainerProps
 } from './ArticleTypes';

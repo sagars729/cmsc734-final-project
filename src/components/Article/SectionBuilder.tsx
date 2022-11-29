@@ -5,7 +5,7 @@ import { Box } from "@mui/system";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import TextField from "@mui/material/TextField";
-import { alpha, styled } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 
 import Chart from "./Chart";
 
@@ -120,7 +120,7 @@ const SectionBuilder = (props: SectionBuilderProps) => {
 					startDate={new Date(props.data[0].Date)}
 					endDate={
 						new Date(
-					    // @ts-ignore TS2769
+							// @ts-ignore TS2769
 							props.data[
 								props.data
 									.length -
