@@ -155,7 +155,14 @@ const App = () => {
             style={{ display: "block", margin: "10px auto" }}
           />
           <span className="row">
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                paddingLeft: 0,
+                paddingRight: 0,
+              }}
+            >
               <div
                 style={{
                   display: "flex",

@@ -31,7 +31,8 @@ const LineChart = (props: any) => {
             const index = props.keyPoints.findIndex(
               (x: any) => x.time === d[xVar]
             );
-            const calcdate = d3.timeParse("%Y-%m-%d")(d[xVar]);
+            const calcdate =
+              d3.timeParse("%Y-%m-%d")(d[xVar]) || new Date(d[xVar]);
             data1.push({
               circle:
                 index != -1 &&
@@ -44,7 +45,7 @@ const LineChart = (props: any) => {
                 props.keyPoints[index].points[0]["variable"] == yVar
                   ? props.keyPoints[index].points[0]["analysis_yielded"]
                   : "",
-              value: d[yVar],
+              value: +d[yVar],
             });
             if (yVar2 != "") {
               data2.push({
@@ -59,7 +60,7 @@ const LineChart = (props: any) => {
                   props.keyPoints[index].points[0]["variable"] == yVar2
                     ? props.keyPoints[index].points[0]["analysis_yielded"]
                     : "",
-                value: d[yVar2],
+                value: +d[yVar2],
               });
             }
           });
