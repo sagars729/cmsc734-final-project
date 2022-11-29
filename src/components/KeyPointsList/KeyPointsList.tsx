@@ -1,25 +1,24 @@
 import React from "react";
 import { BsArrowsAngleContract } from "react-icons/bs";
 import { BsArrowsAngleExpand } from "react-icons/bs";
-// import EditorConvertToHTML from "../TextEditor/TextEditor";
 
 import "./KeyPointsList.css";
 
 const KeyPointsList = (props: any) => {
-  // const monthNames = [
-  //   "Jan",
-  //   "Feb",
-  //   "Mar",
-  //   "Apr",
-  //   "May",
-  //   "Jun",
-  //   "Jul",
-  //   "Aug",
-  //   "Sept",
-  //   "Oct",
-  //   "Nov",
-  //   "Dec",
-  // ];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   const printData = (data: any) => {
     console.log(data);
@@ -62,35 +61,34 @@ const KeyPointsList = (props: any) => {
     props.setData(newData);
   };
 
-  // function dateOrdinal(date: any) {
-  //   if (date > 3 && date < 21) return "th";
-  //   switch (date % 10) {
-  //     case 1:
-  //       return "st";
-  //     case 2:
-  //       return "nd";
-  //     case 3:
-  //       return "rd";
-  //     default:
-  //       return "th";
-  //   }
-  // }
+  function dateOrdinal(date: any) {
+    if (date > 3 && date < 21) return "th";
+    switch (date % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  }
 
-  // function convertTime(time: any) {
-  //   var date = new Date(time);
-  //   var userTimezoneOffset = date.getTimezoneOffset() * 60000;
-  //   var d = new Date(date.getTime());
+  function convertTime(time: any) {
+    let arr = time.split('-');
+    let m = (parseInt(arr[1])-1)
 
-  //   let str =
-  //     "" +
-  //     monthNames[d.getMonth()] +
-  //     " " +
-  //     d.getDate() +
-  //     dateOrdinal(d.getDate()) +
-  //     ", " +
-  //     d.getFullYear();
-  //   return str;
-  // }
+    let str =
+      "" +
+      monthNames[m] +
+      " " +
+      arr[2] +
+      dateOrdinal(arr[2]) +
+      ", " +
+      arr[0];
+    return str;
+  }
 
   const expandKP = () => {
     props.setExpandKeyPoints(true);
@@ -119,7 +117,7 @@ const KeyPointsList = (props: any) => {
             <div className="col-lg">
               <div className="card card-margin">
                 <div className="card-header no-border">
-                  <h5 className="card-title">{item.time}</h5>
+                  <h5 className="card-title">{convertTime(item.time)}</h5>
                 </div>
 
                 {item.points.map((point: any, pointIdx: number) => (
