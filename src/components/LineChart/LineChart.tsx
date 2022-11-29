@@ -25,6 +25,7 @@ const LineChart = (props: any) => {
               yVar2 = props.variable[2];
             }
           }
+          console.log(results);
 
           // const applyZoomAndFocusOn: any = props.variable == "Cases" ? 0 : 1;
           data.forEach(function (d: any, i: any) {
@@ -73,7 +74,7 @@ const LineChart = (props: any) => {
 
           const width = parseInt(d3.select("#d3ChartId").style("width"));
           const height = parseInt(d3.select("#d3ChartId").style("height"));
-          const padding = { t: 15, r: 0, b: 45, l: 25 };
+          const padding = { t: 15, r: 25, b: 100, l: 30 };
           // Compute chart dimensions
           var chartWidth = width - padding.l - padding.r;
           var chartHeight = height - padding.t - padding.b;
@@ -97,7 +98,7 @@ const LineChart = (props: any) => {
                 return d.date;
               }) as [any, any]
             )
-            .range([0, chartWidth]);
+            .range([20, chartWidth]);
 
           const y0 = d3
             .scaleLinear()
@@ -137,6 +138,7 @@ const LineChart = (props: any) => {
           const yAxisLeft = svg
             .append("g")
             .attr("class", "y-axis1")
+            .attr("transform", "translate(" + 20 + "," + 0 + ")")
             .call(d3.axisRight(y0));
           var yAxisRight: any;
           if (yVar2 != "") {
@@ -200,7 +202,7 @@ const LineChart = (props: any) => {
           const focus1 = svg
             .append("g")
             .append("circle")
-            .style("fill", "green")
+            .style("fill", "yellow")
             .style("z-index", "100")
             .attr("stroke", "black")
             .attr("r", 4)
@@ -210,7 +212,7 @@ const LineChart = (props: any) => {
             focus2 = svg
               .append("g")
               .append("circle")
-              .style("fill", "green")
+              .style("fill", "yellow")
               .style("z-index", "100")
               .attr("stroke", "black")
               .attr("r", 4)
@@ -280,14 +282,17 @@ const LineChart = (props: any) => {
                 .attr("x", 0)
                 .attr("y", chartHeight + padding.t + 20)
                 .text(
-                  "Date: " +
-                    (selectedData1.date as Date).getMonth() +
-                    "/" +
-                    (selectedData1.date as Date).getFullYear() +
-                    "     " +
-                    (selectedData1 && selectedData1.value
-                      ? yVar + ": " + selectedData1.value
-                      : "") +
+                  // "Date: " +
+                  //   ((selectedData1.date as Date).getMonth() + 1) +
+                  //   "/" +
+                  // (selectedData1.date as Date).getDay() +
+                  //   1 +
+                  //   "/" +
+                  //   (selectedData1.date as Date).getFullYear() +
+                  //   "     " +
+                  (selectedData1 && selectedData1.value
+                    ? yVar + ": " + selectedData1.value
+                    : "") +
                     "     " +
                     (yVar2 != "" && selectedData2 && selectedData2.value
                       ? yVar2 + ": " + selectedData2.value
@@ -327,13 +332,15 @@ const LineChart = (props: any) => {
               }
 
               // TODO: for Harsh - auto scroll to the point on the left side when point is clicked on the graph
-              if (props.focusVar == yVar)
+              if (props.focusVar == yVar) {
+                // alert(formatDate(selectedData1.date));
                 props.addKeyPoints(
                   formatDate(selectedData1.date),
                   yVar,
                   selectedData1.value
                 );
-              else {
+              } else {
+                // alert(formatDate(selectedData2.date));
                 props.addKeyPoints(
                   formatDate(selectedData2.date),
                   yVar2,
@@ -344,7 +351,7 @@ const LineChart = (props: any) => {
 
           function formatDate(d: Date) {
             var month = "" + (d.getMonth() + 1),
-              day = "" + d.getDate(),
+              day = "" + (d.getDate() + 1),
               year = d.getFullYear();
 
             if (month.length < 2) month = "0" + month;
@@ -602,8 +609,8 @@ const LineChart = (props: any) => {
     <div id="d3ChartId">
       <svg
         style={{
-          width: "100%",
-          height: "620px",
+          width: "98%",
+          height: "600px",
         }}
         ref={d3Chart}
       ></svg>

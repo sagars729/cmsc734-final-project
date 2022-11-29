@@ -6,36 +6,8 @@ import { DSVRowArray } from "d3-dsv";
 import { data_processing } from "./data";
 import ArticleContainer from "./components/Article/ArticleContainer";
 import AttrSelection from "./components/AttrSelection/AttrSelection";
-
-let originalKeyPointsJson = [
-  {
-    time: "2020-01-22",
-    points: [
-      {
-        variable: "cases",
-        analysis_yielded: "absolute maximum",
-      },
-    ],
-  },
-  {
-    time: "2021-04-14",
-    points: [
-      {
-        variable: "cases",
-        analysis_yielded: "absolute minimum",
-      },
-    ],
-  },
-  {
-    time: "2022-04-15",
-    points: [
-      {
-        variable: "cases",
-        analysis_yielded: "absolute saddle point",
-      },
-    ],
-  },
-];
+import { BsArrowsAngleContract } from "react-icons/bs";
+import { BsArrowsAngleExpand } from "react-icons/bs";
 
 const emptyData = [
   {
@@ -71,6 +43,15 @@ const App = () => {
 
   const [renderArticle, setRenderArticle] = useState<boolean>(false);
   const [pointsData, setPointsData] = useState<DSVRowArray | null>(null);
+  const [isKeyPointsExpanded, setExpandKeyPoints] = useState(false);
+  const [isChartExpanded, setExpandChart] = useState(false);
+
+  const halfPageClassName = "col-md-6 borderStyle nopadding";
+  const fullPageClassName = "col-md-12 borderStyle nopadding";
+
+  useEffect(() => {
+    setFocusChange(selectedColumns[1]);
+  }, [selectedColumns]); //and in the array tag the state you want to watch for
 
   useEffect(() => {
     setFocusChange(selectedColumns[1]);
@@ -87,14 +68,15 @@ const App = () => {
 
   const btnProcessData = () => {
     setShowAttrSelection(false);
-    // console.log("btn proccess - selectedColumns = " + selectedColumns)
     process_data(dataCSV, selectedColumns).then(function (result) {
       // console.log(result);
-      setKeyPointsData(result);
+      if (typeof result !== "undefined") {
+        setKeyPointsData(result);
+      } else {
+        setKeyPointsData([]);
+      }
 
       setIsLoadedInt(1);
-      // TODO: call setPointsData() so the article has the most recent keypoints
-
       setUploadedCsvBool(false);
     });
   };
@@ -110,11 +92,38 @@ const App = () => {
     }
   };
 
+  function getFormattedDate(date: any) {
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return month + "/" + day + "/" + year;
+  }
+
   const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
 
-    //todo: if everyone likes it, we can edit the timestamp to look like Oct. 20, 2022 (it looks better)
+    // let oldJsonPointsIdx = keyPointsData.findIndex(function (x) {return x.time === time});
+    // var jsonPoints =
+    //   {
+    //     variable: attribute,
+    //     point_value: attrValue,
+    //     analysis_yielded: "<input>",
+    //   };
 
+    // if (oldJsonPointsIdx > -1) {
+    //   newData[oldJsonPointsIdx].points.push(jsonPoints);
+    // } else {
+    //   let arr = [jsonPoints]
+    //   var jsonObj = { time: time, points: arr };
+
+    //   newData.push(jsonObj);
+
+    // }
     var jsonPoints = [
       {
         variable: attribute,
@@ -122,20 +131,17 @@ const App = () => {
         analysis_yielded: "<input>",
       },
     ];
-    var jsonObj = { time: time, points: jsonPoints };
-
+    var newtime = getFormattedDate(new Date(time));
+    var jsonObj = { time: newtime, points: jsonPoints };
     newData.push(jsonObj);
-    // newData.sort( (a, b) => a.time.localeCompare(b.time));
 
     newData.sort((a, b) => {
       return new Date(a.time).getTime() - new Date(b.time).getTime();
     });
 
     setKeyPointsData(newData);
-
-    // TODO: call setPointsData() so the article has the most recent keypoints
-    // setPointsData(newData )
   };
+
   const getYAxis = () => {
     return (
       (selectedColumns[1] ? selectedColumns[1] : "") +
@@ -143,6 +149,15 @@ const App = () => {
       (selectedColumns[2] ? selectedColumns[2] : "")
     );
   };
+
+  const expandChart = () => {
+    setExpandChart(true);
+  };
+
+  const collapseChart = () => {
+    setExpandChart(false);
+  };
+
   return (
     <div className="container">
       {!renderArticle || !pointsData ? (
@@ -225,7 +240,14 @@ const App = () => {
             </div>
           </span>
           <div className="row">
-            <div className="col-md-6 borderStyle">
+            <div
+              className={
+                isKeyPointsExpanded && !isChartExpanded
+                  ? fullPageClassName
+                  : halfPageClassName
+              }
+              hidden={isChartExpanded ? true : false}
+            >
               {showAttrSelection && dataCSV ? (
                 <AttrSelection
                   show={showAttrSelection}
@@ -241,11 +263,32 @@ const App = () => {
                   addKeyPoints={addKeyPoint}
                   disabled={uploadedCsvBool}
                   setRenderArticle={setRenderArticle}
+                  isKeyPointsExpanded={isKeyPointsExpanded}
+                  setExpandKeyPoints={setExpandKeyPoints}
+                  isChartExpanded={isChartExpanded}
                 />
               )}
             </div>
             {/* <div className="m-2"></div> */}
-            <div className="col-md-6 borderStyle">
+            <div
+              className={
+                !isKeyPointsExpanded && isChartExpanded
+                  ? fullPageClassName
+                  : halfPageClassName
+              }
+              hidden={isKeyPointsExpanded ? true : false}
+            >
+              {!isChartExpanded ? (
+                <BsArrowsAngleExpand
+                  className="top-right"
+                  onClick={() => expandChart()}
+                />
+              ) : (
+                <BsArrowsAngleContract
+                  className="top-right"
+                  onClick={() => collapseChart()}
+                />
+              )}
               <LineChart
                 csv={dataCSV}
                 showAttrSelection={showAttrSelection}
@@ -260,6 +303,7 @@ const App = () => {
                 setData={setKeyPointsData}
                 setHoverData={setHoverData}
                 setPointsData={setPointsData}
+                // isShowingAttrSelection={showAttrSelection}
               />
             </div>
           </div>
