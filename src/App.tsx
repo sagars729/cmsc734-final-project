@@ -54,7 +54,7 @@ const App = () => {
   }, [selectedColumns]); //and in the array tag the state you want to watch for
 
   const changeHandler = (event: any) => {
-    if (dataCSV != event.target.files[0]) {
+    if (dataCSV !== event.target.files[0]) {
       setSelectedColumns([]);
       setTitle(event.target.files[0].name.split(".")[0]);
       setDataCSV(event.target.files[0]);
@@ -81,7 +81,7 @@ const App = () => {
     setFocusChange(e.target.value);
   };
   const changeColor = (e: any) => {
-    if (focus == selectedColumns[2])
+    if (focus === selectedColumns[2])
       return { backgroundColor: "pink", color: "black" };
     else {
       return { backgroundColor: "steelblue", color: "white" };
@@ -291,6 +291,7 @@ const App = () => {
                 keyPoints={keyPointsData}
                 variable={selectedColumns}
                 focusVar={focus}
+                resize={resize}
                 setResize={setResize}
                 isLoadedInt={isLoadedInt}
                 setIsLoadedInt={setIsLoadedInt}

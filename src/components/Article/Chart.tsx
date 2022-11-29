@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import React, { useState, useEffect, RefObject } from "react";
-import { PointType, KeyPointType, ChartProps } from "./ArticleTypes";
+import React, { useEffect, RefObject } from "react";
+import { ChartProps } from "./ArticleTypes";
 
 const Chart = (props: ChartProps) => {
 	const ref: RefObject<HTMLDivElement> = React.createRef();
@@ -40,7 +40,7 @@ const Chart = (props: ChartProps) => {
 		const xScale = d3
 			.scaleTime()
 			.domain(
-			  // @ts-ignore TS2352
+				// @ts-ignore TS2352
 				d3.extent(data, (d) => new Date(d.Date)) as [
 					Date,
 					Date
@@ -53,7 +53,7 @@ const Chart = (props: ChartProps) => {
 			.domain(
 				d3.extent(
 					data,
-			    // @ts-ignore TS2352
+					// @ts-ignore TS2352
 					(d) => parseInt(d.Cases) * props.ycoef
 				) as [number, number]
 			)
@@ -135,7 +135,7 @@ const Chart = (props: ChartProps) => {
 			.attr("stroke-width", 1.5)
 			.attr(
 				"d",
-			  // @ts-ignore TS2345
+				// @ts-ignore TS2345
 				d3
 					.line()
 					.x((d) =>
@@ -165,8 +165,7 @@ const Chart = (props: ChartProps) => {
 			.filter(dateFilter)
 			.forEach((point) =>
 				point.points.forEach((p) => {
-					const circle = svg
-						.append("circle")
+					svg.append("circle")
 						.attr(
 							"cx",
 							xScale(
@@ -196,14 +195,13 @@ const Chart = (props: ChartProps) => {
 					(keyPoint) =>
 						new Date(
 							keyPoint.time
-						).getTime() ==
-				    // @ts-ignore TS2532
+						).getTime() ===
+						// @ts-ignore TS2532
 						props.focusDate.getTime()
 				)
 				.forEach((point) =>
 					point.points.forEach((p) => {
-						const circle = svg
-							.append("circle")
+						svg.append("circle")
 							.attr(
 								"cx",
 								xScale(

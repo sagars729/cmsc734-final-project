@@ -1,7 +1,6 @@
 import React from "react";
 import { BsArrowsAngleContract } from "react-icons/bs";
 import { BsArrowsAngleExpand } from "react-icons/bs";
-import EditorConvertToHTML from "../TextEditor/TextEditor";
 
 import "./KeyPointsList.css";
 
@@ -26,13 +25,13 @@ const KeyPointsList = (props: any) => {
   };
 
   // don't think we'll need this
-  const componentDidUpdate = (id: any) => {
-    var element = document.getElementById(id);
-    if (element != null) {
-      element.scrollIntoView();
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  // const componentDidUpdate = (id: any) => {
+  //   var element = document.getElementById(id);
+  //   if (element != null) {
+  //     element.scrollIntoView();
+  //     element.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // };
 
   const deletePoint = (time: string, index: number) => {
     let newData = [...props.data];
@@ -77,18 +76,11 @@ const KeyPointsList = (props: any) => {
   }
 
   function convertTime(time: any) {
-    var date = new Date(time);
-    var userTimezoneOffset = date.getTimezoneOffset() * 60000;
-    var d = new Date(date.getTime());
+    let arr = time.split("-");
+    let m = parseInt(arr[1]) - 1;
+    let d = parseInt(arr[2]);
 
-    let str =
-      "" +
-      monthNames[d.getMonth()] +
-      " " +
-      d.getDate() +
-      dateOrdinal(d.getDate()) +
-      ", " +
-      d.getFullYear();
+    let str = "" + monthNames[m] + " " + d + dateOrdinal(d) + ", " + arr[0];
     return str;
   }
 
@@ -119,7 +111,7 @@ const KeyPointsList = (props: any) => {
             <div className="col-lg">
               <div className="card card-margin">
                 <div className="card-header no-border">
-                  <h5 className="card-title">{item.time}</h5>
+                  <h5 className="card-title">{convertTime(item.time)}</h5>
                 </div>
 
                 {item.points.map((point: any, pointIdx: number) => (
@@ -131,7 +123,7 @@ const KeyPointsList = (props: any) => {
                       <div className="widget-49-title-wrapper">
                         <div className="widget-49-meeting-info">
                           <span className="widget-49-pro-title">
-                            Variable: {point.variable}
+                            {`(Variable, Value) : (${point.variable},  ${point.point_value})`}
                           </span>
                         </div>
                       </div>

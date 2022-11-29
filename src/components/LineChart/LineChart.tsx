@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import Papa from "papaparse";
 import "./LineChart.css";
@@ -25,6 +25,7 @@ const LineChart = (props: any) => {
               yVar2 = props.variable[2];
             }
           }
+          console.log(results);
 
           // const applyZoomAndFocusOn: any = props.variable == "Cases" ? 0 : 1;
           data.forEach(function (d: any, i: any) {
@@ -35,29 +36,29 @@ const LineChart = (props: any) => {
               d3.timeParse("%Y-%m-%d")(d[xVar]) || new Date(d[xVar]);
             data1.push({
               circle:
-                index != -1 &&
-                props.keyPoints[index].points[0]["variable"] == yVar
+                index !== -1 &&
+                props.keyPoints[index].points[0]["variable"] === yVar
                   ? 1
                   : 0,
               date: calcdate,
               tooltip:
-                index != -1 &&
-                props.keyPoints[index].points[0]["variable"] == yVar
+                index !== -1 &&
+                props.keyPoints[index].points[0]["variable"] === yVar
                   ? props.keyPoints[index].points[0]["analysis_yielded"]
                   : "",
               value: +d[yVar],
             });
-            if (yVar2 != "") {
+            if (yVar2 !== "") {
               data2.push({
                 circle:
-                  index != -1 &&
-                  props.keyPoints[index].points[0]["variable"] == yVar2
+                  index !== -1 &&
+                  props.keyPoints[index].points[0]["variable"] === yVar2
                     ? 1
                     : 0,
                 date: calcdate,
                 tooltip:
-                  index != -1 &&
-                  props.keyPoints[index].points[0]["variable"] == yVar2
+                  index !== -1 &&
+                  props.keyPoints[index].points[0]["variable"] === yVar2
                     ? props.keyPoints[index].points[0]["analysis_yielded"]
                     : "",
                 value: +d[yVar2],
@@ -146,20 +147,19 @@ const LineChart = (props: any) => {
           //   .text(props.general["y-axis"]);
 
           //Adding Axes
-          const xAxis = svg
+          svg
             .append("g")
             .attr("class", "x-axis")
             .attr("transform", "translate(" + [0, chartHeight] + ")")
             .call(d3.axisBottom(x));
 
-          const yAxisLeft = svg
+          svg
             .append("g")
             .attr("class", "y-axis1")
             .attr("transform", "translate(" + 20 + "," + 0 + ")")
             .call(d3.axisRight(y0));
-          var yAxisRight: any;
-          if (yVar2 != "") {
-            yAxisRight = svg
+          if (yVar2 !== "") {
+            svg
               .append("g")
               .attr("class", "y-axis2")
               .attr("transform", "translate(" + (chartWidth + 25) + ",0)")
@@ -172,7 +172,7 @@ const LineChart = (props: any) => {
             .x((d: any) => x(d.date))
             .y((d: any) => y0(d.value));
           var line2: any;
-          if (yVar2 != "") {
+          if (yVar2 !== "") {
             line2 = d3
               .line()
               .defined((d: any) => !isNaN(d.value))
@@ -180,7 +180,7 @@ const LineChart = (props: any) => {
               .y((d: any) => y1(d.value));
           }
 
-          const defs = svg
+          svg
             .append("defs")
             .append("clipPath")
             .attr("id", "clip")
@@ -189,7 +189,7 @@ const LineChart = (props: any) => {
             .attr("width", chartWidth - padding.r)
             .attr("height", chartHeight);
 
-          var path = svg
+          svg
             .append("path")
             .datum(data1)
             .attr("class", "path")
@@ -198,7 +198,7 @@ const LineChart = (props: any) => {
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             .attr("d", line1);
-          if (yVar2 != "") {
+          if (yVar2 !== "") {
             svg
               .append("path")
               .datum(data2)
@@ -225,7 +225,7 @@ const LineChart = (props: any) => {
             .attr("r", 4)
             .style("opacity", 0);
           var focus2: any;
-          if (yVar2 != "") {
+          if (yVar2 !== "") {
             focus2 = svg
               .append("g")
               .append("circle")
@@ -246,22 +246,29 @@ const LineChart = (props: any) => {
             .attr("height", chartHeight)
             .on("mouseover", function () {
               focus1.style("opacity", 1);
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 focus2.style("opacity", 1);
               }
             })
             .on("mousemove", function (event) {
+              if (props.focusVar === yVar2) {
+                d3.selectAll(".path") // Fade the non-selected names in the legend
+                  .style("opacity", 0.2);
+              } else {
+                d3.selectAll(".path1") // Fade the non-selected names in the legend
+                  .style("opacity", 0.2);
+              }
               // recover coordinate we need
               const x0 = x.invert(d3.pointer(event)[0]);
               const i = bisect(data1, x0, 1);
               var j: any;
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 j = bisect(data2, x0, 1);
               }
 
               const selectedData1: any = data1[i];
               var selectedData2: any;
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 selectedData2 = data2[j];
               }
               if (selectedData1) {
@@ -274,9 +281,8 @@ const LineChart = (props: any) => {
                   .attr("cx", x(selectedData2.date))
                   .attr("cy", y1(selectedData2.value));
               }
-              var text1 = [];
-              if (selectedData1) text1 = [selectedData1.value];
-              if (yVar2 != "" && selectedData2) {
+              var text1 = [selectedData1.value];
+              if (yVar2 !== "" && selectedData2) {
                 text1.push(selectedData2.value);
               }
               // props.setHoverData({
@@ -303,8 +309,8 @@ const LineChart = (props: any) => {
                   (selectedData1 && selectedData1.value
                     ? yVar + ": " + selectedData1.value
                     : "") +
-                    "       " +
-                    (yVar2 != "" && selectedData2 && selectedData2.value
+                    "     " +
+                    (yVar2 !== "" && selectedData2 && selectedData2.value
                       ? yVar2 + ": " + selectedData2.value
                       : "")
                 );
@@ -320,10 +326,10 @@ const LineChart = (props: any) => {
             .on("mouseout", function () {
               if (xTitle) xTitle.remove();
               focus1.style("opacity", 0);
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 focus2.style("opacity", 0);
               }
-              if (props.focusVar == yVar2) {
+              if (props.focusVar === yVar2) {
                 d3.selectAll(".path") // Fade the non-selected names in the legend
                   .style("opacity", 1);
               } else {
@@ -335,22 +341,22 @@ const LineChart = (props: any) => {
               const x0 = x.invert(d3.pointer(event)[0]);
               const i = bisect(data1, x0, 1);
               var j: any;
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 j = bisect(data2, x0, 1);
               }
               const selectedData1: any = data1[i];
               var selectedData2: any;
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 selectedData2 = data2[j];
               }
 
               selectedData1.circle = 1;
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 selectedData2.circle = 1;
               }
 
               // TODO: for Harsh - auto scroll to the point on the left side when point is clicked on the graph
-              if (props.focusVar == yVar) {
+              if (props.focusVar === yVar) {
                 // alert(formatDate(selectedData1.date));
                 props.addKeyPoints(
                   formatDate(selectedData1.date),
@@ -397,11 +403,11 @@ const LineChart = (props: any) => {
             .join("circle")
             .attr("clip-path", "urzl(#clip)")
             .attr("r", function (d: any) {
-              return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+              return d.circle === 1 ? "5" : d.highlight ? "5" : "0";
             })
             .attr("opacity", 1)
             .style("fill", function (d: any) {
-              return d.circle == 1 ? "green" : d.highlight ? "green" : "";
+              return d.circle === 1 ? "green" : d.highlight ? "green" : "";
             })
             .style("stroke", "black")
             .style("stroke-width", "0.2")
@@ -424,7 +430,7 @@ const LineChart = (props: any) => {
             .on("mouseout", function () {
               d3.select(this).style(
                 "fill",
-                (d3.select(this) as any)._groups[0][0]["__data__"]["circle"] ==
+                (d3.select(this) as any)._groups[0][0]["__data__"]["circle"] ===
                   1
                   ? "green"
                   : "green"
@@ -439,18 +445,18 @@ const LineChart = (props: any) => {
             });
 
           var circles2: any;
-          if (yVar2 != "") {
+          if (yVar2 !== "") {
             circles2 = svg
               .selectAll(".myDot")
               .data(data2)
               .join("circle")
               .attr("clip-path", "urzl(#clip)")
               .attr("r", function (d: any) {
-                return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+                return d.circle === 1 ? "5" : d.highlight ? "5" : "0";
               })
               .attr("opacity", 1)
               .style("fill", function (d: any) {
-                return d.circle == 1 ? "green" : d.highlight ? "green" : "";
+                return d.circle === 1 ? "green" : d.highlight ? "green" : "";
               })
               .style("stroke", "black")
               .style("stroke-width", "0.2")
@@ -475,7 +481,7 @@ const LineChart = (props: any) => {
                   "fill",
                   (d3.select(this) as any)._groups[0][0]["__data__"][
                     "circle"
-                  ] == 1
+                  ] === 1
                     ? "green"
                     : "green"
                 );
@@ -514,7 +520,7 @@ const LineChart = (props: any) => {
               );
 
               svg.select(".path").attr("d", line1);
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 svg.select(".path1").attr("d", line2);
               }
               circles1.remove();
@@ -524,11 +530,11 @@ const LineChart = (props: any) => {
                 .join("circle")
                 .attr("clip-path", "url(#clip)")
                 .attr("r", function (d: any) {
-                  return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+                  return d.circle === 1 ? "5" : d.highlight ? "5" : "0";
                 })
                 .attr("opacity", 1)
                 .style("fill", function (d: any) {
-                  return d.circle == 1 ? "green" : d.highlight ? "green" : "";
+                  return d.circle === 1 ? "green" : d.highlight ? "green" : "";
                 })
                 .style("stroke", "black")
                 .style("stroke-width", "0.2")
@@ -553,7 +559,7 @@ const LineChart = (props: any) => {
                     "fill",
                     (d3.select(this) as any)._groups[0][0]["__data__"][
                       "circle"
-                    ] == 1
+                    ] === 1
                       ? "green"
                       : "green"
                   );
@@ -566,7 +572,7 @@ const LineChart = (props: any) => {
                     .style("left", event.pageX + 10 + "px");
                 });
 
-              if (yVar2 != "") {
+              if (yVar2 !== "") {
                 circles2.remove();
                 circles2 = svg
                   .selectAll(".myDot")
@@ -574,11 +580,15 @@ const LineChart = (props: any) => {
                   .join("circle")
                   .attr("clip-path", "url(#clip)")
                   .attr("r", function (d: any) {
-                    return d.circle == 1 ? "5" : d.highlight ? "5" : "0";
+                    return d.circle === 1 ? "5" : d.highlight ? "5" : "0";
                   })
                   .attr("opacity", 1)
                   .style("fill", function (d: any) {
-                    return d.circle == 1 ? "green" : d.highlight ? "green" : "";
+                    return d.circle === 1
+                      ? "green"
+                      : d.highlight
+                      ? "green"
+                      : "";
                   })
                   .style("stroke", "black")
                   .style("stroke-width", "0.2")
@@ -603,7 +613,7 @@ const LineChart = (props: any) => {
                       "fill",
                       (d3.select(this) as any)._groups[0][0]["__data__"][
                         "circle"
-                      ] == 1
+                      ] === 1
                         ? "green"
                         : "green"
                     );

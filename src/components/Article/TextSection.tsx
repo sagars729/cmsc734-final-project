@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import { PointType, TextSectionProps } from "./ArticleTypes";
+import { TextSectionProps } from "./ArticleTypes";
 import { textsx } from "./ArticleConstants";
 
 const TextSection = (props: TextSectionProps) => {
@@ -18,7 +18,7 @@ const TextSection = (props: TextSectionProps) => {
 	const getsx = (date: Date) => {
 		if (
 			props.focusDate &&
-			date.getTime() == props.focusDate.getTime()
+			date.getTime() === props.focusDate.getTime()
 		) {
 			return Object.assign({}, textsx, { color: "red" });
 		}
