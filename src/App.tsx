@@ -92,18 +92,6 @@ const App = () => {
     }
   };
 
-  function getFormattedDate(date: any) {
-    var year = date.getFullYear();
-
-    var month = (1 + date.getMonth()).toString();
-    month = month.length > 1 ? month : "0" + month;
-
-    var day = date.getDate().toString();
-    day = day.length > 1 ? day : "0" + day;
-
-    return month + "/" + day + "/" + year;
-  }
-
   const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
 
@@ -131,8 +119,7 @@ const App = () => {
         analysis_yielded: "<input>",
       },
     ];
-    var newtime = getFormattedDate(new Date(time));
-    var jsonObj = { time: newtime, points: jsonPoints };
+    var jsonObj = { time: time, points: jsonPoints };
     newData.push(jsonObj);
 
     newData.sort((a, b) => {
