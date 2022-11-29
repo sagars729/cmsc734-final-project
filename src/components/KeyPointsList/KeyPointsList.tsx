@@ -1,7 +1,6 @@
 import React from "react";
 import { BsArrowsAngleContract } from "react-icons/bs";
 import { BsArrowsAngleExpand } from "react-icons/bs";
-import EditorConvertToHTML from "../TextEditor/TextEditor";
 
 import "./KeyPointsList.css";
 
@@ -77,18 +76,17 @@ const KeyPointsList = (props: any) => {
   }
 
   function convertTime(time: any) {
-    var date = new Date(time);
-    var userTimezoneOffset = date.getTimezoneOffset() * 60000;
-    var d = new Date(date.getTime());
+    let arr = time.split('-');
+    let m = (parseInt(arr[1])-1)
 
     let str =
       "" +
-      monthNames[d.getMonth()] +
+      monthNames[m] +
       " " +
-      d.getDate() +
-      dateOrdinal(d.getDate()) +
+      arr[2] +
+      dateOrdinal(arr[2]) +
       ", " +
-      d.getFullYear();
+      arr[0];
     return str;
   }
 
@@ -119,7 +117,7 @@ const KeyPointsList = (props: any) => {
             <div className="col-lg">
               <div className="card card-margin">
                 <div className="card-header no-border">
-                  <h5 className="card-title">{item.time}</h5>
+                  <h5 className="card-title">{convertTime(item.time)}</h5>
                 </div>
 
                 {item.points.map((point: any, pointIdx: number) => (
