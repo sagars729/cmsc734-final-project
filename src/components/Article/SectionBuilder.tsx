@@ -118,9 +118,9 @@ const SectionBuilder = (props: SectionBuilderProps) => {
 				<Chart
 					// @ts-ignore TS2769
 					startDate={new Date(props.data[0].Date)}
-					// @ts-ignore TS2769
 					endDate={
 						new Date(
+					    // @ts-ignore TS2769
 							props.data[
 								props.data
 									.length -

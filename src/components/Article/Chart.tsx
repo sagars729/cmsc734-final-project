@@ -39,8 +39,8 @@ const Chart = (props: ChartProps) => {
 
 		const xScale = d3
 			.scaleTime()
-			// @ts-ignore TS2352
 			.domain(
+			  // @ts-ignore TS2352
 				d3.extent(data, (d) => new Date(d.Date)) as [
 					Date,
 					Date
@@ -50,10 +50,10 @@ const Chart = (props: ChartProps) => {
 
 		const yScale = d3
 			.scaleLinear()
-			// @ts-ignore TS2352
 			.domain(
 				d3.extent(
 					data,
+			    // @ts-ignore TS2352
 					(d) => parseInt(d.Cases) * props.ycoef
 				) as [number, number]
 			)
@@ -133,9 +133,9 @@ const Chart = (props: ChartProps) => {
 			.attr("fill", "none")
 			.attr("stroke", props.lineColor)
 			.attr("stroke-width", 1.5)
-			// @ts-ignore TS2345
 			.attr(
 				"d",
+			  // @ts-ignore TS2345
 				d3
 					.line()
 					.x((d) =>
@@ -192,12 +192,12 @@ const Chart = (props: ChartProps) => {
 
 		if (props.focusDate) {
 			props.keyPoints
-				// @ts-ignore TS2532
 				.filter(
 					(keyPoint) =>
 						new Date(
 							keyPoint.time
 						).getTime() ==
+				    // @ts-ignore TS2532
 						props.focusDate.getTime()
 				)
 				.forEach((point) =>
