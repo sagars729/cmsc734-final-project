@@ -30,8 +30,8 @@ const NavButtons = (props: NavButtonsProps) => {
 			onClick={() => {
 				// @ts-ignore TS2345
 				props.setTitle($("#article-title-input").val());
-				// @ts-ignore TS2345
 				props.setByline(
+				  // @ts-ignore TS2345
 					$("#article-byline-input").val()
 				);
 				// @ts-ignore TS2345
@@ -78,11 +78,11 @@ const NavButtons = (props: NavButtonsProps) => {
 			onClick={() => {
 				props.setSections(
 					props.sections.map((section, i) => {
-						// @ts-ignore TS2345
 						return Object.assign(
 							{},
 							section,
 							{
+						    // @ts-ignore TS2345
 								header: $(
 									"#article-section-header-" +
 										i
