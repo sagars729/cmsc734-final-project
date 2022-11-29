@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react";
-import Typography from "@mui/material/Typography";
 import "@fontsource/playfair-display";
 
 import TextSection from "./TextSection";
@@ -13,7 +12,7 @@ export const validateAndSetColor = (
 	color: string,
 	setColor: Dispatch<SetStateAction<string>>
 ) => {
-	if (color.length != 7 || !color.startsWith("#")) {
+	if (color.length !== 7 || !color.startsWith("#")) {
 		return false;
 	}
 

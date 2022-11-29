@@ -25,13 +25,13 @@ const KeyPointsList = (props: any) => {
   };
 
   // don't think we'll need this
-  const componentDidUpdate = (id: any) => {
-    var element = document.getElementById(id);
-    if (element != null) {
-      element.scrollIntoView();
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  // const componentDidUpdate = (id: any) => {
+  //   var element = document.getElementById(id);
+  //   if (element != null) {
+  //     element.scrollIntoView();
+  //     element.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // };
 
   const deletePoint = (time: string, index: number) => {
     let newData = [...props.data];
