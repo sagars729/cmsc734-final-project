@@ -25,49 +25,65 @@ const LineChart = (props: any) => {
               yVar2 = props.variable[2];
             }
           }
-          console.log(results);
-
-          // const applyZoomAndFocusOn: any = props.variable == "Cases" ? 0 : 1;
           data.forEach(function (d: any, i: any) {
-            const index = props.keyPoints.findIndex(
-              (x: any) => x.time === d[xVar]
-            );
-            const calcdate =
-              d3.timeParse("%Y-%m-%d")(d[xVar]) || new Date(d[xVar]);
+            var circleTooltipList: any = new Array(4);
+            circleTooltipList[0] = 0;
+            circleTooltipList[2] = 0;
+            circleTooltipList[1] = "";
+            circleTooltipList[3] = "";
+            props.keyPoints.forEach((e: any, j: any) => {
+              if (e.time === d[xVar]) {
+                if (e.points[0]["variable"] === yVar) {
+                  circleTooltipList[0] = 1;
+                  circleTooltipList[1] = e.points[0]["analysis_yielded"];
+                }
+
+                if (e.points[0]["variable"] === yVar2) {
+                  circleTooltipList[2] = 1;
+                  circleTooltipList[3] = e.points[0]["analysis_yielded"];
+                }
+              }
+            });
+            // console.log(circleTooltipList);
+
+            const calcdate = new Date(d[xVar]); //d3.timeParse("%Y-%m-%d")(d[xVar]); //|| new Date(d[xVar]);
+
             data1.push({
-              circle:
-                index !== -1 &&
-                props.keyPoints[index].points[0]["variable"] === yVar
-                  ? 1
-                  : 0,
+              circle: circleTooltipList[0],
               date: calcdate,
-              tooltip:
-                index !== -1 &&
-                props.keyPoints[index].points[0]["variable"] === yVar
-                  ? props.keyPoints[index].points[0]["analysis_yielded"]
-                  : "",
+              tooltip: circleTooltipList[1],
               value: +d[yVar],
             });
             if (yVar2 !== "") {
               data2.push({
-                circle:
-                  index !== -1 &&
-                  props.keyPoints[index].points[0]["variable"] === yVar2
-                    ? 1
-                    : 0,
+                circle: circleTooltipList[2],
                 date: calcdate,
-                tooltip:
-                  index !== -1 &&
-                  props.keyPoints[index].points[0]["variable"] === yVar2
-                    ? props.keyPoints[index].points[0]["analysis_yielded"]
-                    : "",
+                tooltip: circleTooltipList[3],
                 value: +d[yVar2],
               });
             }
           });
 
+          data1.sort(function (a: any, b: any) {
+            var keyA = a.date,
+              keyB = b.date;
+            // Compare the 2 dates
+            if (keyA < keyB) return -1;
+            if (keyA > keyB) return 1;
+            return 0;
+          });
+          if (data2) {
+            data2.sort(function (a: any, b: any) {
+              var keyA = a.date,
+                keyB = b.date;
+              // Compare the 2 dates
+              if (keyA < keyB) return -1;
+              if (keyA > keyB) return 1;
+              return 0;
+            });
+          }
+
           if (props.isLoadedInt === 1) {
-            console.log("set points data");
             props.setIsLoadedInt(2);
             props.setPointsData(data);
           }
@@ -98,7 +114,7 @@ const LineChart = (props: any) => {
                 return d.date;
               }) as [any, any]
             )
-            .range([20, chartWidth]);
+            .range([40, chartWidth]);
 
           const y0 = d3
             .scaleLinear()
@@ -119,14 +135,6 @@ const LineChart = (props: any) => {
               }) as number,
             ])
             .rangeRound([chartHeight, 0]);
-
-          // // Y axis label:
-          // svg
-          //   .append("text")
-          //   .attr("transform", "rotate(-90)")
-          //   .attr("y", -padding.l + 20)
-          //   .attr("x", -padding.t)
-          //   .text(props.general["y-axis"]);
 
           //Adding Axes
           svg
@@ -219,11 +227,10 @@ const LineChart = (props: any) => {
           }
           // // Create a rect on top of the svg area: this rectangle recovers mouse position
           var xTitle: any;
+
           svg
             .append("rect")
             .style("fill", "none")
-            .attr("class", "path2")
-            .attr("clip-path", "url(#clip)")
             .style("pointer-events", "all")
             .attr("width", chartWidth)
             .attr("height", chartHeight)
@@ -243,17 +250,18 @@ const LineChart = (props: any) => {
               }
               // recover coordinate we need
               const x0 = x.invert(d3.pointer(event)[0]);
-              const i = bisect(data1, x0, 1);
+              const i =
+                bisect(data1, x0, 1) === 0 ? 0 : bisect(data1, x0, 1) - 1;
               var j: any;
               if (yVar2 !== "") {
-                j = bisect(data2, x0, 1);
+                j = bisect(data2, x0, 1) === 0 ? 0 : bisect(data2, x0, 1) - 1;
               }
+
               const selectedData1: any = data1[i];
               var selectedData2: any;
               if (yVar2 !== "") {
                 selectedData2 = data2[j];
               }
-
               if (selectedData1) {
                 focus1
                   .attr("cx", x(selectedData1.date))
@@ -268,35 +276,31 @@ const LineChart = (props: any) => {
               if (yVar2 !== "" && selectedData2) {
                 text1.push(selectedData2.value);
               }
-              // props.setHoverData({
-              //   date:
-              //     (selectedData1.date as Date).getMonth() +
-              //     "/" +
-              //     (selectedData1.date as Date).getFullYear(),
-              //   value: text1,
-              // });
               if (xTitle) xTitle.remove();
               xTitle = svg
                 .append("text")
-                .attr("x", 0)
+                .attr("x", 40)
                 .attr("y", chartHeight + padding.t + 20)
                 .text(
-                  // "Date: " +
-                  //   ((selectedData1.date as Date).getMonth() + 1) +
-                  //   "/" +
-                  // (selectedData1.date as Date).getDay() +
-                  //   1 +
-                  //   "/" +
-                  //   (selectedData1.date as Date).getFullYear() +
-                  //   "     " +
-                  (selectedData1 && selectedData1.value
-                    ? yVar + ": " + selectedData1.value
-                    : "") +
+                  "Date: " +
+                    selectedData1.date.toISOString().slice(0, 10) +
+                    "     " +
+                    (selectedData1 && selectedData1.value
+                      ? yVar + ": " + selectedData1.value
+                      : "") +
                     "     " +
                     (yVar2 !== "" && selectedData2 && selectedData2.value
                       ? yVar2 + ": " + selectedData2.value
                       : "")
                 );
+
+              if (props.focusVar === yVar2) {
+                d3.selectAll(".path") // Fade the non-selected names in the legend
+                  .style("opacity", 0.2);
+              } else {
+                d3.selectAll(".path1") // Fade the non-selected names in the legend
+                  .style("opacity", 0.2);
+              }
             })
             .on("mouseout", function () {
               if (xTitle) xTitle.remove();
@@ -314,12 +318,14 @@ const LineChart = (props: any) => {
             })
             .on("click", function (event) {
               const x0 = x.invert(d3.pointer(event)[0]);
-              const i = bisect(data1, x0, 1);
+              const i =
+                bisect(data1, x0, 1) === 0 ? 0 : bisect(data1, x0, 1) - 1;
               var j: any;
               if (yVar2 !== "") {
-                j = bisect(data2, x0, 1);
+                j = bisect(data2, x0, 1) === 0 ? 0 : bisect(data2, x0, 1) - 1;
               }
               const selectedData1: any = data1[i];
+              // console.log(x0, i, data1, selectedData1);
               var selectedData2: any;
               if (yVar2 !== "") {
                 selectedData2 = data2[j];
@@ -330,16 +336,14 @@ const LineChart = (props: any) => {
                 selectedData2.circle = 1;
               }
 
-              // TODO: for Harsh - auto scroll to the point on the left side when point is clicked on the graph
               if (props.focusVar === yVar) {
-                // alert(formatDate(selectedData1.date));
+                // console.log(formatDate(selectedData1.date));
                 props.addKeyPoints(
                   formatDate(selectedData1.date),
                   yVar,
                   selectedData1.value
                 );
               } else {
-                // alert(formatDate(selectedData2.date));
                 props.addKeyPoints(
                   formatDate(selectedData2.date),
                   yVar2,
@@ -348,15 +352,19 @@ const LineChart = (props: any) => {
               }
             });
 
-          function formatDate(d: Date) {
-            var month = "" + (d.getMonth() + 1),
-              day = "" + (d.getDate() + 1),
-              year = d.getFullYear();
+          function formatDate(d: any) {
+            return d.toISOString().slice(0, 10);
+            // var arr = d.split("-");
+            // console.log(d.toISOString().slice(0, 10));
 
-            if (month.length < 2) month = "0" + month;
-            if (day.length < 2) day = "0" + day;
+            // var month = "" + d.getUTCMonth(),
+            //   day = "" + d.getUTCDate(),
+            //   year = d.getUTCFullYear();
 
-            return [year, month, day].join("-");
+            // if (month.length < 2) month = "0" + month;
+            // if (day.length < 2) day = "0" + day;
+
+            // return [year, month, day].join("-");
           }
 
           // Tooltip On Hover
@@ -370,10 +378,10 @@ const LineChart = (props: any) => {
             .style("font-size", "13px")
             .style("color", "#fff")
             .attr("class", "keyPointTip");
-
+          // console.log(data1, data2, props.keyPoints);
           // Adding data Key points circle
           var circles1 = svg
-            .selectAll(".myDot")
+            .selectAll(".myDot1")
             .data(data1)
             .join("circle")
             .attr("clip-path", "urzl(#clip)")
@@ -422,7 +430,7 @@ const LineChart = (props: any) => {
           var circles2: any;
           if (yVar2 !== "") {
             circles2 = svg
-              .selectAll(".myDot")
+              .selectAll(".myDot2")
               .data(data2)
               .join("circle")
               .attr("clip-path", "urzl(#clip)")
@@ -500,7 +508,7 @@ const LineChart = (props: any) => {
               }
               circles1.remove();
               circles1 = svg
-                .selectAll(".myDot")
+                .selectAll(".myDot1")
                 .data(data1)
                 .join("circle")
                 .attr("clip-path", "url(#clip)")
@@ -550,7 +558,7 @@ const LineChart = (props: any) => {
               if (yVar2 !== "") {
                 circles2.remove();
                 circles2 = svg
-                  .selectAll(".myDot")
+                  .selectAll(".myDot2")
                   .data(data2)
                   .join("circle")
                   .attr("clip-path", "url(#clip)")
@@ -559,7 +567,11 @@ const LineChart = (props: any) => {
                   })
                   .attr("opacity", 1)
                   .style("fill", function (d: any) {
-                    return d.circle === 1 ? "green" : d.highlight ? "green" : "";
+                    return d.circle === 1
+                      ? "green"
+                      : d.highlight
+                      ? "green"
+                      : "";
                   })
                   .style("stroke", "black")
                   .style("stroke-width", "0.2")
@@ -610,6 +622,8 @@ const LineChart = (props: any) => {
         style={{
           width: "98%",
           height: "600px",
+          overflowY: "unset",
+          overflowX: "hidden",
         }}
         ref={d3Chart}
       ></svg>
