@@ -25,9 +25,8 @@ const LineChart = (props: any) => {
               yVar2 = props.variable[2];
             }
           }
-          console.log(results);
+          // console.log(props.keyPoints);
 
-          // const applyZoomAndFocusOn: any = props.variable == "Cases" ? 0 : 1;
           data.forEach(function (d: any, i: any) {
             const index = props.keyPoints.findIndex(
               (x: any) => x.time === d[xVar]
@@ -137,14 +136,6 @@ const LineChart = (props: any) => {
               }) as number,
             ])
             .rangeRound([chartHeight, 0]);
-
-          // // Y axis label:
-          // svg
-          //   .append("text")
-          //   .attr("transform", "rotate(-90)")
-          //   .attr("y", -padding.l + 20)
-          //   .attr("x", -padding.t)
-          //   .text(props.general["y-axis"]);
 
           //Adding Axes
           svg
@@ -285,13 +276,6 @@ const LineChart = (props: any) => {
               if (yVar2 !== "" && selectedData2) {
                 text1.push(selectedData2.value);
               }
-              // props.setHoverData({
-              //   date:
-              //     (selectedData1.date as Date).getMonth() +
-              //     "/" +
-              //     (selectedData1.date as Date).getFullYear(),
-              //   value: text1,
-              // });
               if (xTitle) xTitle.remove();
               xTitle = svg
                 .append("text")
@@ -355,16 +339,13 @@ const LineChart = (props: any) => {
                 selectedData2.circle = 1;
               }
 
-              // TODO: for Harsh - auto scroll to the point on the left side when point is clicked on the graph
               if (props.focusVar === yVar) {
-                // alert(formatDate(selectedData1.date));
                 props.addKeyPoints(
                   formatDate(selectedData1.date),
                   yVar,
                   selectedData1.value
                 );
               } else {
-                // alert(formatDate(selectedData2.date));
                 props.addKeyPoints(
                   formatDate(selectedData2.date),
                   yVar2,
@@ -374,8 +355,8 @@ const LineChart = (props: any) => {
             });
 
           function formatDate(d: Date) {
-            var month = "" + (d.getMonth() + 1),
-              day = "" + (d.getDate() + 1),
+            var month = "" + d.getMonth(),
+              day = "" + d.getDate(),
               year = d.getFullYear();
 
             if (month.length < 2) month = "0" + month;

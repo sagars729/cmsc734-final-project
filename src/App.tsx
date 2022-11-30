@@ -6,7 +6,11 @@ import { DSVRowArray } from "d3-dsv";
 import { data_processing } from "./data";
 import ArticleContainer from "./components/Article/ArticleContainer";
 import AttrSelection from "./components/AttrSelection/AttrSelection";
-import { BsArrowsAngleContract, BsArrowsAngleExpand, BsFolderSymlinkFill } from "react-icons/bs";
+import {
+  BsArrowsAngleContract,
+  BsArrowsAngleExpand,
+  BsFolderSymlinkFill,
+} from "react-icons/bs";
 import logo from "./logo2.png";
 
 const emptyData = [
@@ -89,7 +93,6 @@ const App = () => {
     }
   };
 
-
   const addKeyPoint = (time: string, attribute: string, attrValue: number) => {
     let newData = [...keyPointsData];
 
@@ -165,15 +168,15 @@ const App = () => {
               </div>
               <div className="row">
                 <div className="col-md-2 gDriveLink">
-
-
-                  <a href="https://drive.google.com/drive/folders/1azW5IeEg1evdTRhOwkFievTKg6wO0sgn?usp=share_link" target="_blank" rel="noreferrer">
+                  <a
+                    href="https://drive.google.com/drive/folders/1azW5IeEg1evdTRhOwkFievTKg6wO0sgn?usp=share_link"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <BsFolderSymlinkFill
-                    style={{marginTop: "50%",
-                            marginLeft: "50%"}}
+                      style={{ marginTop: "50%", marginLeft: "50%" }}
                     />
                   </a>
-
                 </div>
                 <div className="col-md-10">
                   <input
@@ -191,7 +194,6 @@ const App = () => {
                     id="formFile"
                   />
                 </div>
-                
               </div>
             </div>
           </span>
