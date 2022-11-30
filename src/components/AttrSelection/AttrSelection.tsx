@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Papa from "papaparse";
-import { convertToObject } from "typescript";
 
 // import "./AttrSelection.css";
 
@@ -58,7 +57,7 @@ const AttrSelection = (props:any) => {
             }
             
         }
-    });
+    }, [props, columnHeaders]);
 
     const handleOnChange = (item:any, position:any) => {
         let newSelections = [...props.selectedColumns];
