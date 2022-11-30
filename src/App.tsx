@@ -146,7 +146,6 @@ const App = () => {
       (selectedColumns[2] ? selectedColumns[2] : "")
     );
   };
-
   const expandChart = () => {
     setExpandChart(true);
   };
