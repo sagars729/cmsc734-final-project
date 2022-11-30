@@ -67,6 +67,8 @@ const App = () => {
     }
   };
 
+  console.log("Selected Columns", selectedColumns)
+
   const btnProcessData = () => {
     setShowAttrSelection(false);
     process_data(dataCSV, selectedColumns, smoothData).then(function (result) {
@@ -130,224 +132,229 @@ const App = () => {
   };
 
   return (
-    <div className="container">
+    <>
       {!renderArticle || !pointsData ? (
-        <div id="author-view">
-          <span className="row">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                border: "solid",
-                marginBottom: "5px",
-                marginTop: "5px",
-                padding: "10px",
-                alignItems: "center",
-              }}
-            >
-              {/* <div
-                style={{
-                  display: "flex",
-                }}
-              >
-                <div>
-                  <img src={logo} width="50" height="50" />
-                </div>
-                <div
-                  style={{
-                    fontWeight: "bold",
-                    fontFamily: "cursive",
-                    fontSize: "35px",
-                  }}
-                >
-                  <u>Time Series Authoring Tool</u>
-                </div>
-              </div> */}
-              <div>
-                <img src={logo} width="350" height="80" alt="Src not found" />
-              </div>
-              <div className="row">
-                <div className="col-md-2 gDriveLink">
-                  <a
-                    href="https://drive.google.com/drive/folders/1azW5IeEg1evdTRhOwkFievTKg6wO0sgn?usp=share_link"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <BsFolderSymlinkFill
-                      style={{ marginTop: "50%", marginLeft: "50%" }}
-                    />
-                  </a>
-                </div>
-                <div className="col-md-10">
-                  <input
-                    type="file"
-                    name="file"
-                    accept=".csv"
-                    onChange={changeHandler}
-                    style={{
-                      display: "block",
-                      margin: "10px auto",
-                      border: "1.5px dotted black",
-                      backgroundColor: "#eaf4f4",
-                    }}
-                    className="form-control"
-                    id="formFile"
-                  />
-                </div>
-              </div>
-            </div>
-          </span>
-          {selectedColumns.length > 0 ? (
+        <div className="container">
+          <div id="author-view">
             <span className="row">
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  paddingLeft: 0,
-                  paddingRight: 0,
+                  justifyContent: "space-between",
+                  border: "solid",
+                  marginBottom: "5px",
+                  marginTop: "5px",
+                  padding: "10px",
+                  alignItems: "center",
                 }}
               >
-                <div
+                {/* <div
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
-                    border: "solid",
-                    marginBottom: "5px",
-                    padding: "10px",
                   }}
                 >
                   <div>
-                    <span style={{ fontWeight: "bold" }}>
-                      <u>Focus and Legend</u>{" "}
-                    </span>
-                    <select
-                      onChange={handleFocusChange}
-                      style={changeColor(this)}
+                    <img src={logo} width="50" height="50" />
+                  </div>
+                  <div
+                    style={{
+                      fontWeight: "bold",
+                      fontFamily: "cursive",
+                      fontSize: "35px",
+                    }}
+                  >
+                    <u>Time Series Authoring Tool</u>
+                  </div>
+                </div> */}
+                <div>
+                  <img src={logo} width="350" height="80" alt="Src not found" />
+                </div>
+                <div className="row">
+                  <div className="col-md-2 gDriveLink">
+                    <a
+                      href="https://drive.google.com/drive/folders/1azW5IeEg1evdTRhOwkFievTKg6wO0sgn?usp=share_link"
+                      target="_blank"
+                      rel="noreferrer"
                     >
-                      {selectedColumns.slice(1).map((col) => (
-                        <option value={col} key={col}>
-                          {col}
-                        </option>
-                      ))}
-                    </select>
+                      <BsFolderSymlinkFill
+                        style={{ marginTop: "50%", marginLeft: "50%" }}
+                      />
+                    </a>
                   </div>
-                  <div>
-                    <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
-                      {chartTitle}
-                    </p>
+                  <div className="col-md-10">
+                    <input
+                      type="file"
+                      name="file"
+                      accept=".csv"
+                      onChange={changeHandler}
+                      style={{
+                        display: "block",
+                        margin: "10px auto",
+                        border: "1.5px dotted black",
+                        backgroundColor: "#eaf4f4",
+                      }}
+                      className="form-control"
+                      id="formFile"
+                    />
                   </div>
-                  <div style={{ display: "flex" }}>
-                    <p>
-                      <b>X-axis:</b> {selectedColumns[0]}
-                    </p>
-                    <span style={{ margin: "5px" }}></span>
-                    <p>
-                      <b>Y-axis:</b>
-                      {getYAxis()}
-                    </p>
-                  </div>
-                  {hoverData.date ? (
-                    <div>
-                      <span>
-                        <b>Date: </b> {hoverData.date}
-                      </span>
-                      <br />
-                      <span>
-                        <b>{selectedColumns[1]}: </b>
-                        {hoverData.value[0]}
-                      </span>
-                      <br />
-                      {selectedColumns[2] ? (
-                        <span>
-                          <b>{selectedColumns[2]}: </b>
-                          {hoverData.value[1]}
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : null}
                 </div>
               </div>
             </span>
-          ) : null}
-          <div className="row">
-            <div
-              className={
-                isKeyPointsExpanded && !isChartExpanded
-                  ? fullPageClassName
-                  : halfPageClassName
-              }
-              hidden={isChartExpanded ? true : false}
-            >
-              {showAttrSelection && dataCSV ? (
-                <AttrSelection
-                  show={showAttrSelection}
-                  setSelectedColumns={setSelectedColumns}
-                  selectedColumns={selectedColumns}
+            {selectedColumns.length > 0 ? (
+              <span className="row">
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      border: "solid",
+                      marginBottom: "5px",
+                      padding: "10px",
+                    }}
+                  >
+                    <div>
+                      <span style={{ fontWeight: "bold" }}>
+                        <u>Focus and Legend</u>{" "}
+                      </span>
+                      <select
+                        onChange={handleFocusChange}
+                        style={changeColor(this)}
+                      >
+                        {selectedColumns.slice(1).map((col) => (
+                          <option value={col} key={col}>
+                            {col}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
+                        {chartTitle}
+                      </p>
+                    </div>
+                    <div style={{ display: "flex" }}>
+                      <p>
+                        <b>X-axis:</b> {selectedColumns[0]}
+                      </p>
+                      <span style={{ margin: "5px" }}></span>
+                      <p>
+                        <b>Y-axis:</b>
+                        {getYAxis()}
+                      </p>
+                    </div>
+                    {hoverData.date ? (
+                      <div>
+                        <span>
+                          <b>Date: </b> {hoverData.date}
+                        </span>
+                        <br />
+                        <span>
+                          <b>{selectedColumns[1]}: </b>
+                          {hoverData.value[0]}
+                        </span>
+                        <br />
+                        {selectedColumns[2] ? (
+                          <span>
+                            <b>{selectedColumns[2]}: </b>
+                            {hoverData.value[1]}
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              </span>
+            ) : null}
+            <div className="row">
+              <div
+                className={
+                  isKeyPointsExpanded && !isChartExpanded
+                    ? fullPageClassName
+                    : halfPageClassName
+                }
+                hidden={isChartExpanded ? true : false}
+              >
+                {showAttrSelection && dataCSV ? (
+                  <AttrSelection
+                    show={showAttrSelection}
+                    setSelectedColumns={setSelectedColumns}
+                    selectedColumns={selectedColumns}
+                    csv={dataCSV}
+                    btnProcessData={btnProcessData}
+                    setSmoothData={setSmoothData}
+                    smoothData={smoothData}
+                  />
+                ) : (
+                  <KeyPointsList
+                    data={keyPointsData}
+                    setData={setKeyPointsData}
+                    addKeyPoints={addKeyPoint}
+                    disabled={uploadedCsvBool}
+                    setRenderArticle={setRenderArticle}
+                    isKeyPointsExpanded={isKeyPointsExpanded}
+                    setExpandKeyPoints={setExpandKeyPoints}
+                    isChartExpanded={isChartExpanded}
+                  />
+                )}
+              </div>
+              {/* <div className="m-2"></div> */}
+              <div
+                className={
+                  !isKeyPointsExpanded && isChartExpanded
+                    ? fullPageClassName
+                    : halfPageClassName
+                }
+                hidden={isKeyPointsExpanded ? true : false}
+              >
+                {!isChartExpanded ? (
+                  <BsArrowsAngleExpand
+                    className="top-right"
+                    onClick={() => expandChart()}
+                  />
+                ) : (
+                  <BsArrowsAngleContract
+                    className="top-right"
+                    onClick={() => collapseChart()}
+                  />
+                )}
+                <LineChart
                   csv={dataCSV}
-                  btnProcessData={btnProcessData}
-                  setSmoothData={setSmoothData}
-                  smoothData={smoothData}
-                />
-              ) : (
-                <KeyPointsList
-                  data={keyPointsData}
-                  setData={setKeyPointsData}
+                  showAttrSelection={showAttrSelection}
+                  keyPoints={keyPointsData}
+                  variable={selectedColumns}
+                  focusVar={focus}
+                  resize={resize}
+                  setResize={setResize}
+                  isLoadedInt={isLoadedInt}
+                  setIsLoadedInt={setIsLoadedInt}
                   addKeyPoints={addKeyPoint}
-                  disabled={uploadedCsvBool}
-                  setRenderArticle={setRenderArticle}
-                  isKeyPointsExpanded={isKeyPointsExpanded}
-                  setExpandKeyPoints={setExpandKeyPoints}
-                  isChartExpanded={isChartExpanded}
+                  setData={setKeyPointsData}
+                  setHoverData={setHoverData}
+                  setPointsData={setPointsData}
+                  // isShowingAttrSelection={showAttrSelection}
                 />
-              )}
-            </div>
-            {/* <div className="m-2"></div> */}
-            <div
-              className={
-                !isKeyPointsExpanded && isChartExpanded
-                  ? fullPageClassName
-                  : halfPageClassName
-              }
-              hidden={isKeyPointsExpanded ? true : false}
-            >
-              {!isChartExpanded ? (
-                <BsArrowsAngleExpand
-                  className="top-right"
-                  onClick={() => expandChart()}
-                />
-              ) : (
-                <BsArrowsAngleContract
-                  className="top-right"
-                  onClick={() => collapseChart()}
-                />
-              )}
-              <LineChart
-                csv={dataCSV}
-                showAttrSelection={showAttrSelection}
-                keyPoints={keyPointsData}
-                variable={selectedColumns}
-                focusVar={focus}
-                resize={resize}
-                setResize={setResize}
-                isLoadedInt={isLoadedInt}
-                setIsLoadedInt={setIsLoadedInt}
-                addKeyPoints={addKeyPoint}
-                setData={setKeyPointsData}
-                setHoverData={setHoverData}
-                setPointsData={setPointsData}
-                // isShowingAttrSelection={showAttrSelection}
-              />
+              </div>
             </div>
           </div>
         </div>
       ) : (
-        <ArticleContainer
-          data={pointsData}
-          keyPoints={keyPointsData}
-          setRenderArticle={setRenderArticle}
-        />
+        <div className="container2">
+          <ArticleContainer
+            data={pointsData}
+            keyPoints={keyPointsData}
+            features={selectedColumns}
+            setRenderArticle={setRenderArticle}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -42,7 +42,12 @@ const NavButtons = (props: NavButtonsProps) => {
 				props.setYlabel($("#chart-yaxis-input").val());
 				// @ts-ignore TS2345
 				props.setYcoef($("#chart-yscale-input").val());
-
+        if (props.bivariate) {
+				  // @ts-ignore TS2345
+				  props.setYlabel2($("#chart-yaxis2-input").val());
+				  // @ts-ignore TS2345
+				  props.setYcoef2($("#chart-yscale2-input").val());
+        }
 				props.setShowBuilder(false);
 				props.setShowSectionBuilder(true);
 			}}

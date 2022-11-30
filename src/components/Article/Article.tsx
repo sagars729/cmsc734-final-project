@@ -36,6 +36,8 @@ const Article = (props: ArticleProps) => {
 		}
 	};
 
+	console.log(props.keyPoints);
+
 	useEffect(() => {
 		const keyup = (e: any) => {
 			if (e.code === "ArrowUp") transition(-1);
@@ -110,6 +112,13 @@ const Article = (props: ArticleProps) => {
 								keyPoints={
 									props.keyPoints
 								}
+								x={
+									props
+										.features[0]
+								}
+								primaryPointColor={
+									props.primaryPointColor
+								}
 							/>
 						</Grid>
 						<Grid
@@ -148,6 +157,9 @@ const Article = (props: ArticleProps) => {
 								lineColor={
 									props.lineColor
 								}
+								secondLineColor={
+									props.secondLineColor
+								}
 								width={500}
 								height={250}
 								xlabel={
@@ -158,6 +170,18 @@ const Article = (props: ArticleProps) => {
 								}
 								ycoef={
 									props.ycoef
+								}
+								x={
+									props
+										.features[0]
+								}
+								y1={
+									props
+										.features[1]
+								}
+								y2={
+									props
+										.features[2]
 								}
 							/>
 						</Grid>

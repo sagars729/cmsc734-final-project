@@ -19,13 +19,16 @@ const ArticleContainer = (props: ArticleContainerProps) => {
   const [primaryPointColor, setPrimaryPointColor] = useState<string>("#ff0000");
   const [secondaryPointColor, setSecondaryPointColor] = useState<string>("#ffc107");
   const [lineColor, setLineColor] = useState<string>("#ffffff");
+  const [secondLineColor, setSecondLineColor] = useState<string>("#000000");
   const [showBuilder, setShowBuilder] = useState<boolean>(true);
   const [showSectionBuilder, setShowSectionBuilder] = useState<boolean>(false);
   const [sections, setSections] = useState<SectionType[]>([]);
-  const [xlabel, setXlabel] = useState<string>("");
-  const [ylabel, setYlabel] = useState<string>("");
+  const [xlabel, setXlabel] = useState<string>(props.features[0] || "");
+  const [ylabel, setYlabel] = useState<string>(props.features[1] || "");
   const [ycoef, setYcoef] = useState<number>(1);
-
+  const [ylabel2, setYlabel2] = useState<string>(props.features[2] || "");
+  const [ycoef2, setYcoef2] = useState<number>(1);
+  const bivariate = props.features.length >= 3;
 
   return (
     <Box sx={{
@@ -45,14 +48,20 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            primaryPointColor={primaryPointColor}
            secondaryPointColor={secondaryPointColor}
            lineColor={lineColor}
+           secondLineColor={secondLineColor}
            setBackgroundColor={setBackgroundColor}
            setColor={setColor}
            setPrimaryPointColor={setPrimaryPointColor}
            setSecondaryPointColor={setSecondaryPointColor}
            setLineColor={setLineColor}
+           setSecondLineColor={setSecondLineColor}
            xlabel={xlabel}
            ylabel={ylabel}
            ycoef={ycoef}
+           features={props.features}
+           bivariate={bivariate}
+           ylabel2={ylabel2}
+           ycoef2={ycoef2}
          />
        ) : (<></>)}
        {showSectionBuilder ? (
@@ -65,11 +74,15 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            primaryPointColor={primaryPointColor}
            secondaryPointColor={secondaryPointColor}
            lineColor={lineColor}
+           secondLineColor={secondLineColor}
            sections={sections}
            setSections={setSections}
            xlabel={xlabel}
            ylabel={ylabel}
            ycoef={ycoef}
+           ylabel2={ylabel2}
+           ycoef2={ycoef2}
+           features={props.features}
          />
        ): (<></>)}
        {(!showSectionBuilder && !showBuilder) ? (
@@ -83,10 +96,14 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            primaryPointColor={primaryPointColor}
            secondaryPointColor={secondaryPointColor}
            lineColor={lineColor}
+           secondLineColor={secondLineColor}
            sections={sections}
            xlabel={xlabel}
            ylabel={ylabel}
            ycoef={ycoef}
+           ylabel2={ylabel2}
+           ycoef2={ycoef2}
+           features={props.features}
          />
        ) : (<></>)}
        <NavButtons
@@ -105,6 +122,9 @@ const ArticleContainer = (props: ArticleContainerProps) => {
          setXlabel={setXlabel}
          setYlabel={setYlabel}
          setYcoef={setYcoef}
+         bivariate={bivariate}
+         setYlabel2={setYlabel2}
+         setYcoef2={setYcoef2}
        />
     </Box>     
   )
