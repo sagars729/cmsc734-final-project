@@ -155,6 +155,28 @@ const LineChart = (props: any) => {
               .attr("transform", "translate(" + (chartWidth + 25) + ",0)")
               .call(d3.axisLeft(y1));
           }
+          if (yVar2 != "")
+            svg
+              .append("text")
+              .attr("text-anchor", "end")
+              .attr("y", chartWidth + 25)
+              .attr("dy", ".75em")
+              .attr("transform", "rotate(-90)")
+              .text(yVar2);
+
+          svg
+            .append("text")
+            .attr("text-anchor", "end")
+            .attr("y", 0)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text(yVar);
+
+          // svg
+          //   .append("text")
+          //   .attr("x", 40)
+          //   .attr("y", chartHeight + padding.t + 20)
+          //   .text(yVar2);
 
           const line1: any = d3
             .line()
