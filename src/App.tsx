@@ -45,6 +45,7 @@ const App = () => {
   const [pointsData, setPointsData] = useState<DSVRowArray | null>(null);
   const [isKeyPointsExpanded, setExpandKeyPoints] = useState(false);
   const [isChartExpanded, setExpandChart] = useState(false);
+  const [smoothData, setSmoothData] = useState(false);
 
   const halfPageClassName = "col-md-6 borderStyle nopadding";
   const fullPageClassName = "col-md-12 borderStyle nopadding";
@@ -284,6 +285,8 @@ const App = () => {
                   selectedColumns={selectedColumns}
                   csv={dataCSV}
                   btnProcessData={btnProcessData}
+                  setSmoothData={setSmoothData}
+                  smoothData={smoothData}
                 />
               ) : (
                 <KeyPointsList
