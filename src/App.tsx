@@ -26,8 +26,8 @@ const emptyData = [
   },
 ];
 
-const process_data = async (file: any, selectedColumns: any) => {
-  return await data_processing(file, selectedColumns);
+const process_data = async (file: any, selectedColumns: any, smoothData: boolean) => {
+  return await data_processing(file, selectedColumns, smoothData);
 };
 
 const App = () => {
@@ -69,7 +69,7 @@ const App = () => {
 
   const btnProcessData = () => {
     setShowAttrSelection(false);
-    process_data(dataCSV, selectedColumns).then(function (result) {
+    process_data(dataCSV, selectedColumns, smoothData).then(function (result) {
       // console.log(result);
       if (typeof result !== "undefined") {
         setKeyPointsData(result);
