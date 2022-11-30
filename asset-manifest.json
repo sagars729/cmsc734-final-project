@@ -1,20 +1,21 @@
 {
   "files": {
     "main.css": "/cmsc734-final-project/static/css/main.23be7941.css",
-    "main.js": "/cmsc734-final-project/static/js/main.1e656aca.js",
+    "main.js": "/cmsc734-final-project/static/js/main.b23f4cb5.js",
     "static/js/787.28cb0dcd.chunk.js": "/cmsc734-final-project/static/js/787.28cb0dcd.chunk.js",
     "static/media/playfair-display-all-400-normal.woff": "/cmsc734-final-project/static/media/playfair-display-all-400-normal.008fcfba1bbc87fec45d.woff",
+    "static/media/logo2.png": "/cmsc734-final-project/static/media/logo2.c4d075160991111625ef.png",
     "static/media/playfair-display-latin-400-normal.woff2": "/cmsc734-final-project/static/media/playfair-display-latin-400-normal.0240e9884f59757ace9e.woff2",
     "static/media/playfair-display-cyrillic-400-normal.woff2": "/cmsc734-final-project/static/media/playfair-display-cyrillic-400-normal.16bba4d09621b64bdbe9.woff2",
     "static/media/playfair-display-latin-ext-400-normal.woff2": "/cmsc734-final-project/static/media/playfair-display-latin-ext-400-normal.c6049e8e92d5fd75a60c.woff2",
     "static/media/playfair-display-vietnamese-400-normal.woff2": "/cmsc734-final-project/static/media/playfair-display-vietnamese-400-normal.e62870cc6e58a439e70a.woff2",
     "index.html": "/cmsc734-final-project/index.html",
     "main.23be7941.css.map": "/cmsc734-final-project/static/css/main.23be7941.css.map",
-    "main.1e656aca.js.map": "/cmsc734-final-project/static/js/main.1e656aca.js.map",
+    "main.b23f4cb5.js.map": "/cmsc734-final-project/static/js/main.b23f4cb5.js.map",
     "787.28cb0dcd.chunk.js.map": "/cmsc734-final-project/static/js/787.28cb0dcd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.23be7941.css",
-    "static/js/main.1e656aca.js"
+    "static/js/main.b23f4cb5.js"
   ]
 }
