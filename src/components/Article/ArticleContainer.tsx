@@ -6,8 +6,6 @@ import Builder from './Builder';
 import SectionBuilder from './SectionBuilder';
 import NavButtons from './NavButtons';
 import {
-  PointType,
-  KeyPointType,
   SectionType,
   ArticleContainerProps
 } from './ArticleTypes';
@@ -24,6 +22,9 @@ const ArticleContainer = (props: ArticleContainerProps) => {
   const [showBuilder, setShowBuilder] = useState<boolean>(true);
   const [showSectionBuilder, setShowSectionBuilder] = useState<boolean>(false);
   const [sections, setSections] = useState<SectionType[]>([]);
+  const [xlabel, setXlabel] = useState<string>("");
+  const [ylabel, setYlabel] = useState<string>("");
+  const [ycoef, setYcoef] = useState<number>(1);
 
 
   return (
@@ -49,6 +50,9 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            setPrimaryPointColor={setPrimaryPointColor}
            setSecondaryPointColor={setSecondaryPointColor}
            setLineColor={setLineColor}
+           xlabel={xlabel}
+           ylabel={ylabel}
+           ycoef={ycoef}
          />
        ) : (<></>)}
        {showSectionBuilder ? (
@@ -63,6 +67,9 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            lineColor={lineColor}
            sections={sections}
            setSections={setSections}
+           xlabel={xlabel}
+           ylabel={ylabel}
+           ycoef={ycoef}
          />
        ): (<></>)}
        {(!showSectionBuilder && !showBuilder) ? (
@@ -77,6 +84,9 @@ const ArticleContainer = (props: ArticleContainerProps) => {
            secondaryPointColor={secondaryPointColor}
            lineColor={lineColor}
            sections={sections}
+           xlabel={xlabel}
+           ylabel={ylabel}
+           ycoef={ycoef}
          />
        ) : (<></>)}
        <NavButtons
@@ -92,6 +102,9 @@ const ArticleContainer = (props: ArticleContainerProps) => {
          setByline={setByline}
          setDate={setDate}
          setRenderArticle={props.setRenderArticle}
+         setXlabel={setXlabel}
+         setYlabel={setYlabel}
+         setYcoef={setYcoef}
        />
     </Box>     
   )
