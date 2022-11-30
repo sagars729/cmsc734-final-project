@@ -138,11 +138,17 @@ const SectionBuilder = (props: SectionBuilderProps) => {
 						props.secondaryPointColor
 					}
 					lineColor={props.lineColor}
+          secondLineColor={props.secondLineColor}
 					width={1000}
 					height={300}
 					xlabel={props.xlabel}
 					ylabel={props.ylabel}
 					ycoef={props.ycoef}
+          ylabel2={props.ylabel2}
+          ycoef2={props.ycoef2}
+          x={props.features[0]}
+          y1={props.features[1]}
+          y2={props.features[2]}
 					setBrushStartDate={setBrushStartDate}
 					setBrushEndDate={setBrushEndDate}
 					enableBrush

@@ -21,7 +21,6 @@ const Builder = (props: BuilderProps) => {
 		padding: "1%",
 		margin: "2%",
 	};
-
 	const CustomTextField = styled(TextField)({
 		"& label.Mui-focused": {
 			color: props.color,
@@ -143,12 +142,25 @@ const Builder = (props: BuilderProps) => {
 							}
 						/>
 						<ColorPicker
-							label="Line"
+							label={`${props.features[1]} Line`}
 							color={props.lineColor}
 							setColor={
 								props.setLineColor
 							}
 						/>
+						{props.bivariate ? (
+							<ColorPicker
+								label={`${props.features[2]} Line`}
+								color={
+									props.secondLineColor
+								}
+								setColor={
+									props.setSecondLineColor
+								}
+							/>
+						) : (
+							<></>
+						)}
 						<ColorPicker
 							label="Primary Point"
 							color={
@@ -169,7 +181,7 @@ const Builder = (props: BuilderProps) => {
 						/>
 					</Grid>
 					<Grid xs={4}>
-						<ExampleText />
+						<ExampleText primaryPointColor={props.primaryPointColor}/>
 					</Grid>
 					<Grid
 						xs={6}
@@ -186,6 +198,10 @@ const Builder = (props: BuilderProps) => {
 							}
 							lineColor={
 								props.lineColor
+							}
+              bivariate={props.bivariate}
+							secondLineColor={
+								props.secondLineColor
 							}
 						/>
 					</Grid>
@@ -222,6 +238,30 @@ const Builder = (props: BuilderProps) => {
 					defaultValue={props.ycoef}
 					fullWidth
 				/>
+				{props.bivariate ? (
+					<>
+						<CustomTextField
+							id="chart-yaxis2-input"
+							label="Second Y Axis Label"
+							variant="standard"
+							defaultValue={
+								props.ylabel2
+							}
+							fullWidth
+						/>
+						<CustomTextField
+							id="chart-yscale2-input"
+							label="Second Y Axis Scaling Factor"
+							variant="standard"
+							defaultValue={
+								props.ycoef2
+							}
+							fullWidth
+						/>
+					</>
+				) : (
+					<></>
+				)}
 			</Box>
 		</div>
 	);

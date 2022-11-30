@@ -21,24 +21,25 @@ export const validateAndSetColor = (
 };
 
 const exampleTextHeader: string = "Example Text";
-const exampleText: string = `
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-  enim ad minim veniam, quis nostrud exercitation ullamco laboris
-  nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-  reprehenderit in voluptate velit esse cillum dolore eu fugiat
-  nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-  sunt in culpa qui officia deserunt mollit anim id est laborum.
-`;
+const exampleText: string[] = [
+	"Lorem ipsum dolor sit amet, consectetur adipiscing.",
+	"Ut enim ad minim veniam, quis nostrud exercitation.",
+	"Excepteur sint occaecat cupidatat non proident.",
+];
 
 const exampleKeyPoints: KeyPointType[] = [
 	{
 		time: "2022-11-16",
 		points: [
 			{
-				analysis_yielded: "",
+				analysis_yielded: exampleText[0],
 				variable: "Cases",
 				point_value: 95000,
+			},
+			{
+				analysis_yielded: exampleText[0],
+				variable: "Deaths",
+				point_value: 9500,
 			},
 		],
 	},
@@ -46,9 +47,14 @@ const exampleKeyPoints: KeyPointType[] = [
 		time: "2022-11-21",
 		points: [
 			{
-				analysis_yielded: exampleText,
+				analysis_yielded: exampleText[1],
 				variable: "Cases",
 				point_value: 100000,
+			},
+			{
+				analysis_yielded: exampleText[1],
+				variable: "Deaths",
+				point_value: 10000,
 			},
 		],
 	},
@@ -56,9 +62,14 @@ const exampleKeyPoints: KeyPointType[] = [
 		time: "2022-11-26",
 		points: [
 			{
-				analysis_yielded: "",
+				analysis_yielded: exampleText[2],
 				variable: "Cases",
 				point_value: 95000,
+			},
+			{
+				analysis_yielded: exampleText[2],
+				variable: "Deaths",
+				point_value: 9500,
 			},
 		],
 	},
@@ -68,31 +79,42 @@ const examplePoints: object[] = [
 	{
 		Date: "2022-11-11",
 		Cases: 90000,
+		Deaths: 9000,
 	},
 	{
 		Date: "2022-11-16",
 		Cases: 95000,
+		Deaths: 9500,
 	},
 	{
 		Date: "2022-11-21",
 		Cases: 100000,
+		Deaths: 10000,
 	},
 	{
 		Date: "2022-11-26",
 		Cases: 95000,
+		Deaths: 9500,
 	},
 	{
 		Date: "2022-12-01",
 		Cases: 102000,
+		Deaths: 10500,
 	},
 ];
 
-export const ExampleText = () => (
+interface ExampleTextProps {
+	primaryPointColor: string;
+}
+export const ExampleText = (props: ExampleTextProps) => (
 	<TextSection
 		startDate={new Date("2022-11-11")}
 		endDate={new Date("2022-12-01")}
+		focusDate={new Date("2022-11-21")}
+		primaryPointColor={props.primaryPointColor}
 		header={exampleTextHeader}
 		keyPoints={exampleKeyPoints}
+		x={"Date"}
 	/>
 );
 
@@ -101,6 +123,8 @@ interface ExampleChartProps {
 	primaryPointColor: string;
 	secondaryPointColor: string;
 	lineColor: string;
+	secondLineColor: string;
+	bivariate?: boolean;
 }
 export const ExampleChart = (props: ExampleChartProps) => (
 	<Chart
@@ -114,9 +138,15 @@ export const ExampleChart = (props: ExampleChartProps) => (
 		primaryPointColor={props.primaryPointColor}
 		secondaryPointColor={props.secondaryPointColor}
 		lineColor={props.lineColor}
-		width={500}
+		secondLineColor={props.secondLineColor}
+		width={props.bivariate ? 400 : 500}
 		height={250}
 		ylabel={"Cases (in thousands)"}
 		ycoef={1 / 1000}
+		x={"Date"}
+		y1={"Cases"}
+		y2={props.bivariate ? "Deaths" : ""}
+		ylabel2={"Deaths (in thousands)"}
+		ycoef2={1 / 1000}
 	/>
 );
