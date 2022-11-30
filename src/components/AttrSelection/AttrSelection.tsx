@@ -79,6 +79,10 @@ const AttrSelection = (props:any) => {
         props.setSelectedColumns(newSelections);
     };
 
+    const smoothOnChange = () => {
+        props.setSmoothData(!props.smoothData);
+    }
+
     function returnColType(item:any) {
         // let idx = columnHeaders?.indexOf(item);
         return typeof(firstRow[item]);
@@ -117,6 +121,15 @@ const AttrSelection = (props:any) => {
                         </div>
                     )
                 })}
+                
+                <p>-----</p>
+                
+                <input type="checkbox"
+                id={`custom-checkbox-smooth`} 
+                checked={props.smoothData}
+                onChange={() => {smoothOnChange()}}>
+                </input>
+                <label htmlFor={`custom-checkbox-smooth`}>Smooth Data?</label>
             </ul>
 
 
