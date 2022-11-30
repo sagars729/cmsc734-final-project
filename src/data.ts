@@ -1,4 +1,4 @@
-// import * as dfd from "danfojs"
+import * as dfd from "danfojs"
 import { readCSV } from "danfojs"
 // import { Series } from "danfojs/dist/danfojs-base"
 
@@ -20,12 +20,24 @@ export function data_processing(
 ): any {
     return readCSV(input_data)
         .then((df) => {
+            let smoothed = df.copy()
+            // console.log(df)
+            var columns = selectedColumns.slice(1,)
+
             if(smoothing){
-                df = df
+                let window = 7
+                for(var column of columns){
+                    // const average = (array: number[]) => array.reduce((a, b) => a + b) / array.length;
+                    let means = smoothed[column].map((e:number,i:number) => (i<=window) ? e : smoothed[column].iloc([i-window,i+1]).mean())
+                    console.log(means)
+                    smoothed[column] = means
+                }
+                
+                console.log(smoothed)
             }
 
+            df = smoothed.copy()
             // we know date column is first
-            var columns = selectedColumns.slice(1,)
             var key_points: Array<Timestamp> = []
 
             // find min/max of all colunns (1 for now)
@@ -37,33 +49,8 @@ export function data_processing(
             });
         
             var final_json = JSON.parse(JSON.stringify(key_points))
-            return final_json
-
-        }).catch(err => {
-            console.log(err);
-        })
-};
-
-export function data_smoothing(
-    input_data: any,
-    selectedColumns: any
-): any {
-    return readCSV(input_data, selectedColumns)
-        .then((df) => {
-            // we know date column is first
-            var columns = selectedColumns.slice(1,)
-            var key_points: Array<Timestamp> = []
-
-            // find min/max of all colunns (1 for now)
-            columns.forEach(function (column: string, i: number) {
-                key_points = key_points.concat(absolute_max_min(df, column))
-                for(var column2 of columns.slice(i+1,)){
-                    key_points = key_points.concat(bivariate_analysis(df, column, column2))
-                }
-            });
-        
-            var final_json = JSON.parse(JSON.stringify(key_points))
-            return final_json
+            const csv = dfd.toCSV(df);
+            return [csv, final_json]
 
         }).catch(err => {
             console.log(err);
