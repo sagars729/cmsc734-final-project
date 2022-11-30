@@ -85,8 +85,11 @@ function bivariate_analysis(
     let min_timestamps: string[] = df.loc({ rows: df['diff'].eq(col_min) })[date_col].values
 
     let ret = []
-    ret.push(create_point(col1, col_max, "absolute difference maximum", max_timestamps[0]))
-    ret.push(create_point(col1, col_min, "absolute difference minimum", min_timestamps[0]))
+    let max_string = "absolute maximum difference between " + col1 + " and " + col2
+    let min_string = "absolute minimum difference between " + col1 + " and " + col2
+
+    ret.push(create_point(col1, col_max, max_string, max_timestamps[0]))
+    ret.push(create_point(col1, col_min, min_string, min_timestamps[0]))
 
     return ret
 };
@@ -104,8 +107,11 @@ function absolute_max_min(
     let min_timestamps: string[] = df.loc({ rows: df[col].eq(col_min) })[date_col].values
 
     let ret = []
-    ret.push(create_point(col, col_max, "absolute maximum", max_timestamps[0]))
-    ret.push(create_point(col, col_min, "absolute minimum", min_timestamps[0]))
+    let max_string = "absolute maximum of " + col
+    let min_string = "absolute minimum of " + col
+
+    ret.push(create_point(col, col_max, max_string, max_timestamps[0]))
+    ret.push(create_point(col, col_min, min_string, min_timestamps[0]))
 
     return ret
 };
