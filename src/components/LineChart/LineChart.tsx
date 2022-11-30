@@ -374,8 +374,8 @@ const LineChart = (props: any) => {
             });
 
           function formatDate(d: Date) {
-            var month = "" + (d.getMonth() + 1),
-              day = "" + (d.getDate() + 1),
+            var month = "" + d.getMonth(),
+              day = "" + d.getDate(),
               year = d.getFullYear();
 
             if (month.length < 2) month = "0" + month;
