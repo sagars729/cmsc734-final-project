@@ -158,90 +158,117 @@ const App = () => {
     <div className="container">
       {!renderArticle || !pointsData ? (
         <div id="author-view">
-          <input
-            type="file"
-            name="file"
-            accept=".csv"
-            onChange={changeHandler}
-            style={{
-              display: "block",
-              margin: "10px auto",
-              border: "solid black",
-              backgroundColor: "#eaf4f4",
-            }}
-            className="form-control"
-            id="formFile"
-          />
           <span className="row">
             <div
               style={{
                 display: "flex",
-                flexDirection: "column",
-                paddingLeft: 0,
-                paddingRight: 0,
+                justifyContent: "space-between",
+                border: "solid",
+                marginBottom: "5px",
+                marginTop: "5px",
+                padding: "10px",
+                alignItems: "center",
               }}
             >
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  border: "solid",
-                  marginBottom: "5px",
-                  padding: "10px",
+                  fontWeight: "bold",
+                  fontFamily: "cursive",
+                  fontSize: "35px",
                 }}
               >
-                <div>
-                  <span style={{ fontWeight: "bold" }}>
-                    <u>Focus and Legend</u>{" "}
-                  </span>
-                  <select
-                    onChange={handleFocusChange}
-                    style={changeColor(this)}
-                  >
-                    {selectedColumns.slice(1).map((col) => (
-                      <option value={col} key={col}>
-                        {col}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
-                    {chartTitle}
-                  </p>
-                </div>
-                <div style={{ display: "flex" }}>
-                  <p>
-                    <b>X-axis:</b> {selectedColumns[0]}
-                  </p>
-                  <span style={{ margin: "5px" }}></span>
-                  <p>
-                    <b>Y-axis:</b>
-                    {getYAxis()}
-                  </p>
-                </div>
-                {hoverData.date ? (
-                  <div>
-                    <span>
-                      <b>Date: </b> {hoverData.date}
-                    </span>
-                    <br />
-                    <span>
-                      <b>{selectedColumns[1]}: </b>
-                      {hoverData.value[0]}
-                    </span>
-                    <br />
-                    {selectedColumns[2] ? (
-                      <span>
-                        <b>{selectedColumns[2]}: </b>
-                        {hoverData.value[1]}
-                      </span>
-                    ) : null}
-                  </div>
-                ) : null}
+                Time Series Authoring
+              </div>
+              <div>
+                <input
+                  type="file"
+                  name="file"
+                  accept=".csv"
+                  onChange={changeHandler}
+                  style={{
+                    display: "block",
+                    margin: "10px auto",
+                    border: "1.5px dotted black",
+                    backgroundColor: "#eaf4f4",
+                  }}
+                  className="form-control"
+                  id="formFile"
+                />
               </div>
             </div>
           </span>
+          {selectedColumns.length > 0 ? (
+            <span className="row">
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    border: "solid",
+                    marginBottom: "5px",
+                    padding: "10px",
+                  }}
+                >
+                  <div>
+                    <span style={{ fontWeight: "bold" }}>
+                      <u>Focus and Legend</u>{" "}
+                    </span>
+                    <select
+                      onChange={handleFocusChange}
+                      style={changeColor(this)}
+                    >
+                      {selectedColumns.slice(1).map((col) => (
+                        <option value={col} key={col}>
+                          {col}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
+                      {chartTitle}
+                    </p>
+                  </div>
+                  <div style={{ display: "flex" }}>
+                    <p>
+                      <b>X-axis:</b> {selectedColumns[0]}
+                    </p>
+                    <span style={{ margin: "5px" }}></span>
+                    <p>
+                      <b>Y-axis:</b>
+                      {getYAxis()}
+                    </p>
+                  </div>
+                  {hoverData.date ? (
+                    <div>
+                      <span>
+                        <b>Date: </b> {hoverData.date}
+                      </span>
+                      <br />
+                      <span>
+                        <b>{selectedColumns[1]}: </b>
+                        {hoverData.value[0]}
+                      </span>
+                      <br />
+                      {selectedColumns[2] ? (
+                        <span>
+                          <b>{selectedColumns[2]}: </b>
+                          {hoverData.value[1]}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </span>
+          ) : null}
           <div className="row">
             <div
               className={
