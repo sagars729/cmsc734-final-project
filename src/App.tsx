@@ -190,7 +190,7 @@ const App = () => {
                 </div>
               </div> */}
               <div>
-                <img src={logo} width="350" height="80" />
+                <img src={logo} width="350" height="80" alt="Src not found" />
               </div>
               <div>
                 <input
