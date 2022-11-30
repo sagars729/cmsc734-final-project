@@ -85,7 +85,7 @@ const LineChart = (props: any) => {
             });
           }
 
-          if (props.isLoadedInt == 1) {
+          if (props.isLoadedInt === 1) {
             props.setIsLoadedInt(2);
             props.setPointsData(data);
           }
@@ -315,7 +315,7 @@ const LineChart = (props: any) => {
                       : "")
                 );
 
-              if (props.focusVar == yVar2) {
+              if (props.focusVar === yVar2) {
                 d3.selectAll(".path") // Fade the non-selected names in the legend
                   .style("opacity", 0.2);
               } else {
