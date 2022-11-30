@@ -25,6 +25,7 @@ export interface SectionType {
 export interface ArticleContainerProps {
 	data: DSVRowArray;
 	keyPoints: KeyPointType[];
+  features: string[];
 	setRenderArticle: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -39,9 +40,13 @@ export interface ArticleProps {
 	primaryPointColor: string;
 	secondaryPointColor: string;
 	lineColor: string;
+	secondLineColor: string;
 	xlabel: string;
 	ylabel: string;
 	ycoef: number;
+  ylabel2?: string;
+  ycoef2?: number;
+  features: string[];
 }
 
 export interface TextSectionProps {
@@ -50,18 +55,8 @@ export interface TextSectionProps {
 	endDate: Date;
 	focusDate?: Date;
 	keyPoints: KeyPointType[];
-}
-
-export interface ChartSectionProps {
-	time: string;
-	timeWindow: number;
-	points: PointType[];
-	data: DSVRowArray;
-	allPoints: KeyPointType[];
-	axisLabelColor: string;
+  x: string;
 	primaryPointColor: string;
-	secondaryPointColor: string;
-	lineColor: string;
 }
 
 export interface ChartProps {
@@ -75,6 +70,7 @@ export interface ChartProps {
 	primaryPointColor: string;
 	secondaryPointColor: string;
 	lineColor: string;
+	secondLineColor: string;
 	setBrushStartDate?: Dispatch<SetStateAction<Date | null>>;
 	setBrushEndDate?: Dispatch<SetStateAction<Date | null>>;
 	enableBrush?: boolean;
@@ -82,6 +78,11 @@ export interface ChartProps {
 	xlabel: string;
 	ylabel: string;
 	ycoef: number;
+  ylabel2?: string;
+  ycoef2?: number;
+  x: string;
+  y1: string;
+  y2?: string;
 }
 
 export interface BuilderProps {
@@ -94,15 +95,21 @@ export interface BuilderProps {
 	primaryPointColor: string;
 	secondaryPointColor: string;
 	lineColor: string;
+	secondLineColor: string;
 	xlabel: string;
 	ylabel: string;
 	ycoef: number;
+  features: string[];
+  bivariate?: boolean;
+  ylabel2?: string;
+  ycoef2?: number;
 	// setters
 	setColor: Dispatch<SetStateAction<string>>;
 	setBackgroundColor: Dispatch<SetStateAction<string>>;
 	setPrimaryPointColor: Dispatch<SetStateAction<string>>;
 	setSecondaryPointColor: Dispatch<SetStateAction<string>>;
 	setLineColor: Dispatch<SetStateAction<string>>;
+	setSecondLineColor: Dispatch<SetStateAction<string>>;
 }
 
 export interface ColorPickerProps {
@@ -120,6 +127,7 @@ export interface NavButtonsProps {
 	showBuilder: boolean;
 	showSectionBuilder: boolean;
 	sections: SectionType[];
+  bivariate?: boolean;
 	// variable setters
 	setTitle: Dispatch<SetStateAction<string>>;
 	setByline: Dispatch<SetStateAction<string>>;
@@ -128,6 +136,8 @@ export interface NavButtonsProps {
 	setXlabel: Dispatch<SetStateAction<string>>;
 	setYlabel: Dispatch<SetStateAction<string>>;
 	setYcoef: Dispatch<SetStateAction<number>>;
+  setYlabel2?: Dispatch<SetStateAction<string>>;
+  setYcoef2?: Dispatch<SetStateAction<number>>;
 	// navigation setters
 	setShowBuilder: Dispatch<SetStateAction<boolean>>;
 	setShowSectionBuilder: Dispatch<SetStateAction<boolean>>;
@@ -150,9 +160,13 @@ export interface SectionBuilderProps {
 	primaryPointColor: string;
 	secondaryPointColor: string;
 	lineColor: string;
+	secondLineColor: string;
 	sections: SectionType[];
 	setSections: Dispatch<SetStateAction<SectionType[]>>;
 	xlabel: string;
 	ylabel: string;
 	ycoef: number;
+  ylabel2?: string;
+  ycoef2?: number;
+  features: string[];
 }

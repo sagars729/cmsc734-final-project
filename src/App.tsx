@@ -63,6 +63,8 @@ const App = () => {
     }
   };
 
+  console.log("Selected Columns", selectedColumns)
+
   const btnProcessData = () => {
     setShowAttrSelection(false);
     process_data(dataCSV, selectedColumns).then(function (result) {
@@ -143,163 +145,168 @@ const App = () => {
   };
 
   return (
-    <div className="container">
+    <>
       {!renderArticle || !pointsData ? (
-        <div id="author-view">
-          <input
-            type="file"
-            name="file"
-            accept=".csv"
-            onChange={changeHandler}
-            style={{ display: "block", margin: "10px auto" }}
-          />
-          <span className="row">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                paddingLeft: 0,
-                paddingRight: 0,
-              }}
-            >
+        <div className="container">
+          <div id="author-view">
+            <input
+              type="file"
+              name="file"
+              accept=".csv"
+              onChange={changeHandler}
+              style={{ display: "block", margin: "10px auto" }}
+            />
+            <span className="row">
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  border: "solid",
-                  marginBottom: "5px",
-                  padding: "10px",
+                  flexDirection: "column",
+                  paddingLeft: 0,
+                  paddingRight: 0,
                 }}
               >
-                <div>
-                  <span style={{ fontWeight: "bold" }}>
-                    <u>Focus and Legend</u>{" "}
-                  </span>
-                  <select
-                    onChange={handleFocusChange}
-                    style={changeColor(this)}
-                  >
-                    {selectedColumns.slice(1).map((col) => (
-                      <option value={col} key={col}>
-                        {col}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
-                    {chartTitle}
-                  </p>
-                </div>
-                <div style={{ display: "flex" }}>
-                  <p>
-                    <b>X-axis:</b> {selectedColumns[0]}
-                  </p>
-                  <span style={{ margin: "5px" }}></span>
-                  <p>
-                    <b>Y-axis:</b>
-                    {getYAxis()}
-                  </p>
-                </div>
-                {hoverData.date ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    border: "solid",
+                    marginBottom: "5px",
+                    padding: "10px",
+                  }}
+                >
                   <div>
-                    <span>
-                      <b>Date: </b> {hoverData.date}
+                    <span style={{ fontWeight: "bold" }}>
+                      <u>Focus and Legend</u>{" "}
                     </span>
-                    <br />
-                    <span>
-                      <b>{selectedColumns[1]}: </b>
-                      {hoverData.value[0]}
-                    </span>
-                    <br />
-                    {selectedColumns[2] ? (
-                      <span>
-                        <b>{selectedColumns[2]}: </b>
-                        {hoverData.value[1]}
-                      </span>
-                    ) : null}
+                    <select
+                      onChange={handleFocusChange}
+                      style={changeColor(this)}
+                    >
+                      {selectedColumns.slice(1).map((col) => (
+                        <option value={col} key={col}>
+                          {col}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                ) : null}
+                  <div>
+                    <p style={{ fontFamily: "cursive", fontWeight: "bold" }}>
+                      {chartTitle}
+                    </p>
+                  </div>
+                  <div style={{ display: "flex" }}>
+                    <p>
+                      <b>X-axis:</b> {selectedColumns[0]}
+                    </p>
+                    <span style={{ margin: "5px" }}></span>
+                    <p>
+                      <b>Y-axis:</b>
+                      {getYAxis()}
+                    </p>
+                  </div>
+                  {hoverData.date ? (
+                    <div>
+                      <span>
+                        <b>Date: </b> {hoverData.date}
+                      </span>
+                      <br />
+                      <span>
+                        <b>{selectedColumns[1]}: </b>
+                        {hoverData.value[0]}
+                      </span>
+                      <br />
+                      {selectedColumns[2] ? (
+                        <span>
+                          <b>{selectedColumns[2]}: </b>
+                          {hoverData.value[1]}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          </span>
-          <div className="row">
-            <div
-              className={
-                isKeyPointsExpanded && !isChartExpanded
-                  ? fullPageClassName
-                  : halfPageClassName
-              }
-              hidden={isChartExpanded ? true : false}
-            >
-              {showAttrSelection && dataCSV ? (
-                <AttrSelection
-                  show={showAttrSelection}
-                  setSelectedColumns={setSelectedColumns}
-                  selectedColumns={selectedColumns}
+            </span>
+            <div className="row">
+              <div
+                className={
+                  isKeyPointsExpanded && !isChartExpanded
+                    ? fullPageClassName
+                    : halfPageClassName
+                }
+                hidden={isChartExpanded ? true : false}
+              >
+                {showAttrSelection && dataCSV ? (
+                  <AttrSelection
+                    show={showAttrSelection}
+                    setSelectedColumns={setSelectedColumns}
+                    selectedColumns={selectedColumns}
+                    csv={dataCSV}
+                    btnProcessData={btnProcessData}
+                  />
+                ) : (
+                  <KeyPointsList
+                    data={keyPointsData}
+                    setData={setKeyPointsData}
+                    addKeyPoints={addKeyPoint}
+                    disabled={uploadedCsvBool}
+                    setRenderArticle={setRenderArticle}
+                    isKeyPointsExpanded={isKeyPointsExpanded}
+                    setExpandKeyPoints={setExpandKeyPoints}
+                    isChartExpanded={isChartExpanded}
+                  />
+                )}
+              </div>
+              {/* <div className="m-2"></div> */}
+              <div
+                className={
+                  !isKeyPointsExpanded && isChartExpanded
+                    ? fullPageClassName
+                    : halfPageClassName
+                }
+                hidden={isKeyPointsExpanded ? true : false}
+              >
+                {!isChartExpanded ? (
+                  <BsArrowsAngleExpand
+                    className="top-right"
+                    onClick={() => expandChart()}
+                  />
+                ) : (
+                  <BsArrowsAngleContract
+                    className="top-right"
+                    onClick={() => collapseChart()}
+                  />
+                )}
+                <LineChart
                   csv={dataCSV}
-                  btnProcessData={btnProcessData}
-                />
-              ) : (
-                <KeyPointsList
-                  data={keyPointsData}
-                  setData={setKeyPointsData}
+                  showAttrSelection={showAttrSelection}
+                  keyPoints={keyPointsData}
+                  variable={selectedColumns}
+                  focusVar={focus}
+                  resize={resize}
+                  setResize={setResize}
+                  isLoadedInt={isLoadedInt}
+                  setIsLoadedInt={setIsLoadedInt}
                   addKeyPoints={addKeyPoint}
-                  disabled={uploadedCsvBool}
-                  setRenderArticle={setRenderArticle}
-                  isKeyPointsExpanded={isKeyPointsExpanded}
-                  setExpandKeyPoints={setExpandKeyPoints}
-                  isChartExpanded={isChartExpanded}
+                  setData={setKeyPointsData}
+                  setHoverData={setHoverData}
+                  setPointsData={setPointsData}
+                  // isShowingAttrSelection={showAttrSelection}
                 />
-              )}
-            </div>
-            {/* <div className="m-2"></div> */}
-            <div
-              className={
-                !isKeyPointsExpanded && isChartExpanded
-                  ? fullPageClassName
-                  : halfPageClassName
-              }
-              hidden={isKeyPointsExpanded ? true : false}
-            >
-              {!isChartExpanded ? (
-                <BsArrowsAngleExpand
-                  className="top-right"
-                  onClick={() => expandChart()}
-                />
-              ) : (
-                <BsArrowsAngleContract
-                  className="top-right"
-                  onClick={() => collapseChart()}
-                />
-              )}
-              <LineChart
-                csv={dataCSV}
-                showAttrSelection={showAttrSelection}
-                keyPoints={keyPointsData}
-                variable={selectedColumns}
-                focusVar={focus}
-                resize={resize}
-                setResize={setResize}
-                isLoadedInt={isLoadedInt}
-                setIsLoadedInt={setIsLoadedInt}
-                addKeyPoints={addKeyPoint}
-                setData={setKeyPointsData}
-                setHoverData={setHoverData}
-                setPointsData={setPointsData}
-                // isShowingAttrSelection={showAttrSelection}
-              />
+              </div>
             </div>
           </div>
         </div>
       ) : (
-        <ArticleContainer
-          data={pointsData}
-          keyPoints={keyPointsData}
-          setRenderArticle={setRenderArticle}
-        />
+        <div className="container2">
+          <ArticleContainer
+            data={pointsData}
+            keyPoints={keyPointsData}
+            features={selectedColumns}
+            setRenderArticle={setRenderArticle}
+          />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
