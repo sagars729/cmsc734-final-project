@@ -8,6 +8,7 @@ import ArticleContainer from "./components/Article/ArticleContainer";
 import AttrSelection from "./components/AttrSelection/AttrSelection";
 import { BsArrowsAngleContract } from "react-icons/bs";
 import { BsArrowsAngleExpand } from "react-icons/bs";
+import logo from "./logo2.png";
 
 const emptyData = [
   {
@@ -170,14 +171,26 @@ const App = () => {
                 alignItems: "center",
               }}
             >
-              <div
+              {/* <div
                 style={{
-                  fontWeight: "bold",
-                  fontFamily: "cursive",
-                  fontSize: "35px",
+                  display: "flex",
                 }}
               >
-                Time Series Authoring
+                <div>
+                  <img src={logo} width="50" height="50" />
+                </div>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    fontFamily: "cursive",
+                    fontSize: "35px",
+                  }}
+                >
+                  <u>Time Series Authoring Tool</u>
+                </div>
+              </div> */}
+              <div>
+                <img src={logo} width="350" height="80" />
               </div>
               <div>
                 <input
