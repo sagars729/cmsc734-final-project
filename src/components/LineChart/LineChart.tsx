@@ -155,6 +155,7 @@ const LineChart = (props: any) => {
               .attr("transform", "translate(" + (chartWidth + 25) + ",0)")
               .call(d3.axisLeft(y1));
           }
+
           if (yVar2 !== "")
             svg
               .append("text")
