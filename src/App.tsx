@@ -6,8 +6,7 @@ import { DSVRowArray } from "d3-dsv";
 import { data_processing } from "./data";
 import ArticleContainer from "./components/Article/ArticleContainer";
 import AttrSelection from "./components/AttrSelection/AttrSelection";
-import { BsArrowsAngleContract } from "react-icons/bs";
-import { BsArrowsAngleExpand } from "react-icons/bs";
+import { BsArrowsAngleContract, BsArrowsAngleExpand, BsFolderSymlinkFill } from "react-icons/bs";
 import logo from "./logo2.png";
 
 const emptyData = [
@@ -163,21 +162,35 @@ const App = () => {
               <div>
                 <img src={logo} width="350" height="80" alt="Src not found" />
               </div>
-              <div>
-                <input
-                  type="file"
-                  name="file"
-                  accept=".csv"
-                  onChange={changeHandler}
-                  style={{
-                    display: "block",
-                    margin: "10px auto",
-                    border: "1.5px dotted black",
-                    backgroundColor: "#eaf4f4",
-                  }}
-                  className="form-control"
-                  id="formFile"
-                />
+              <div className="row">
+                <div className="col-md-2 gDriveLink">
+
+
+                  <a href="https://drive.google.com/drive/folders/1azW5IeEg1evdTRhOwkFievTKg6wO0sgn?usp=share_link" target="_blank" rel="noreferrer">
+                    <BsFolderSymlinkFill
+                    style={{marginTop: "50%",
+                            marginLeft: "50%"}}
+                    />
+                  </a>
+
+                </div>
+                <div className="col-md-10">
+                  <input
+                    type="file"
+                    name="file"
+                    accept=".csv"
+                    onChange={changeHandler}
+                    style={{
+                      display: "block",
+                      margin: "10px auto",
+                      border: "1.5px dotted black",
+                      backgroundColor: "#eaf4f4",
+                    }}
+                    className="form-control"
+                    id="formFile"
+                  />
+                </div>
+                
               </div>
             </div>
           </span>
