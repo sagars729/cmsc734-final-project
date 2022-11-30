@@ -3,7 +3,7 @@ import { readCSV } from "danfojs"
 // import { Series } from "danfojs/dist/danfojs-base"
 
 interface Point {
-    variable: any;
+    variable: string;
     point_value: number;
     analysis_yielded: string;
 }
@@ -85,8 +85,8 @@ function bivariate_analysis(
     let min_timestamps: string[] = df.loc({ rows: df['diff'].eq(col_min) })[date_col].values
 
     let ret = []
-    ret.push(create_point([col1, col2], col_max, "absolute difference maximum", max_timestamps[0]))
-    ret.push(create_point([col1, col2], col_min, "absolute difference minimum", min_timestamps[0]))
+    ret.push(create_point(col1, col_max, "absolute difference maximum", max_timestamps[0]))
+    ret.push(create_point(col1, col_min, "absolute difference minimum", min_timestamps[0]))
 
     return ret
 };
@@ -104,8 +104,8 @@ function absolute_max_min(
     let min_timestamps: string[] = df.loc({ rows: df[col].eq(col_min) })[date_col].values
 
     let ret = []
-    ret.push(create_point([col], col_max, "absolute maximum", max_timestamps[0]))
-    ret.push(create_point([col], col_min, "absolute minimum", min_timestamps[0]))
+    ret.push(create_point(col, col_max, "absolute maximum", max_timestamps[0]))
+    ret.push(create_point(col, col_min, "absolute minimum", min_timestamps[0]))
 
     return ret
 };
