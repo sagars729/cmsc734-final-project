@@ -20,6 +20,7 @@ export function data_processing(
 ): any {
     return readCSV(input_data)
         .then((df) => {
+
             var columns = selectedColumns.slice(1,)
             var key_points: Array<Timestamp> = []
 

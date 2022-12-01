@@ -6,7 +6,8 @@ const Chart = (props: ChartProps) => {
 	const ref: RefObject<HTMLDivElement> = React.createRef();
 	const dateFilter = (point: any) => {
 		const candDate: number =
-			new Date(point.Date).getTime() ||
+			// @ts-ignore TS7015
+			new Date(point[props.x]).getTime() ||
 			new Date(point.time).getTime() ||
 			0;
 
@@ -37,27 +38,34 @@ const Chart = (props: ChartProps) => {
 			.attr("width", width + loff + roff)
 			.attr("height", height + boff + toff);
 
+		// xscale + axis label
 		const xScale = d3
 			.scaleTime()
-			.domain(
-				// @ts-ignore TS2352
-				d3.extent(data, (d) => new Date(d.Date)) as [
-					Date,
-					Date
-				]
-			)
-			.range([loff, width + loff]);
-
-		const yScale = d3
-			.scaleLinear()
 			.domain(
 				d3.extent(
 					data,
 					// @ts-ignore TS2352
-					(d) => parseInt(d.Cases) * props.ycoef
-				) as [number, number]
+					(d) => new Date(d[props.x])
+				) as [Date, Date]
 			)
-			.range([height + toff, toff]);
+			.range([loff, width + loff]);
+
+		svg.append("g")
+			.attr(
+				"transform",
+				`translate(0, ${height + toff + 10})`
+			)
+			.attr("class", "chartAxis")
+			.attr("stroke", props.axisLabelColor)
+			.call(d3.axisBottom(xScale));
+
+		svg.append("text")
+			.attr("class", "x label")
+			.attr("text-anchor", "end")
+			.attr("x", width / 2 + loff)
+			.attr("y", height + toff + textOff)
+			.attr("fill", props.axisLabelColor)
+			.text(props.xlabel);
 
 		var brushStartDate: Date | null = null;
 		var brushEndDate: Date | null = null;
@@ -93,137 +101,184 @@ const Chart = (props: ChartProps) => {
 			svg.call(brush);
 		}
 
-		svg.append("g")
-			.attr(
-				"transform",
-				`translate(0, ${height + toff + 10})`
-			)
-			.attr("class", "chartAxis")
-			.attr("stroke", props.axisLabelColor)
-			.call(d3.axisBottom(xScale));
+		const addYScale = (
+			y: string,
+			ycoef: number,
+			ylabel: string,
+			left: boolean
+		) => {
+			const yScale = d3
+				.scaleLinear()
+				.domain(
+					d3.extent(
+						data,
+						// @ts-ignore TS2352
+						(d) => parseInt(d[y]) * ycoef
+					) as [number, number]
+				)
+				.range([height + toff, toff]);
 
-		svg.append("text")
-			.attr("class", "x label")
-			.attr("text-anchor", "end")
-			.attr("x", width / 2 + loff)
-			.attr("y", height + toff + textOff)
-			.attr("fill", props.axisLabelColor)
-			.text(props.xlabel);
+			const translateAxis: string = `translate(${
+				left ? loff : loff + width
+			}, ${toff})`;
+			const d3axis = left ? d3.axisLeft : d3.axisRight;
+			svg.append("g")
+				.attr("transform", translateAxis)
+				.attr("class", "chartAxis")
+				.attr("stroke", props.axisLabelColor)
+				.call(d3axis(yScale));
 
-		svg.append("g")
-			.attr("transform", `translate(${loff}, ${toff})`)
-			.attr("class", "chartAxis")
-			.attr("stroke", props.axisLabelColor)
-			.call(d3.axisLeft(yScale));
+			const translateText: string = `translate(${
+				left ? loff - textOff : loff + width + textOff
+			}, ${
+				left
+					? height / 2 - textOff + toff
+					: height / 2 + toff
+			}) rotate(270)`;
+			svg.append("text")
+				.attr("transform", translateText)
+				.attr("class", "y label")
+				.attr("text-anchor", "end")
+				.attr("fill", props.axisLabelColor)
+				.text(ylabel);
 
-		svg.append("text")
-			.attr(
-				"transform",
-				`translate(${loff - textOff}, ${
-					height / 2 - textOff + toff
-				}) rotate(270)`
-			)
-			.attr("class", "y label")
-			.attr("text-anchor", "end")
-			.attr("fill", props.axisLabelColor)
-			.text(props.ylabel);
+			return yScale;
+		};
 
-		svg.append("path")
-			.datum(data)
-			.attr("fill", "none")
-			.attr("stroke", props.lineColor)
-			.attr("stroke-width", 1.5)
-			.attr(
-				"d",
-				// @ts-ignore TS2345
-				d3
-					.line()
-					.x((d) =>
-						xScale(
-							new Date(
-								(
-									d as unknown as {
-										Date: number;
-									}
-								).Date
-							)
-						)
-					)
-					.y((d) =>
-						yScale(
-							(
-								d as unknown as {
-									Cases: number;
-								}
-							).Cases * props.ycoef
-						)
-					)
-			);
-
-		props.keyPoints
-			// @ts-ignore TS2769
-			.filter(dateFilter)
-			.forEach((point) =>
-				point.points.forEach((p) => {
-					svg.append("circle")
-						.attr(
-							"cx",
+		const addPath = (
+			y: string,
+			ycoef: number,
+			yScale: any,
+			color: string
+		) => {
+			svg.append("path")
+				.datum(data)
+				.attr("fill", "none")
+				.attr("stroke", color)
+				.attr("stroke-width", 1.5)
+				.attr(
+					"d",
+					// @ts-ignore TS2345
+					d3
+						.line()
+						.x((d) =>
 							xScale(
 								new Date(
-									point.time
+									d[
+										// @ts-ignore TS7015
+										props.x
+									]
 								)
 							)
 						)
-						.attr(
-							"cy",
+						.y((d) =>
 							yScale(
-								p.point_value *
-									props.ycoef
+								// @ts-ignore TS7015
+								d[y] * ycoef
 							)
 						)
-						.attr("r", 3)
-						.attr(
-							"fill",
-							props.secondaryPointColor
-						);
-				})
-			);
+				);
+		};
 
-		if (props.focusDate) {
+		const addCircle = (
+			time: string,
+			point_value: number,
+			ycoef: number,
+			yScale: any,
+			r: number,
+			color: string
+		) => {
+			svg.append("circle")
+				.attr("cx", xScale(new Date(time)))
+				.attr("cy", yScale(point_value * ycoef))
+				.attr("r", r)
+				.attr("fill", color);
+		};
+
+		const addKeyPoints = (
+			y: string,
+			ycoef: number,
+			yScale: any
+		) => {
 			props.keyPoints
-				.filter(
-					(keyPoint) =>
-						new Date(
-							keyPoint.time
-						).getTime() ===
-						// @ts-ignore TS2532
-						props.focusDate.getTime()
-				)
+				// @ts-ignore TS2769
+				.filter(dateFilter)
 				.forEach((point) =>
 					point.points.forEach((p) => {
-						svg.append("circle")
-							.attr(
-								"cx",
-								xScale(
-									new Date(
-										point.time
-									)
-								)
-							)
-							.attr(
-								"cy",
-								yScale(
-									p.point_value *
-										props.ycoef
-								)
-							)
-							.attr("r", 3)
-							.attr(
-								"fill",
-								props.primaryPointColor
+						if (p.variable === y) {
+							addCircle(
+								point.time,
+								p.point_value,
+								ycoef,
+								yScale,
+								3,
+								props.secondaryPointColor
 							);
+						}
 					})
 				);
+
+			if (props.focusDate) {
+				props.keyPoints
+					.filter(
+						(keyPoint) =>
+							new Date(
+								keyPoint.time
+							).getTime() ===
+							// @ts-ignore TS2532
+							props.focusDate.getTime()
+					)
+					.forEach((point) =>
+						point.points.forEach((p) => {
+							point.points.forEach(
+								(p) => {
+									if (
+										p.variable ===
+										y
+									) {
+										addCircle(
+											point.time,
+											p.point_value,
+											ycoef,
+											yScale,
+											5,
+											props.primaryPointColor
+										);
+									}
+								}
+							);
+						})
+					);
+			}
+		};
+
+		const yScale = addYScale(
+			props.y1,
+			props.ycoef,
+			props.ylabel,
+			true
+		);
+		addPath(props.y1, props.ycoef, yScale, props.lineColor);
+		addKeyPoints(props.y1, props.ycoef, yScale);
+
+		if (props.y2) {
+			const yScale2 = addYScale(
+				props.y2 || "",
+				props.ycoef2 || 1,
+				props.ylabel2 || "",
+				false
+			);
+			addPath(
+				props.y2 || "",
+				props.ycoef2 || 1,
+				yScale2,
+				props.secondLineColor
+			);
+			addKeyPoints(
+				props.y2 || "",
+				props.ycoef2 || 1,
+				yScale2
+			);
 		}
 	};
 
