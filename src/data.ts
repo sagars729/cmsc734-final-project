@@ -1,4 +1,4 @@
-// import * as dfd from "danfojs"
+import * as dfd from "danfojs"
 import { readCSV } from "danfojs"
 // import { Series } from "danfojs/dist/danfojs-base"
 
@@ -20,11 +20,7 @@ export function data_processing(
 ): any {
     return readCSV(input_data)
         .then((df) => {
-            if(smoothing){
-                df = df
-            }
 
-            // we know date column is first
             var columns = selectedColumns.slice(1,)
             var key_points: Array<Timestamp> = []
 
@@ -37,33 +33,8 @@ export function data_processing(
             });
         
             var final_json = JSON.parse(JSON.stringify(key_points))
-            return final_json
-
-        }).catch(err => {
-            console.log(err);
-        })
-};
-
-export function data_smoothing(
-    input_data: any,
-    selectedColumns: any
-): any {
-    return readCSV(input_data, selectedColumns)
-        .then((df) => {
-            // we know date column is first
-            var columns = selectedColumns.slice(1,)
-            var key_points: Array<Timestamp> = []
-
-            // find min/max of all colunns (1 for now)
-            columns.forEach(function (column: string, i: number) {
-                key_points = key_points.concat(absolute_max_min(df, column))
-                for(var column2 of columns.slice(i+1,)){
-                    key_points = key_points.concat(bivariate_analysis(df, column, column2))
-                }
-            });
-        
-            var final_json = JSON.parse(JSON.stringify(key_points))
-            return final_json
+            const csv = dfd.toCSV(df);
+            return [csv, final_json]
 
         }).catch(err => {
             console.log(err);
@@ -85,8 +56,11 @@ function bivariate_analysis(
     let min_timestamps: string[] = df.loc({ rows: df['diff'].eq(col_min) })[date_col].values
 
     let ret = []
-    ret.push(create_point(col1, col_max, "absolute difference maximum", max_timestamps[0]))
-    ret.push(create_point(col1, col_min, "absolute difference minimum", min_timestamps[0]))
+    let max_string = "absolute maximum difference between " + col1 + " and " + col2
+    let min_string = "absolute minimum difference between " + col1 + " and " + col2
+
+    ret.push(create_point(col1, col_max, max_string, max_timestamps[0]))
+    ret.push(create_point(col1, col_min, min_string, min_timestamps[0]))
 
     return ret
 };
@@ -104,8 +78,11 @@ function absolute_max_min(
     let min_timestamps: string[] = df.loc({ rows: df[col].eq(col_min) })[date_col].values
 
     let ret = []
-    ret.push(create_point(col, col_max, "absolute maximum", max_timestamps[0]))
-    ret.push(create_point(col, col_min, "absolute minimum", min_timestamps[0]))
+    let max_string = "absolute maximum of " + col
+    let min_string = "absolute minimum of " + col
+
+    ret.push(create_point(col, col_max, max_string, max_timestamps[0]))
+    ret.push(create_point(col, col_min, min_string, min_timestamps[0]))
 
     return ret
 };
