@@ -20,24 +20,7 @@ export function data_processing(
 ): any {
     return readCSV(input_data)
         .then((df) => {
-            let smoothed = df.copy()
-            // console.log(df)
             var columns = selectedColumns.slice(1,)
-
-            if(smoothing){
-                let window = 7
-                for(var column of columns){
-                    // const average = (array: number[]) => array.reduce((a, b) => a + b) / array.length;
-                    let means = smoothed[column].map((e:number,i:number) => (i<=window) ? e : smoothed[column].iloc([i-window,i+1]).mean())
-                    console.log(means)
-                    smoothed[column] = means
-                }
-                
-                console.log(smoothed)
-            }
-
-            df = smoothed.copy()
-            // we know date column is first
             var key_points: Array<Timestamp> = []
 
             // find min/max of all colunns (1 for now)
