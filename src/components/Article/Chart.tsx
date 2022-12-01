@@ -27,6 +27,7 @@ const Chart = (props: ChartProps) => {
 		const toff: number = 10;
 		const textOff: number = 40;
 
+    console.log(props.startDate, props.endDate)
 		// @ts-ignore TS2769
 		const data = props.data.filter(dateFilter);
 
