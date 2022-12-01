@@ -5,7 +5,7 @@ import { textsx } from "./ArticleConstants";
 const TextSection = (props: TextSectionProps) => {
 	const dateFilter = (point: any) => {
 		const candDate: number =
-			new Date(point.Date).getTime() ||
+			new Date(point[props.x]).getTime() ||
 			new Date(point.time).getTime() ||
 			0;
 
@@ -20,7 +20,7 @@ const TextSection = (props: TextSectionProps) => {
 			props.focusDate &&
 			date.getTime() === props.focusDate.getTime()
 		) {
-			return Object.assign({}, textsx, { color: "red" });
+			return Object.assign({}, textsx, { color: props.primaryPointColor });
 		}
 		return textsx;
 	};
