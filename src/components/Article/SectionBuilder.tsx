@@ -117,17 +117,9 @@ const SectionBuilder = (props: SectionBuilderProps) => {
 			>
 				<Chart
 					// @ts-ignore TS2769
-					startDate={new Date(props.data[0].Date)}
-					endDate={
-						new Date(
-							// @ts-ignore TS2769
-							props.data[
-								props.data
-									.length -
-									1
-							].Date
-						)
-					}
+					startDate={new Date(props.data.reduce((a, c) => Math.min(a, (new Date(c.Date)).getTime()), new Date(props.data[0].Date).getTime()))}
+					// @ts-ignore TS2769
+					endDate={new Date(props.data.reduce((a, c) => Math.max(a, (new Date(c.Date)).getTime()), new Date(props.data[0].Date).getTime()))}
 					data={props.data}
 					keyPoints={props.keyPoints}
 					axisLabelColor={props.axisLabelColor}
