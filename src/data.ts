@@ -33,8 +33,12 @@ export function data_processing(
             });
         
             var final_json = JSON.parse(JSON.stringify(key_points))
+<<<<<<< HEAD
+            return final_json
+=======
             const csv = dfd.toCSV(df);
             return [csv, final_json]
+>>>>>>> main
 
         }).catch(err => {
             console.log(err);
